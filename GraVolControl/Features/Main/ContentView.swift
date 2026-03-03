@@ -7,7 +7,7 @@ struct ContentView: View {
     @State private var infoDetent: PresentationDetent = .medium
 
     var body: some View {
-        GeometryReader { proxy in
+        GeometryReader { geo in
             ZStack(alignment: .bottomLeading) {
                 backgroundLayer
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -15,26 +15,31 @@ struct ContentView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 14) {
-                        header
                         volumeCard
                         controlsCard
                     }
                     .padding(.horizontal, 16)
-                    .padding(.top, proxy.safeAreaInsets.top + 52)
-                    .padding(.bottom, proxy.safeAreaInsets.bottom + 24)
+                    .padding(.top, 8)
+                    .padding(.bottom, geo.safeAreaInsets.bottom + 24)
                     .frame(maxWidth: .infinity, alignment: .top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
-                islandAngleBadge
-                    .padding(.top, proxy.safeAreaInsets.top + 6)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-
                 infoButton
                     .padding(.leading, 16)
-                    .padding(.bottom, proxy.safeAreaInsets.bottom + 10)
+                    .padding(.bottom, geo.safeAreaInsets.bottom + 10)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                VStack(spacing: 8) {
+                    islandAngleBadge
+                    header
+                }
+                .padding(.top, 8)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 6)
+                .background(Color.clear)
+            }
         }
         .sheet(item: $activeSheet) { item in
             switch item {
@@ -181,6 +186,8 @@ struct ContentView: View {
                 Button("80%") { model.setVolumePreset(0.8) }.buttonStyle(ChipStyle())
                 Button("Recenter") { model.recenterTiltReference() }.buttonStyle(ChipStyle())
             }
+            .disabled(!model.isVolumeControlReady)
+            .opacity(model.isVolumeControlReady ? 1 : 0.55)
 
             HStack(spacing: 12) {
                 CircularAngleSlider(

@@ -2,7 +2,8 @@ import ActivityKit
 import Foundation
 
 enum GraVolControlRemoteStore {
-    private static let defaults = UserDefaults.standard
+    static let appGroupID = "group.com.sarsiz.GraVolControl"
+    private static let defaults = UserDefaults(suiteName: appGroupID) ?? UserDefaults.standard
     private static let triggerAngleKey = "gravol_trigger_angle_degrees"
     private static let recenterCommandKey = "gravol_recenter_command_id"
 

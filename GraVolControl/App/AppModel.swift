@@ -94,6 +94,11 @@ final class AppModel: ObservableObject {
     }
 
     func setVolumePreset(_ value: Float) {
+        guard volumeManager.isReady() else {
+            isVolumeControlReady = false
+            lastAction = "Volume Bridge Loading"
+            return
+        }
         _ = volumeManager.setVolume(value)
         currentVolume = volumeManager.currentOutputVolume()
         lastAction = "Set \(Int(value * 100))%"
