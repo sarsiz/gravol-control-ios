@@ -6,12 +6,22 @@ actor GraVolLiveActivityController {
 
     func startOrUpdate(_ state: GraVolLiveActivityAttributes.ContentState) async {
         if let activity = Activity<GraVolLiveActivityAttributes>.activities.first {
-            await activity.update(using: state)
+            if #available(iOS 16.2, *) {
+                let content = ActivityContent(state: state, staleDate: nil)
+                await activity.update(content)
+            } else {
+                await activity.update(using: state)
+            }
             return
         }
 
         let attributes = GraVolLiveActivityAttributes()
-        _ = try? Activity.request(attributes: attributes, contentState: state, pushType: nil)
+        if #available(iOS 16.2, *) {
+            let content = ActivityContent(state: state, staleDate: nil)
+            _ = try? Activity.request(attributes: attributes, content: content, pushType: nil)
+        } else {
+            _ = try? Activity.request(attributes: attributes, contentState: state, pushType: nil)
+        }
     }
 
     func endAll() async {
