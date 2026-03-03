@@ -14,8 +14,8 @@ enum GraVolControlRemoteStore {
     private static let volumePresetValueKey = "gravol_volume_preset_command_value"
 
     static func triggerAngleDegrees(defaultValue: Double) -> Double {
-        let raw = defaults.double(forKey: triggerAngleKey)
-        return raw == 0 ? defaultValue : raw
+        guard defaults.object(forKey: triggerAngleKey) != nil else { return defaultValue }
+        return defaults.double(forKey: triggerAngleKey)
     }
 
     static func setTriggerAngleDegrees(_ value: Double) {
@@ -23,8 +23,8 @@ enum GraVolControlRemoteStore {
     }
 
     static func defaultTriggerAngleDegrees(defaultValue: Double) -> Double {
-        let raw = defaults.double(forKey: defaultTriggerAngleKey)
-        return raw == 0 ? defaultValue : raw
+        guard defaults.object(forKey: defaultTriggerAngleKey) != nil else { return defaultValue }
+        return defaults.double(forKey: defaultTriggerAngleKey)
     }
 
     static func setDefaultTriggerAngleDegrees(_ value: Double) {

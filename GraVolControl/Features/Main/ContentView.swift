@@ -210,24 +210,32 @@ struct ContentView: View {
                         get: { model.triggerAngleDegrees },
                         set: { model.updateTriggerAngleDegrees($0) }
                     ),
-                    range: 0...60
+                    range: 0...60,
+                    onUseDefault: { model.resetTriggerToDefault() },
+                    onSetDefault: { model.updateDefaultTriggerAngleDegrees(model.triggerAngleDegrees) }
                 )
-                .frame(width: 96, height: 96)
-                .frame(width: 110, alignment: .center)
+                .frame(width: 140, height: 140)
+                .frame(width: 146, alignment: .center)
+                .offset(x: 14)
                 .contentShape(Rectangle())
 
-                VStack(alignment: .leading, spacing: 4) {
+                Spacer(minLength: 0)
+
+                VStack(alignment: .trailing, spacing: 3) {
                     Text("Trigger Angle")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.95))
                     Text("\(Int(model.triggerAngleDegrees))°")
                         .font(.title3.weight(.bold))
                         .foregroundStyle(.white)
-                    Text(tiltDirectionLabel)
-                        .font(.caption)
-                        .foregroundStyle(.white.opacity(0.8))
+                    Text(String(format: "Tilt %+.1f°", model.currentTiltDegrees))
+                        .font(.caption2.monospacedDigit().weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.82))
+                    Text("Default \(Int(model.defaultTriggerAngleDegrees))°")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.78))
                 }
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
 
             Button {
@@ -238,8 +246,8 @@ struct ContentView: View {
                 HStack(spacing: 10) {
                     Image(systemName: model.isArmed ? "pause.fill" : "play.fill")
                         .font(.footnote.weight(.bold))
-                        .frame(width: 18, height: 18)
-                        .padding(4)
+                        .frame(width: 16, height: 16)
+                        .padding(3)
                         .background(
                             Circle()
                                 .fill(.white.opacity(model.isArmed ? 0.22 : 0.28))
@@ -249,7 +257,7 @@ struct ContentView: View {
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 11)
+                .padding(.vertical, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 15, style: .continuous)
                         .fill(.ultraThinMaterial.opacity(0.9))
@@ -375,29 +383,6 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Trigger Setup")
                 .font(.title3.bold())
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Default Trigger")
-                    Spacer()
-                    Text("\(Int(model.defaultTriggerAngleDegrees))°")
-                        .font(.caption.weight(.bold))
-                }
-                Slider(
-                    value: Binding(
-                        get: { model.defaultTriggerAngleDegrees },
-                        set: { model.updateDefaultTriggerAngleDegrees($0) }
-                    ),
-                    in: 0...60,
-                    step: 1
-                )
-                .tint(.mint)
-                Button("Use Default (21° recommended)") {
-                    model.resetTriggerToDefault()
-                }
-                .font(.footnote.weight(.semibold))
-            }
-            .padding(.vertical, 6)
-
             Text("Shortcut: create 'Start GraVol' using Open App -> GraVol.")
             Text("Widget: add Shortcuts widget and pick Start GraVol.")
             Text("Action Button (supported models): Settings -> Action Button -> Shortcut -> Start GraVol.")
@@ -405,10 +390,6 @@ struct ContentView: View {
             Spacer()
         }
         .padding(20)
-    }
-
-    private var tiltDirectionLabel: String {
-        String(format: "Tilt %+.1f°", model.currentTiltDegrees)
     }
 
     private func animateNudge(isUp: Bool) {
@@ -463,6 +444,8 @@ private struct ChipStyle: ButtonStyle {
 private struct CircularAngleSlider: View {
     @Binding var value: Double
     let range: ClosedRange<Double>
+    let onUseDefault: () -> Void
+    let onSetDefault: () -> Void
     @State private var isDragging = false
 
     private let startAngle: Double = -135
@@ -472,10 +455,8 @@ private struct CircularAngleSlider: View {
         GeometryReader { proxy in
             let size = min(proxy.size.width, proxy.size.height)
             let lineWidth: CGFloat = 8
-            let radius = size / 2 - lineWidth / 2 - 1
             let sweep = endAngle - startAngle
             let progress = min(max((value - range.lowerBound) / (range.upperBound - range.lowerBound), 0), 1)
-            let knobAngle = startAngle + sweep * progress
 
             ZStack {
                 Circle()
@@ -491,14 +472,17 @@ private struct CircularAngleSlider: View {
                     )
                     .rotationEffect(.degrees(startAngle))
 
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 12, height: 12)
-                    .offset(
-                        x: cos(knobAngle * .pi / 180) * radius,
-                        y: sin(knobAngle * .pi / 180) * radius
-                    )
-                    .shadow(radius: 2)
+                VStack(spacing: 6) {
+                    Text("\(Int(value))°")
+                        .font(.headline.monospacedDigit().weight(.bold))
+                        .foregroundStyle(.white)
+                    VStack(spacing: 5) {
+                        Button("Default") { onUseDefault() }
+                            .buttonStyle(InnerChipStyle())
+                        Button("Set Default") { onSetDefault() }
+                            .buttonStyle(InnerChipStyle())
+                    }
+                }
             }
             .frame(width: size, height: size, alignment: .center)
             .contentShape(Circle())
@@ -518,7 +502,7 @@ private struct CircularAngleSlider: View {
                         value = range.lowerBound + progressForDrag(dx: dx, dy: dy) * (range.upperBound - range.lowerBound)
                     }
                     .onEnded { _ in isDragging = false }
-            )
+            , including: .gesture)
         }
     }
 
@@ -530,5 +514,24 @@ private struct CircularAngleSlider: View {
         if theta < sweepStart { theta += 360 }
         let clamped = min(max(theta, sweepStart), sweepEnd)
         return (clamped - sweepStart) / (sweepEnd - sweepStart)
+    }
+}
+
+private struct InnerChipStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.caption2.weight(.semibold))
+            .foregroundStyle(.white)
+            .lineLimit(1)
+            .minimumScaleFactor(0.72)
+            .frame(width: 86)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .background(
+                Capsule()
+                    .fill(.white.opacity(configuration.isPressed ? 0.24 : 0.14))
+                    .overlay(Capsule().stroke(.white.opacity(0.25), lineWidth: 1))
+            )
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
     }
 }

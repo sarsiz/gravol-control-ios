@@ -6,7 +6,7 @@ struct IncreaseTriggerAngleIntent: AppIntent {
     static var title: LocalizedStringResource = "Increase Trigger Angle"
 
     func perform() async throws -> some IntentResult {
-        let current = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 21)
+        let current = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
         let next = min(current + 1, 60)
         GraVolControlRemoteStore.setTriggerAngleDegrees(next)
         reloadWidgets()
@@ -19,7 +19,7 @@ struct DecreaseTriggerAngleIntent: AppIntent {
     static var title: LocalizedStringResource = "Decrease Trigger Angle"
 
     func perform() async throws -> some IntentResult {
-        let current = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 21)
+        let current = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
         let next = max(current - 1, 0)
         GraVolControlRemoteStore.setTriggerAngleDegrees(next)
         reloadWidgets()

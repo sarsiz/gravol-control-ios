@@ -7,8 +7,8 @@ final class AppModel: ObservableObject {
     @Published var isArmed = true
     @Published var lastAction: String = "Idle"
     @Published var currentVolume: Float = 0
-    @Published var triggerAngleDegrees: Double = 21
-    @Published var defaultTriggerAngleDegrees: Double = 21
+    @Published var triggerAngleDegrees: Double = 15
+    @Published var defaultTriggerAngleDegrees: Double = 15
     @Published var currentTiltDegrees: Double = 0
     @Published var stepSize: Double = 0.04
     @Published var didLaunchAnimate = false
@@ -88,7 +88,6 @@ final class AppModel: ObservableObject {
 
     func resetTriggerToDefault() {
         updateTriggerAngleDegrees(defaultTriggerAngleDegrees)
-        lastAction = "Default \(Int(defaultTriggerAngleDegrees))°"
     }
 
     func updateStepSize(_ value: Double) {
