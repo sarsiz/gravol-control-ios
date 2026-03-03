@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 import UIKit
-import ActivityKit
 
 @MainActor
 final class AppModel: ObservableObject {
@@ -20,7 +19,7 @@ final class AppModel: ObservableObject {
     private var recentChangeTimes: [Date] = []
     private var lastSeenRecenterCommandID = 0
     private var lastLiveActivitySync = Date.distantPast
-    private let triggerAngleRange: ClosedRange<Double> = 5...60
+    private let triggerAngleRange: ClosedRange<Double> = 0...60
 
     private lazy var tiltController: TiltVolumeController = {
         let threshold = Self.degreesToRadians(triggerAngleDegrees)
@@ -238,64 +237,5 @@ final class AppModel: ObservableObject {
 
     private static func radiansToDegrees(_ value: Double) -> Double {
         value * 180 / .pi
-    }
-}
-
-enum GraVolControlRemoteStore {
-    private static let defaults = UserDefaults.standard
-    private static let triggerAngleKey = "gravol_trigger_angle_degrees"
-    private static let recenterCommandKey = "gravol_recenter_command_id"
-
-    static func triggerAngleDegrees(defaultValue: Double) -> Double {
-        let raw = defaults.double(forKey: triggerAngleKey)
-        return raw == 0 ? defaultValue : raw
-    }
-
-    static func setTriggerAngleDegrees(_ value: Double) {
-        defaults.set(value, forKey: triggerAngleKey)
-    }
-
-    static func issueRecenterCommand() {
-        let next = defaults.integer(forKey: recenterCommandKey) + 1
-        defaults.set(next, forKey: recenterCommandKey)
-    }
-
-    static func consumeRecenterCommand(lastSeenID: inout Int) -> Bool {
-        let current = defaults.integer(forKey: recenterCommandKey)
-        guard current > lastSeenID else { return false }
-        lastSeenID = current
-        return true
-    }
-}
-
-@available(iOS 16.1, *)
-struct GraVolLiveActivityAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        var tiltDegrees: Double
-        var triggerDegrees: Double
-        var isArmed: Bool
-    }
-
-    var title: String = "GraVol Control"
-}
-
-@available(iOS 16.1, *)
-actor GraVolLiveActivityController {
-    static let shared = GraVolLiveActivityController()
-
-    func startOrUpdate(_ state: GraVolLiveActivityAttributes.ContentState) async {
-        if let activity = Activity<GraVolLiveActivityAttributes>.activities.first {
-            await activity.update(using: state)
-            return
-        }
-
-        let attributes = GraVolLiveActivityAttributes()
-        _ = try? Activity.request(attributes: attributes, contentState: state, pushType: nil)
-    }
-
-    func endAll() async {
-        for activity in Activity<GraVolLiveActivityAttributes>.activities {
-            await activity.end(dismissalPolicy: .immediate)
-        }
     }
 }

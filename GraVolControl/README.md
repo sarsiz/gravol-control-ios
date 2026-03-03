@@ -40,7 +40,7 @@ Glass-style, full-screen iOS volume controller with safer tilt detection and qui
 - Live Activity updates are guarded for iOS 16.1+.
 - The app updates/starts Live Activity while tilt is armed and ends it when paused.
 - Dynamic Island rendering code is in:
-  - `GraVolControl/LiveActivity/GraVolLiveActivityWidget.swift`
+  - `GraVolControlWidget/GraVolControlLiveActivityWidget.swift`
 
 ## Security and Secret Safety
 

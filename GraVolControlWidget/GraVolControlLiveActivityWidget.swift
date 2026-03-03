@@ -1,10 +1,10 @@
-#if canImport(ActivityKit) && canImport(WidgetKit)
 import ActivityKit
+import AppIntents
 import SwiftUI
 import WidgetKit
 
 @available(iOSApplicationExtension 16.1, *)
-struct GraVolLiveActivityWidget: Widget {
+struct GraVolControlLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: GraVolLiveActivityAttributes.self) { context in
             VStack(alignment: .leading, spacing: 6) {
@@ -56,4 +56,3 @@ struct GraVolLiveActivityWidget: Widget {
         }
     }
 }
-#endif

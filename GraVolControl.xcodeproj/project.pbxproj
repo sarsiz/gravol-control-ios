@@ -16,7 +16,14 @@
 		A10000000000000000000007 /* StartGraVolIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* StartGraVolIntent.swift */; };
 		A10000000000000000000008 /* GraVolShortcutsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* GraVolShortcutsProvider.swift */; };
 		A10000000000000000000009 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* Assets.xcassets */; };
-		A10000000000000000000010 /* GraVolLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* GraVolLiveActivityWidget.swift */; };
+		A10000000000000000000011 /* GraVolLiveActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* GraVolLiveActivityController.swift */; };
+		A10000000000000000000012 /* GraVolLiveActivityShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* GraVolLiveActivityShared.swift */; };
+		A10000000000000000000013 /* LiveActivityControlIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* LiveActivityControlIntents.swift */; };
+		B10000000000000000000001 /* GraVolControlWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* GraVolControlWidgetBundle.swift */; };
+		B10000000000000000000002 /* GraVolControlLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* GraVolControlLiveActivityWidget.swift */; };
+		B10000000000000000000003 /* GraVolLiveActivityShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* GraVolLiveActivityShared.swift */; };
+		B10000000000000000000004 /* LiveActivityControlIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* LiveActivityControlIntents.swift */; };
+		B10000000000000000000005 /* GraVolControlWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* GraVolControlWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +38,13 @@
 		A20000000000000000000008 /* GraVolShortcutsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolShortcutsProvider.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A20000000000000000000011 /* GraVolLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolLiveActivityWidget.swift; sourceTree = "<group>"; };
+		A20000000000000000000012 /* GraVolLiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolLiveActivityController.swift; sourceTree = "<group>"; };
+		A20000000000000000000013 /* GraVolLiveActivityShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolLiveActivityShared.swift; sourceTree = "<group>"; };
+		A20000000000000000000014 /* LiveActivityControlIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityControlIntents.swift; sourceTree = "<group>"; };
+		A20000000000000000000015 /* GraVolControlWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GraVolControlWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000016 /* GraVolControlWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolControlWidgetBundle.swift; sourceTree = "<group>"; };
+		A20000000000000000000017 /* GraVolControlLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolControlLiveActivityWidget.swift; sourceTree = "<group>"; };
+		A20000000000000000000018 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,48 +55,71 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B30000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
-/* Begin PBXGroup section */
-		A40000000000000000000001 = {
-			isa = PBXGroup;
-			children = (
-				A40000000000000000000002 /* GraVolControl */,
-				A40000000000000000000003 /* Products */,
+/* Begin PBXCopyFilesBuildPhase section */
+		B30000000000000000000004 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B10000000000000000000005 /* GraVolControlWidget.appex in Embed App Extensions */,
 			);
-			sourceTree = "<group>";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXGroup section */
+			A40000000000000000000001 = {
+				isa = PBXGroup;
+				children = (
+					A40000000000000000000002 /* GraVolControl */,
+					A40000000000000000000010 /* GraVolControlWidget */,
+					A40000000000000000000003 /* Products */,
+				);
+				sourceTree = "<group>";
+			};
 		A40000000000000000000002 /* GraVolControl */ = {
 			isa = PBXGroup;
 			children = (
 				A40000000000000000000004 /* App */,
-				A40000000000000000000005 /* Features */,
-				A40000000000000000000006 /* Services */,
-				A40000000000000000000007 /* Intents */,
-				A40000000000000000000009 /* LiveActivity */,
-				A20000000000000000000009 /* Assets.xcassets */,
-				A20000000000000000000010 /* Info.plist */,
-			);
+					A40000000000000000000005 /* Features */,
+					A40000000000000000000006 /* Services */,
+					A40000000000000000000007 /* Intents */,
+					A40000000000000000000009 /* Shared */,
+					A20000000000000000000009 /* Assets.xcassets */,
+					A20000000000000000000010 /* Info.plist */,
+				);
 			path = GraVolControl;
 			sourceTree = "<group>";
 		};
-		A40000000000000000000003 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000000 /* GraVolControl.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		A40000000000000000000004 /* App */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000001 /* GraVolControlApp.swift */,
-				A20000000000000000000002 /* AppModel.swift */,
-			);
-			path = App;
-			sourceTree = "<group>";
-		};
+			A40000000000000000000003 /* Products */ = {
+				isa = PBXGroup;
+				children = (
+					A20000000000000000000000 /* GraVolControl.app */,
+					A20000000000000000000015 /* GraVolControlWidget.appex */,
+				);
+				name = Products;
+				sourceTree = "<group>";
+			};
+			A40000000000000000000004 /* App */ = {
+				isa = PBXGroup;
+				children = (
+					A20000000000000000000001 /* GraVolControlApp.swift */,
+					A20000000000000000000002 /* AppModel.swift */,
+					A20000000000000000000012 /* GraVolLiveActivityController.swift */,
+				);
+				path = App;
+				sourceTree = "<group>";
+			};
 		A40000000000000000000005 /* Features */ = {
 			isa = PBXGroup;
 			children = (
@@ -101,15 +137,16 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		A40000000000000000000007 /* Intents */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000007 /* StartGraVolIntent.swift */,
-				A20000000000000000000008 /* GraVolShortcutsProvider.swift */,
-			);
-			path = Intents;
-			sourceTree = "<group>";
-		};
+			A40000000000000000000007 /* Intents */ = {
+				isa = PBXGroup;
+				children = (
+					A20000000000000000000007 /* StartGraVolIntent.swift */,
+					A20000000000000000000008 /* GraVolShortcutsProvider.swift */,
+					A20000000000000000000014 /* LiveActivityControlIntents.swift */,
+				);
+				path = Intents;
+				sourceTree = "<group>";
+			};
 		A40000000000000000000008 /* Main */ = {
 			isa = PBXGroup;
 			children = (
@@ -119,15 +156,35 @@
 			path = Main;
 			sourceTree = "<group>";
 		};
-		A40000000000000000000009 /* LiveActivity */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000011 /* GraVolLiveActivityWidget.swift */,
-			);
-			path = LiveActivity;
-			sourceTree = "<group>";
-		};
+			A40000000000000000000009 /* Shared */ = {
+				isa = PBXGroup;
+				children = (
+					A20000000000000000000013 /* GraVolLiveActivityShared.swift */,
+				);
+				path = Shared;
+				sourceTree = "<group>";
+			};
+			A40000000000000000000010 /* GraVolControlWidget */ = {
+				isa = PBXGroup;
+				children = (
+					A20000000000000000000016 /* GraVolControlWidgetBundle.swift */,
+					A20000000000000000000017 /* GraVolControlLiveActivityWidget.swift */,
+					A20000000000000000000018 /* Info.plist */,
+				);
+				path = GraVolControlWidget;
+				sourceTree = "<group>";
+			};
 /* End PBXGroup section */
+
+/* Begin PBXContainerItemProxy section */
+		B60000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A60000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B50000000000000000000001;
+			remoteInfo = GraVolControlWidget;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXNativeTarget section */
 		A50000000000000000000001 /* GraVolControl */ = {
@@ -137,17 +194,44 @@
 				A30000000000000000000002 /* Sources */,
 				A30000000000000000000001 /* Frameworks */,
 				A30000000000000000000003 /* Resources */,
+				B30000000000000000000004 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B60000000000000000000002 /* PBXTargetDependency */,
 			);
 			name = GraVolControl;
 			productName = GraVolControl;
 			productReference = A20000000000000000000000 /* GraVolControl.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B50000000000000000000001 /* GraVolControlWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B80000000000000000000001 /* Build configuration list for PBXNativeTarget "GraVolControlWidget" */;
+			buildPhases = (
+				B30000000000000000000002 /* Sources */,
+				B30000000000000000000001 /* Frameworks */,
+				B30000000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GraVolControlWidget;
+			productName = GraVolControlWidget;
+			productReference = A20000000000000000000015 /* GraVolControlWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
+
+/* Begin PBXTargetDependency section */
+		B60000000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B50000000000000000000001 /* GraVolControlWidget */;
+			targetProxy = B60000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXProject section */
 		A60000000000000000000001 /* Project object */ = {
@@ -158,6 +242,9 @@
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					A50000000000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					B50000000000000000000001 = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
@@ -176,6 +263,7 @@
 			projectRoot = "";
 			targets = (
 				A50000000000000000000001 /* GraVolControl */,
+				B50000000000000000000001 /* GraVolControlWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -189,6 +277,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B30000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -198,13 +293,26 @@
 			files = (
 				A10000000000000000000001 /* GraVolControlApp.swift in Sources */,
 				A10000000000000000000002 /* AppModel.swift in Sources */,
+				A10000000000000000000011 /* GraVolLiveActivityController.swift in Sources */,
 				A10000000000000000000003 /* ContentView.swift in Sources */,
 				A10000000000000000000004 /* SystemVolumeBridgeView.swift in Sources */,
 				A10000000000000000000005 /* TiltVolumeController.swift in Sources */,
 				A10000000000000000000006 /* VolumeManager.swift in Sources */,
+				A10000000000000000000012 /* GraVolLiveActivityShared.swift in Sources */,
 				A10000000000000000000007 /* StartGraVolIntent.swift in Sources */,
 				A10000000000000000000008 /* GraVolShortcutsProvider.swift in Sources */,
-				A10000000000000000000010 /* GraVolLiveActivityWidget.swift in Sources */,
+				A10000000000000000000013 /* LiveActivityControlIntents.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000001 /* GraVolControlWidgetBundle.swift in Sources */,
+				B10000000000000000000002 /* GraVolControlLiveActivityWidget.swift in Sources */,
+				B10000000000000000000003 /* GraVolLiveActivityShared.swift in Sources */,
+				B10000000000000000000004 /* LiveActivityControlIntents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,6 +475,56 @@
 			};
 			name = Release;
 		};
+		B70000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GraVolControlWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sarsiz.GraVolControl.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B70000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GraVolControlWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sarsiz.GraVolControl.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -384,6 +542,15 @@
 			buildConfigurations = (
 				A70000000000000000000003 /* Debug */,
 				A70000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B80000000000000000000001 /* Build configuration list for PBXNativeTarget "GraVolControlWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B70000000000000000000001 /* Debug */,
+				B70000000000000000000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

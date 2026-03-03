@@ -10,6 +10,8 @@ struct ContentView: View {
         GeometryReader { proxy in
             ZStack(alignment: .bottomLeading) {
                 backgroundLayer
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 14) {
@@ -18,22 +20,21 @@ struct ContentView: View {
                         controlsCard
                     }
                     .padding(.horizontal, 16)
-                    .padding(.top, max(proxy.safeAreaInsets.top + 48, 58))
-                    .padding(.bottom, max(proxy.safeAreaInsets.bottom + 72, 90))
+                    .padding(.top, proxy.safeAreaInsets.top + 52)
+                    .padding(.bottom, proxy.safeAreaInsets.bottom + 24)
                     .frame(maxWidth: .infinity, alignment: .top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
                 islandAngleBadge
-                    .padding(.top, max(proxy.safeAreaInsets.top + 4, 8))
+                    .padding(.top, proxy.safeAreaInsets.top + 6)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
                 infoButton
                     .padding(.leading, 16)
-                    .padding(.bottom, max(proxy.safeAreaInsets.bottom, 12))
+                    .padding(.bottom, proxy.safeAreaInsets.bottom + 10)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .ignoresSafeArea()
         }
         .sheet(item: $activeSheet) { item in
             switch item {
@@ -60,38 +61,27 @@ struct ContentView: View {
     }
 
     private var backgroundLayer: some View {
-        ZStack {
-            LinearGradient(
-                colors: [Color.blue.opacity(0.22), Color.teal.opacity(0.22), Color.black.opacity(0.22)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .overlay(
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .opacity(0.18)
-            )
-
-            Circle()
-                .fill(.white.opacity(0.12))
-                .blur(radius: 72)
-                .frame(width: 260, height: 260)
-                .offset(x: -140, y: -280)
-
-            Circle()
-                .fill(.cyan.opacity(0.14))
-                .blur(radius: 80)
-                .frame(width: 290, height: 290)
-                .offset(x: 130, y: 300)
-        }
+        LinearGradient(
+            colors: [
+                Color(red: 0.05, green: 0.15, blue: 0.24),
+                Color(red: 0.04, green: 0.30, blue: 0.32),
+                Color(red: 0.03, green: 0.08, blue: 0.15)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .overlay(
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .opacity(0.16)
+        )
     }
 
     private var islandAngleBadge: some View {
         HStack(spacing: 8) {
             Image(systemName: "angle")
             Text(String(format: "%+.1f°", model.currentTiltDegrees))
-                .monospacedDigit()
-                .font(.footnote.weight(.semibold))
+                .font(.footnote.monospacedDigit().weight(.semibold))
             Text("Trigger \(Int(model.triggerAngleDegrees))°")
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.white.opacity(0.85))
@@ -114,7 +104,7 @@ struct ContentView: View {
                     .foregroundStyle(.white)
                 Text("Tilt controls system volume")
                     .font(.footnote)
-                    .foregroundStyle(.white.opacity(0.8))
+                    .foregroundStyle(.white.opacity(0.82))
             }
             Spacer()
             Toggle("", isOn: Binding(
@@ -130,8 +120,7 @@ struct ContentView: View {
         VStack(spacing: 10) {
             ZStack {
                 Circle()
-                    .fill(.ultraThinMaterial)
-                    .opacity(0.55)
+                    .fill(.ultraThinMaterial.opacity(0.55))
                     .frame(width: 210, height: 210)
                     .overlay(Circle().stroke(.white.opacity(0.18), lineWidth: 1))
 
@@ -199,7 +188,7 @@ struct ContentView: View {
                         get: { model.triggerAngleDegrees },
                         set: { model.updateTriggerAngleDegrees($0) }
                     ),
-                    range: 5...60
+                    range: 0...60
                 )
                 .frame(width: 84, height: 84)
 
@@ -259,8 +248,7 @@ struct ContentView: View {
 
     private var cardGlass: some View {
         RoundedRectangle(cornerRadius: 22, style: .continuous)
-            .fill(.ultraThinMaterial)
-            .opacity(0.72)
+            .fill(.ultraThinMaterial.opacity(0.72))
             .overlay(
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
                     .stroke(.white.opacity(0.22), lineWidth: 1)
@@ -278,8 +266,7 @@ struct ContentView: View {
                 .padding(8)
                 .background(
                     Circle()
-                        .fill(.ultraThinMaterial)
-                        .opacity(0.85)
+                        .fill(.ultraThinMaterial.opacity(0.85))
                 )
         }
     }
@@ -310,11 +297,10 @@ struct ContentView: View {
 
                 Group {
                     Text("1. Open app from Shortcut, Action Button, widget, or Back Tap.")
-                    Text("2. Tap Recenter in your natural hand position.")
-                    Text("3. Enable Tilt and keep movement intentional.")
-                    Text("4. Tilt toward you to raise volume, away to lower volume.")
-                    Text("5. Tap Pause Tilt when done to avoid accidental changes.")
-                    Text("6. If controls seem delayed, wait for 'Bridge Ready' on the main screen.")
+                    Text("2. Keep the phone near horizontal (0° reference).")
+                    Text("3. Tilt up positive, down negative.")
+                    Text("4. Trigger angle controls when tilt starts changing volume.")
+                    Text("5. Tap Pause Tilt when done.")
                 }
                 .font(.body)
                 .onTapGesture {
@@ -340,17 +326,13 @@ struct ContentView: View {
     }
 
     private var tiltDirectionLabel: String {
-        let angle = model.currentTiltDegrees
-        if angle > 0.8 { return String(format: "Incline %.1f°", angle) }
-        if angle < -0.8 { return String(format: "Decline %.1f°", abs(angle)) }
-        return "Neutral 0.0°"
+        String(format: "Tilt %+.1f°", model.currentTiltDegrees)
     }
 }
 
 private enum ActiveSheet: String, Identifiable {
     case info
     case setup
-
     var id: String { rawValue }
 }
 
@@ -390,35 +372,38 @@ private struct CircularAngleSlider: View {
     @Binding var value: Double
     let range: ClosedRange<Double>
 
+    private let startAngle: Double = -135
+    private let endAngle: Double = 135
+
     var body: some View {
         GeometryReader { proxy in
             let size = min(proxy.size.width, proxy.size.height)
             let lineWidth: CGFloat = 8
             let radius = size / 2 - lineWidth / 2
-            let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
-            let angleDegrees = Double(270.0 * normalized - 135.0)
-            let angle = Angle(degrees: angleDegrees)
+            let sweep = endAngle - startAngle
+            let progress = min(max((value - range.lowerBound) / (range.upperBound - range.lowerBound), 0), 1)
+            let knobAngle = startAngle + sweep * progress
 
             ZStack {
                 Circle()
-                    .trim(from: 0.125, to: 0.875)
+                    .trim(from: 0, to: CGFloat(sweep / 360))
                     .stroke(Color.white.opacity(0.22), style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-                    .rotationEffect(.degrees(45))
+                    .rotationEffect(.degrees(startAngle))
 
                 Circle()
-                    .trim(from: 0, to: normalized * 0.75)
+                    .trim(from: 0, to: CGFloat((sweep / 360) * progress))
                     .stroke(
                         LinearGradient(colors: [.mint, .cyan], startPoint: .leading, endPoint: .trailing),
                         style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                     )
-                    .rotationEffect(.degrees(-135))
+                    .rotationEffect(.degrees(startAngle))
 
                 Circle()
                     .fill(Color.white)
                     .frame(width: 14, height: 14)
                     .offset(
-                        x: cos(angle.radians) * radius,
-                        y: sin(angle.radians) * radius
+                        x: cos(knobAngle * .pi / 180) * radius,
+                        y: sin(knobAngle * .pi / 180) * radius
                     )
                     .shadow(radius: 2)
 
@@ -433,12 +418,10 @@ private struct CircularAngleSlider: View {
                         let center = CGPoint(x: proxy.size.width / 2, y: proxy.size.height / 2)
                         let dx = drag.location.x - center.x
                         let dy = drag.location.y - center.y
-                        var raw = atan2(dy, dx) * 180 / .pi
-                        if raw < 0 { raw += 360 }
-                        if raw < 135 { raw += 360 }
-                        let clamped = min(max(raw, 135), 405)
-                        let progress = (clamped - 135) / 270
-                        value = range.lowerBound + Double(progress) * (range.upperBound - range.lowerBound)
+                        let angle = atan2(dy, dx) * 180 / .pi
+                        let clampedAngle = min(max(angle, startAngle), endAngle)
+                        let localProgress = (clampedAngle - startAngle) / (endAngle - startAngle)
+                        value = range.lowerBound + localProgress * (range.upperBound - range.lowerBound)
                     }
             )
         }
