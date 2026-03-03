@@ -19,19 +19,22 @@ final class VolumeManager {
         audioSession.outputVolume
     }
 
-    func changeVolume(by delta: Float) {
+    @discardableResult
+    func changeVolume(by delta: Float) -> Float {
         let current = currentOutputVolume()
-        setVolume(current + delta)
+        return setVolume(current + delta)
     }
 
     func attachSystemSlider(_ slider: UISlider) {
         systemSlider = slider
     }
 
-    func setVolume(_ value: Float) {
+    @discardableResult
+    func setVolume(_ value: Float) -> Float {
         let clamped = min(max(value, 0.0), 1.0)
-        guard let slider = systemSlider else { return }
+        guard let slider = systemSlider else { return currentOutputVolume() }
         slider.value = clamped
         slider.sendActions(for: .valueChanged)
+        return clamped
     }
 }

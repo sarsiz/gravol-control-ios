@@ -7,3 +7,14 @@ build/
 
 # macOS
 .DS_Store
+
+# Secrets and local env
+.env
+.env.*
+*.pem
+*.p12
+*.mobileprovision
+Secrets.plist
+GoogleService-Info.plist
+firebase-adminsdk*.json
+*credentials*.json

@@ -1,40 +1,63 @@
-# GraVol Control (SwiftUI Starter)
+# GraVol Control
 
-This starter implements:
+Tilt-based system volume control for iPhone, with quick launch via Shortcut/Back Tap.
 
-- Tilt phone toward you to increase system volume
-- Tilt phone away from you to decrease system volume
-- `Start GraVol` App Intent for Shortcuts/Siri/Button triggers
+## Features
 
-## iOS Constraints
+- Tilt toward you: volume up
+- Tilt away: volume down
+- Animated volume dial (shows current volume and change speed)
+- Large one-thumb controls: up/down, presets, sensitivity, step size
+- Quick actions:
+  - Open Shortcuts app
+  - In-app guide to add Shortcuts widget on Home Screen
 
-- Apps cannot directly detect Back Tap events.
-- Use Back Tap to run a Shortcut that opens this app.
-- Continuous lock-screen/background gyro monitoring is not supported for this use case.
+## iOS Constraints (Important)
 
-## Project Setup
+- Lock-screen finger drawing is not available to third-party apps.
+- Back Tap cannot be read directly by app code.
+- Practical flow:
+  1. Back Tap runs a Shortcut
+  2. Shortcut opens this app
+  3. Tilt control runs while app is active
 
-1. Create a new iOS SwiftUI app in Xcode.
-2. Copy these folders into the app target:
-   - `App`
-   - `Features`
-   - `Services`
-   - `Intents`
-3. Ensure all files are checked for your app target.
-4. Build and run once to register app intents.
+## Security and Secret Safety
+
+This repository is configured to avoid committing common secret files:
+
+- `.env`, `.env.*`
+- `*.pem`, `*.p12`, provisioning files
+- `Secrets.plist`, `GoogleService-Info.plist`
+- common credentials JSON patterns
+
+Before every push, run:
+
+```bash
+rg -n "(api[_-]?key|secret|token|password|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|AKIA[0-9A-Z]{16})" . --hidden --glob '!.git/**'
+```
+
+If this finds anything sensitive, remove it from git history before pushing.
+
+## Build and Run
+
+1. Open `/Users/sarsiz/Desktop/Code Projects/iOS app/GraVol Control/GraVolControl.xcodeproj` in Xcode.
+2. Set your signing team and unique bundle id.
+3. Build and run on a real iPhone.
 
 ## Back Tap Setup
 
-1. Open Shortcuts and create `Start GraVol` shortcut:
-   - Action: `Open App` -> select your app
+1. Open Shortcuts:
+   - Create shortcut: `Start GraVol`
+   - Add action: `Open App` -> `GraVol Control`
 2. iPhone Settings:
    - `Accessibility` -> `Touch` -> `Back Tap`
    - Choose `Double Tap` or `Triple Tap`
-   - Assign `Start GraVol` shortcut
+   - Assign `Start GraVol`
 
-When you back tap, iOS runs the shortcut and opens your app. Tilt control starts automatically when the app is active.
+## Home Screen Widget Setup (Shortcuts Widget)
 
-## Tuning
+1. Long-press Home Screen -> tap `+`
+2. Add `Shortcuts` widget
+3. Edit widget and choose `Start GraVol`
 
-- `Tilt Sensitivity`: larger values require stronger tilt.
-- `Volume Step`: how much each update changes volume.
+This gives one-tap launch from Home Screen.
