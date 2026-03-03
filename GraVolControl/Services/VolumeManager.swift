@@ -7,6 +7,7 @@ final class VolumeManager {
     private let audioSession = AVAudioSession.sharedInstance()
     private var systemSlider: UISlider?
     private let minimumSystemTick: Float = 1.0 / 16.0
+    private var pendingVolume: Float?
 
     func configureAudioSession() {
         do {
@@ -17,7 +18,13 @@ final class VolumeManager {
     }
 
     func currentOutputVolume() -> Float {
-        audioSession.outputVolume
+        let systemValue = audioSession.outputVolume
+        guard let pending = pendingVolume else { return systemValue }
+        if abs(systemValue - pending) < 0.02 {
+            pendingVolume = nil
+            return systemValue
+        }
+        return pending
     }
 
     @discardableResult
@@ -42,6 +49,7 @@ final class VolumeManager {
         guard let slider = systemSlider else { return currentOutputVolume() }
         slider.setValue(clamped, animated: false)
         slider.sendActions(for: .valueChanged)
+        pendingVolume = clamped
         return clamped
     }
 }

@@ -6,39 +6,44 @@ struct ContentView: View {
     @State private var activeSheet: ActiveSheet?
     @State private var infoDetent: PresentationDetent = .medium
 
+    // Tweak these if you want the pill/header tighter/looser.
+    private let islandBadgeTopGap: CGFloat = 6
+    private let contentGapBelowBadge: CGFloat = 6
+
     var body: some View {
-        GeometryReader { geo in
-            ZStack(alignment: .bottomLeading) {
-                backgroundLayer
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .ignoresSafeArea()
+        ZStack {
+            // ✅ Always paint edge-to-edge (fixes black bars top/bottom).
+            backgroundLayer
+                .ignoresSafeArea()
 
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 14) {
-                        volumeCard
-                        controlsCard
+            GeometryReader { geo in
+                let bottomInset = geo.safeAreaInsets.bottom
+                let badgeYOffset = -(geo.safeAreaInsets.top - islandBadgeTopGap)
+
+                ZStack(alignment: .bottomLeading) {
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 14) {
+                            header
+                            volumeCard
+                            controlsCard
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, contentGapBelowBadge)
+                        .padding(.bottom, bottomInset + 2)
+                        .frame(maxWidth: .infinity, alignment: .top)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, geo.safeAreaInsets.bottom + 24)
-                    .frame(maxWidth: .infinity, alignment: .top)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
-                infoButton
-                    .padding(.leading, 16)
-                    .padding(.bottom, geo.safeAreaInsets.bottom + 10)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .safeAreaInset(edge: .top, spacing: 0) {
-                VStack(spacing: 8) {
-                    islandAngleBadge
-                    header
+                    infoButton
+                        .padding(.leading, 16)
+                        .padding(.bottom, bottomInset + 10)
                 }
-                .padding(.top, 8)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 6)
-                .background(Color.clear)
+                .overlay(alignment: .top) {
+                    islandAngleBadge
+                        .padding(.top, islandBadgeTopGap)
+                        .padding(.horizontal, 16)
+                        .offset(y: badgeYOffset)
+                }
             }
         }
         .sheet(item: $activeSheet) { item in
@@ -104,11 +109,11 @@ struct ContentView: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text("GraVol")
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                Text("Gravity Volume")
+                    .font(.title3.weight(.semibold))
                     .foregroundStyle(.white)
                 Text("Tilt controls system volume")
-                    .font(.footnote)
+                    .font(.caption)
                     .foregroundStyle(.white.opacity(0.82))
             }
             Spacer()
@@ -216,7 +221,8 @@ struct ContentView: View {
             Button {
                 model.setArmed(!model.isArmed)
             } label: {
-                Label(model.isArmed ? "Pause Tilt" : "Resume Tilt", systemImage: model.isArmed ? "pause.fill" : "play.fill")
+                Label(model.isArmed ? "Pause Tilt" : "Resume Tilt",
+                      systemImage: model.isArmed ? "pause.fill" : "play.fill")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(MainButtonStyle(accent: .orange.opacity(0.24)))
@@ -310,9 +316,7 @@ struct ContentView: View {
                     Text("5. Tap Pause Tilt when done.")
                 }
                 .font(.body)
-                .onTapGesture {
-                    infoDetent = .large
-                }
+                .onTapGesture { infoDetent = .large }
             }
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)

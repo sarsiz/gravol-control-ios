@@ -24,6 +24,7 @@
 		B10000000000000000000003 /* GraVolLiveActivityShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* GraVolLiveActivityShared.swift */; };
 		B10000000000000000000004 /* LiveActivityControlIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* LiveActivityControlIntents.swift */; };
 		B10000000000000000000005 /* GraVolControlWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* GraVolControlWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B10000000000000000000006 /* GraVolControlHomeWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* GraVolControlHomeWidget.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		A20000000000000000000016 /* GraVolControlWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolControlWidgetBundle.swift; sourceTree = "<group>"; };
 		A20000000000000000000017 /* GraVolControlLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolControlLiveActivityWidget.swift; sourceTree = "<group>"; };
 		A20000000000000000000018 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A20000000000000000000019 /* GraVolControlHomeWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolControlHomeWidget.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +171,7 @@
 				children = (
 					A20000000000000000000016 /* GraVolControlWidgetBundle.swift */,
 					A20000000000000000000017 /* GraVolControlLiveActivityWidget.swift */,
+					A20000000000000000000019 /* GraVolControlHomeWidget.swift */,
 					A20000000000000000000018 /* Info.plist */,
 				);
 				path = GraVolControlWidget;
@@ -311,6 +314,7 @@
 			files = (
 				B10000000000000000000001 /* GraVolControlWidgetBundle.swift in Sources */,
 				B10000000000000000000002 /* GraVolControlLiveActivityWidget.swift in Sources */,
+				B10000000000000000000006 /* GraVolControlHomeWidget.swift in Sources */,
 				B10000000000000000000003 /* GraVolLiveActivityShared.swift in Sources */,
 				B10000000000000000000004 /* LiveActivityControlIntents.swift in Sources */,
 			);

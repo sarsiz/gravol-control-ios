@@ -28,7 +28,12 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: MPVolumeView, context: Context) {
-        // Intentionally no-op to avoid observable writes during SwiftUI view updates.
+        attachSliderIfAvailable(from: uiView, coordinator: context.coordinator)
+        if !context.coordinator.didAttachSlider {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+                attachSliderIfAvailable(from: uiView, coordinator: context.coordinator)
+            }
+        }
     }
 
     private func attachSliderIfAvailable(from volumeView: MPVolumeView, coordinator: Coordinator) {
