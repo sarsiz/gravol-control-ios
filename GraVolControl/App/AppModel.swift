@@ -7,17 +7,18 @@ final class AppModel: ObservableObject {
     @Published var isArmed = true
     @Published var lastAction: String = "Idle"
     @Published var currentVolume: Float = 0
-    @Published var triggerAngleDegrees: Double = 12
+    @Published var triggerAngleDegrees: Double = 21
+    @Published var defaultTriggerAngleDegrees: Double = 21
     @Published var currentTiltDegrees: Double = 0
     @Published var stepSize: Double = 0.04
-    @Published var volumeChangeRate: Double = 0
     @Published var didLaunchAnimate = false
     @Published var isVolumeControlReady = false
 
     private let volumeManager = VolumeManager()
     private var volumeRefreshTimer: Timer?
-    private var recentChangeTimes: [Date] = []
     private var lastSeenRecenterCommandID = 0
+    private var lastSeenSetArmedCommandID = 0
+    private var lastSeenVolumePresetCommandID = 0
     private var lastLiveActivitySync = Date.distantPast
     private let triggerAngleRange: ClosedRange<Double> = 0...60
 
@@ -32,7 +33,9 @@ final class AppModel: ObservableObject {
 
     init() {
         volumeManager.configureAudioSession()
-        triggerAngleDegrees = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: triggerAngleDegrees)
+        defaultTriggerAngleDegrees = GraVolControlRemoteStore.defaultTriggerAngleDegrees(defaultValue: defaultTriggerAngleDegrees)
+        triggerAngleDegrees = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: defaultTriggerAngleDegrees)
+        isArmed = GraVolControlRemoteStore.armedState(defaultValue: true)
         refreshCurrentVolume()
         startVolumeRefreshTimer()
 
@@ -54,6 +57,7 @@ final class AppModel: ObservableObject {
 
     func setArmed(_ value: Bool) {
         isArmed = value
+        GraVolControlRemoteStore.setArmedState(value)
         if value {
             tiltController.start()
             tiltController.recenterBaseline()
@@ -75,6 +79,16 @@ final class AppModel: ObservableObject {
             hysteresis: threshold * 0.45
         )
         syncLiveActivity(force: true)
+    }
+
+    func updateDefaultTriggerAngleDegrees(_ value: Double) {
+        defaultTriggerAngleDegrees = min(max(value, triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+        GraVolControlRemoteStore.setDefaultTriggerAngleDegrees(defaultTriggerAngleDegrees)
+    }
+
+    func resetTriggerToDefault() {
+        updateTriggerAngleDegrees(defaultTriggerAngleDegrees)
+        lastAction = "Default \(Int(defaultTriggerAngleDegrees))°"
     }
 
     func updateStepSize(_ value: Double) {
@@ -103,7 +117,6 @@ final class AppModel: ObservableObject {
         _ = volumeManager.setVolume(value)
         currentVolume = volumeManager.currentOutputVolume()
         lastAction = "Set \(Int(value * 100))%"
-        registerVolumeChange()
     }
 
     func triggerLaunchAnimationIfNeeded() {
@@ -145,7 +158,6 @@ final class AppModel: ObservableObject {
         currentVolume = after
         if abs(after - before) > 0.0001 {
             lastAction = action
-            registerVolumeChange()
         } else if after <= 0.001 {
             lastAction = "Already at Min"
         } else if after >= 0.999 {
@@ -164,7 +176,6 @@ final class AppModel: ObservableObject {
         volumeRefreshTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.refreshCurrentVolume()
-                self?.trimVolumeRateWindow()
                 self?.applyRemoteCommands()
                 self?.syncLiveActivity()
             }
@@ -177,17 +188,6 @@ final class AppModel: ObservableObject {
     private func stopVolumeRefreshTimer() {
         volumeRefreshTimer?.invalidate()
         volumeRefreshTimer = nil
-    }
-
-    private func registerVolumeChange() {
-        recentChangeTimes.append(Date())
-        trimVolumeRateWindow()
-    }
-
-    private func trimVolumeRateWindow() {
-        let cutoff = Date().addingTimeInterval(-1.2)
-        recentChangeTimes.removeAll { $0 < cutoff }
-        volumeChangeRate = Double(recentChangeTimes.count)
     }
 
     deinit {
@@ -207,6 +207,15 @@ final class AppModel: ObservableObject {
 
         if GraVolControlRemoteStore.consumeRecenterCommand(lastSeenID: &lastSeenRecenterCommandID) {
             recenterTiltReference()
+        }
+
+        if let remoteArmed = GraVolControlRemoteStore.consumeSetArmedCommand(lastSeenID: &lastSeenSetArmedCommandID),
+           remoteArmed != isArmed {
+            setArmed(remoteArmed)
+        }
+
+        if let volumePreset = GraVolControlRemoteStore.consumeVolumePresetCommand(lastSeenID: &lastSeenVolumePresetCommandID) {
+            setVolumePreset(volumePreset)
         }
     }
 

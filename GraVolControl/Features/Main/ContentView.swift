@@ -5,10 +5,13 @@ struct ContentView: View {
     @EnvironmentObject private var model: AppModel
     @State private var activeSheet: ActiveSheet?
     @State private var infoDetent: PresentationDetent = .medium
+    @State private var upPulse = false
+    @State private var downPulse = false
 
     // Tweak these if you want the pill/header tighter/looser.
-    private let islandBadgeTopGap: CGFloat = 6
-    private let contentGapBelowBadge: CGFloat = 6
+    private let islandBadgeTopGap: CGFloat = 4
+    private let islandBadgeHeight: CGFloat = 34
+    private let badgeContentSpacing: CGFloat = 10
 
     var body: some View {
         ZStack {
@@ -18,7 +21,8 @@ struct ContentView: View {
 
             GeometryReader { geo in
                 let bottomInset = geo.safeAreaInsets.bottom
-                let badgeYOffset = -(geo.safeAreaInsets.top - islandBadgeTopGap)
+                let badgeTopY = max(islandBadgeTopGap, geo.safeAreaInsets.top - 50)
+                let reservedTop = badgeTopY + islandBadgeHeight + badgeContentSpacing
 
                 ZStack(alignment: .bottomLeading) {
                     ScrollView(showsIndicators: false) {
@@ -28,21 +32,20 @@ struct ContentView: View {
                             controlsCard
                         }
                         .padding(.horizontal, 16)
-                        .padding(.top, contentGapBelowBadge)
-                        .padding(.bottom, bottomInset + 2)
+                        .padding(.top, reservedTop)
+                        .padding(.bottom, max(2, bottomInset - 6))
                         .frame(maxWidth: .infinity, alignment: .top)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
                     infoButton
                         .padding(.leading, 16)
-                        .padding(.bottom, bottomInset + 10)
+                        .padding(.bottom, max(4, bottomInset - 4))
                 }
                 .overlay(alignment: .top) {
                     islandAngleBadge
-                        .padding(.top, islandBadgeTopGap)
+                        .padding(.top, badgeTopY)
                         .padding(.horizontal, 16)
-                        .offset(y: badgeYOffset)
                 }
             }
         }
@@ -151,9 +154,6 @@ struct ContentView: View {
                     Text(model.lastAction)
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.9))
-                    Text(String(format: "%.0f/s", model.volumeChangeRate))
-                        .font(.caption2)
-                        .foregroundStyle(.white.opacity(0.75))
                 }
             }
             .scaleEffect(model.didLaunchAnimate ? 1 : 0.92)
@@ -172,17 +172,27 @@ struct ContentView: View {
     private var controlsCard: some View {
         VStack(spacing: 10) {
             HStack(spacing: 10) {
-                Button { model.nudgeDown() } label: {
+                Button {
+                    animateNudge(isUp: false)
+                    model.nudgeDown()
+                } label: {
                     Label("Down", systemImage: "minus")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(MainButtonStyle(accent: .white.opacity(0.16)))
+                .scaleEffect(downPulse ? 0.96 : 1)
+                .animation(.spring(response: 0.20, dampingFraction: 0.72), value: downPulse)
 
-                Button { model.nudgeUp() } label: {
+                Button {
+                    animateNudge(isUp: true)
+                    model.nudgeUp()
+                } label: {
                     Label("Up", systemImage: "plus")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(MainButtonStyle(accent: .white.opacity(0.2)))
+                .scaleEffect(upPulse ? 0.96 : 1)
+                .animation(.spring(response: 0.20, dampingFraction: 0.72), value: upPulse)
             }
 
             HStack(spacing: 8) {
@@ -202,7 +212,9 @@ struct ContentView: View {
                     ),
                     range: 0...60
                 )
-                .frame(width: 84, height: 84)
+                .frame(width: 96, height: 96)
+                .frame(width: 110, alignment: .center)
+                .contentShape(Rectangle())
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Trigger Angle")
@@ -219,13 +231,49 @@ struct ContentView: View {
             }
 
             Button {
-                model.setArmed(!model.isArmed)
+                withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
+                    model.setArmed(!model.isArmed)
+                }
             } label: {
-                Label(model.isArmed ? "Pause Tilt" : "Resume Tilt",
-                      systemImage: model.isArmed ? "pause.fill" : "play.fill")
-                    .frame(maxWidth: .infinity)
+                HStack(spacing: 10) {
+                    Image(systemName: model.isArmed ? "pause.fill" : "play.fill")
+                        .font(.footnote.weight(.bold))
+                        .frame(width: 18, height: 18)
+                        .padding(4)
+                        .background(
+                            Circle()
+                                .fill(.white.opacity(model.isArmed ? 0.22 : 0.28))
+                        )
+                    Text(model.isArmed ? "Pause Tilt" : "Resume Tilt")
+                        .font(.footnote.weight(.semibold))
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 11)
+                .background(
+                    RoundedRectangle(cornerRadius: 15, style: .continuous)
+                        .fill(.ultraThinMaterial.opacity(0.9))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                .stroke(.white.opacity(0.26), lineWidth: 1)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                .fill(
+                                    LinearGradient(
+                                        colors: model.isArmed
+                                            ? [Color.white.opacity(0.08), Color.orange.opacity(0.22)]
+                                            : [Color.white.opacity(0.10), Color.mint.opacity(0.22)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        )
+                )
+                .scaleEffect(model.isArmed ? 1 : 0.995)
+                .animation(.spring(response: 0.32, dampingFraction: 0.82), value: model.isArmed)
             }
-            .buttonStyle(MainButtonStyle(accent: .orange.opacity(0.24)))
+            .buttonStyle(.plain)
 
             sliderRow(
                 title: "Step",
@@ -327,6 +375,29 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Trigger Setup")
                 .font(.title3.bold())
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Default Trigger")
+                    Spacer()
+                    Text("\(Int(model.defaultTriggerAngleDegrees))°")
+                        .font(.caption.weight(.bold))
+                }
+                Slider(
+                    value: Binding(
+                        get: { model.defaultTriggerAngleDegrees },
+                        set: { model.updateDefaultTriggerAngleDegrees($0) }
+                    ),
+                    in: 0...60,
+                    step: 1
+                )
+                .tint(.mint)
+                Button("Use Default (21° recommended)") {
+                    model.resetTriggerToDefault()
+                }
+                .font(.footnote.weight(.semibold))
+            }
+            .padding(.vertical, 6)
+
             Text("Shortcut: create 'Start GraVol' using Open App -> GraVol.")
             Text("Widget: add Shortcuts widget and pick Start GraVol.")
             Text("Action Button (supported models): Settings -> Action Button -> Shortcut -> Start GraVol.")
@@ -338,6 +409,16 @@ struct ContentView: View {
 
     private var tiltDirectionLabel: String {
         String(format: "Tilt %+.1f°", model.currentTiltDegrees)
+    }
+
+    private func animateNudge(isUp: Bool) {
+        if isUp {
+            upPulse = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { upPulse = false }
+        } else {
+            downPulse = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { downPulse = false }
+        }
     }
 }
 
@@ -382,6 +463,7 @@ private struct ChipStyle: ButtonStyle {
 private struct CircularAngleSlider: View {
     @Binding var value: Double
     let range: ClosedRange<Double>
+    @State private var isDragging = false
 
     private let startAngle: Double = -135
     private let endAngle: Double = 135
@@ -390,7 +472,7 @@ private struct CircularAngleSlider: View {
         GeometryReader { proxy in
             let size = min(proxy.size.width, proxy.size.height)
             let lineWidth: CGFloat = 8
-            let radius = size / 2 - lineWidth / 2
+            let radius = size / 2 - lineWidth / 2 - 1
             let sweep = endAngle - startAngle
             let progress = min(max((value - range.lowerBound) / (range.upperBound - range.lowerBound), 0), 1)
             let knobAngle = startAngle + sweep * progress
@@ -411,30 +493,42 @@ private struct CircularAngleSlider: View {
 
                 Circle()
                     .fill(Color.white)
-                    .frame(width: 14, height: 14)
+                    .frame(width: 12, height: 12)
                     .offset(
                         x: cos(knobAngle * .pi / 180) * radius,
                         y: sin(knobAngle * .pi / 180) * radius
                     )
                     .shadow(radius: 2)
-
-                Text("\(Int(value))°")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.white)
             }
+            .frame(width: size, height: size, alignment: .center)
             .contentShape(Circle())
+            .animation(
+                isDragging
+                    ? .linear(duration: 0.04)
+                    : .interactiveSpring(response: 0.24, dampingFraction: 0.82),
+                value: value
+            )
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { drag in
+                        isDragging = true
                         let center = CGPoint(x: proxy.size.width / 2, y: proxy.size.height / 2)
                         let dx = drag.location.x - center.x
                         let dy = drag.location.y - center.y
-                        let angle = atan2(dy, dx) * 180 / .pi
-                        let clampedAngle = min(max(angle, startAngle), endAngle)
-                        let localProgress = (clampedAngle - startAngle) / (endAngle - startAngle)
-                        value = range.lowerBound + localProgress * (range.upperBound - range.lowerBound)
+                        value = range.lowerBound + progressForDrag(dx: dx, dy: dy) * (range.upperBound - range.lowerBound)
                     }
+                    .onEnded { _ in isDragging = false }
             )
         }
+    }
+
+    private func progressForDrag(dx: CGFloat, dy: CGFloat) -> Double {
+        var theta = atan2(dy, dx) * 180 / .pi
+        if theta < 0 { theta += 360 }
+        let sweepStart = 225.0
+        let sweepEnd = 495.0
+        if theta < sweepStart { theta += 360 }
+        let clamped = min(max(theta, sweepStart), sweepEnd)
+        return (clamped - sweepStart) / (sweepEnd - sweepStart)
     }
 }
