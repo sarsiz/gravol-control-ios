@@ -7,6 +7,7 @@ Glass-style, full-screen iOS volume controller with safer tilt detection and qui
 - Tilt toward you: volume up
 - Tilt away: volume down
 - Full-window glass UI for iPhone 14 and newer
+- Scrollable layout so no controls are cropped on smaller screens
 - Animated volume dial (current volume + change speed)
 - One-thumb controls: up/down, presets, recenter, sensitivity, step
 - Bottom-left info button with in-app usage guide
@@ -30,6 +31,7 @@ Glass-style, full-screen iOS volume controller with safer tilt detection and qui
 - Sustained tilt requirement before changing volume
 - Rotation-noise filtering to reduce accidental triggers
 - Instant pause using top-right `Tilt Ready` toggle
+- Bridge readiness status so you can confirm button-to-volume link is active
 
 ## Security and Secret Safety
 

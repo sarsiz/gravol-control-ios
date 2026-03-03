@@ -11,6 +11,7 @@ final class AppModel: ObservableObject {
     @Published var stepSize: Double = 0.04
     @Published var volumeChangeRate: Double = 0
     @Published var didLaunchAnimate = false
+    @Published var isVolumeControlReady = false
 
     private let volumeManager = VolumeManager()
     private var volumeRefreshTimer: Timer?
@@ -66,6 +67,7 @@ final class AppModel: ObservableObject {
 
     func attachSystemVolumeSlider(_ slider: UISlider) {
         volumeManager.attachSystemSlider(slider)
+        isVolumeControlReady = volumeManager.isReady()
         refreshCurrentVolume()
     }
 
@@ -110,6 +112,12 @@ final class AppModel: ObservableObject {
     }
 
     private func applyVolumeChange(delta: Float, action: String) {
+        guard volumeManager.isReady() else {
+            isVolumeControlReady = false
+            lastAction = "Volume Bridge Loading"
+            return
+        }
+        isVolumeControlReady = true
         let before = volumeManager.currentOutputVolume()
         let after = volumeManager.changeVolume(by: delta)
         currentVolume = after
@@ -120,6 +128,7 @@ final class AppModel: ObservableObject {
     }
 
     private func refreshCurrentVolume() {
+        isVolumeControlReady = volumeManager.isReady()
         currentVolume = volumeManager.currentOutputVolume()
     }
 

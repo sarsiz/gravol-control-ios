@@ -29,12 +29,18 @@ final class VolumeManager {
         systemSlider = slider
     }
 
+    func isReady() -> Bool {
+        systemSlider != nil
+    }
+
     @discardableResult
     func setVolume(_ value: Float) -> Float {
         let clamped = min(max(value, 0.0), 1.0)
         guard let slider = systemSlider else { return currentOutputVolume() }
-        slider.value = clamped
-        slider.sendActions(for: .valueChanged)
+        DispatchQueue.main.async {
+            slider.value = clamped
+            slider.sendActions(for: .valueChanged)
+        }
         return clamped
     }
 }
