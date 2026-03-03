@@ -5,7 +5,6 @@ struct ContentView: View {
     @EnvironmentObject private var model: AppModel
     @State private var activeSheet: ActiveSheet?
     @State private var infoDetent: PresentationDetent = .medium
-    @State private var isInfoExpanded = false
 
     var body: some View {
         GeometryReader { proxy in
@@ -165,6 +164,30 @@ struct ContentView: View {
                 Button("Recenter") { model.recenterTiltReference() }.buttonStyle(ChipStyle())
             }
 
+            HStack(spacing: 12) {
+                CircularAngleSlider(
+                    value: Binding(
+                        get: { model.triggerAngleDegrees },
+                        set: { model.updateTriggerAngleDegrees($0) }
+                    ),
+                    range: 5...35
+                )
+                .frame(width: 84, height: 84)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Trigger Angle")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.95))
+                    Text("\(Int(model.triggerAngleDegrees))°")
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(.white)
+                    Text(tiltDirectionLabel)
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.8))
+                }
+                Spacer()
+            }
+
             Button {
                 model.setArmed(!model.isArmed)
             } label: {
@@ -172,16 +195,6 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(MainButtonStyle(accent: .orange.opacity(0.24)))
-
-            sliderRow(
-                title: "Sensitivity",
-                valueLabel: String(format: "%.2f", model.sensitivity),
-                value: Binding(
-                    get: { model.sensitivity },
-                    set: { model.updateSensitivity($0) }
-                ),
-                range: 0.10...0.45
-            )
 
             sliderRow(
                 title: "Step",
@@ -229,7 +242,6 @@ struct ContentView: View {
         Button {
             activeSheet = .info
             infoDetent = .medium
-            isInfoExpanded = false
         } label: {
             Image(systemName: "info.circle.fill")
                 .font(.system(size: 24, weight: .semibold))
@@ -264,16 +276,8 @@ struct ContentView: View {
     private var infoSheet: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text("How It Works")
-                        .font(.title3.bold())
-                    Spacer()
-                    Button(isInfoExpanded ? "Collapse" : "Expand") {
-                        isInfoExpanded.toggle()
-                        infoDetent = isInfoExpanded ? .large : .medium
-                    }
-                    .font(.caption.weight(.semibold))
-                }
+                Text("How It Works")
+                    .font(.title3.bold())
 
                 Group {
                     Text("1. Open app from Shortcut, Action Button, widget, or Back Tap.")
@@ -285,7 +289,6 @@ struct ContentView: View {
                 }
                 .font(.body)
                 .onTapGesture {
-                    isInfoExpanded = true
                     infoDetent = .large
                 }
             }
@@ -306,6 +309,13 @@ struct ContentView: View {
         }
         .padding(20)
     }
+
+    private var tiltDirectionLabel: String {
+        let angle = model.currentTiltDegrees
+        if angle > 0.8 { return String(format: "Incline %.1f°", angle) }
+        if angle < -0.8 { return String(format: "Decline %.1f°", abs(angle)) }
+        return "Neutral 0.0°"
+    }
 }
 
 private enum ActiveSheet: String, Identifiable {
@@ -313,7 +323,7 @@ private enum ActiveSheet: String, Identifiable {
     case setup
 
     var id: String { rawValue }
-    }
+}
 
 private struct MainButtonStyle: ButtonStyle {
     let accent: Color
@@ -344,5 +354,63 @@ private struct ChipStyle: ButtonStyle {
                     .fill(Color.white.opacity(configuration.isPressed ? 0.23 : 0.15))
                     .overlay(Capsule().stroke(.white.opacity(0.34), lineWidth: 1))
             )
+    }
+}
+
+private struct CircularAngleSlider: View {
+    @Binding var value: Double
+    let range: ClosedRange<Double>
+
+    var body: some View {
+        GeometryReader { proxy in
+            let size = min(proxy.size.width, proxy.size.height)
+            let lineWidth: CGFloat = 8
+            let radius = size / 2 - lineWidth / 2
+            let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
+            let angle = Angle(degrees: 270 * normalized - 135)
+
+            ZStack {
+                Circle()
+                    .trim(from: 0.125, to: 0.875)
+                    .stroke(Color.white.opacity(0.22), style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                    .rotationEffect(.degrees(45))
+
+                Circle()
+                    .trim(from: 0, to: normalized * 0.75)
+                    .stroke(
+                        LinearGradient(colors: [.mint, .cyan], startPoint: .leading, endPoint: .trailing),
+                        style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-135))
+
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: 14, height: 14)
+                    .offset(
+                        x: cos(angle.radians) * radius,
+                        y: sin(angle.radians) * radius
+                    )
+                    .shadow(radius: 2)
+
+                Text("\(Int(value))°")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.white)
+            }
+            .contentShape(Circle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { drag in
+                        let center = CGPoint(x: proxy.size.width / 2, y: proxy.size.height / 2)
+                        let dx = drag.location.x - center.x
+                        let dy = drag.location.y - center.y
+                        var degrees = atan2(dy, dx) * 180 / .pi
+                        degrees += 135
+                        if degrees < 0 { degrees += 360 }
+                        let capped = min(max(degrees, 0), 270)
+                        let progress = capped / 270
+                        value = range.lowerBound + Double(progress) * (range.upperBound - range.lowerBound)
+                    }
+            )
+        }
     }
 }

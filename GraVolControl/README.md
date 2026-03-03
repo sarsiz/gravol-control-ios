@@ -9,7 +9,7 @@ Glass-style, full-screen iOS volume controller with safer tilt detection and qui
 - Full-window glass UI for iPhone 14 and newer
 - Scrollable layout so no controls are cropped on smaller screens
 - Animated volume dial (current volume + change speed)
-- One-thumb controls: up/down, presets, recenter, sensitivity, step
+- One-thumb controls: up/down, presets, recenter, trigger-angle dial, step
 - Bottom-left info button with in-app usage guide
 - Quick trigger setup from inside app:
   - Open Shortcuts directly

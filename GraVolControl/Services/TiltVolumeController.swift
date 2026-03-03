@@ -8,6 +8,7 @@ final class TiltVolumeController {
     }
 
     var onDirection: ((Direction) -> Void)?
+    var onTiltDeltaChanged: ((Double) -> Void)?
 
     private let motionManager = CMMotionManager()
     private var pitchThreshold: Double
@@ -29,8 +30,8 @@ final class TiltVolumeController {
     }
 
     func updateThresholds(pitchThreshold: Double, hysteresis: Double) {
-        self.pitchThreshold = max(0.08, pitchThreshold)
-        self.hysteresis = max(0.04, hysteresis)
+        self.pitchThreshold = max(0.05, pitchThreshold)
+        self.hysteresis = max(0.025, hysteresis)
     }
 
     func start() {
@@ -49,6 +50,7 @@ final class TiltVolumeController {
         towardHoldStart = nil
         awayHoldStart = nil
         lowPassPitch = 0
+        onTiltDeltaChanged?(0)
     }
 
     func recenterBaseline() {
@@ -57,17 +59,17 @@ final class TiltVolumeController {
     }
 
     private func process(_ motion: CMDeviceMotion) {
-        // Filter out fast general motion (walking/phone handling) to reduce false positives.
+        let alpha = 0.2
+        lowPassPitch = alpha * motion.attitude.pitch + (1.0 - alpha) * lowPassPitch
+        let deltaPitch = lowPassPitch - baselinePitch
+        onTiltDeltaChanged?(deltaPitch)
+
         let rotationNoise = abs(motion.rotationRate.x) + abs(motion.rotationRate.y) + abs(motion.rotationRate.z)
         if rotationNoise > maxRotationNoise {
             towardHoldStart = nil
             awayHoldStart = nil
             return
         }
-
-        let alpha = 0.2
-        lowPassPitch = alpha * motion.attitude.pitch + (1.0 - alpha) * lowPassPitch
-        let deltaPitch = lowPassPitch - baselinePitch
 
         let now = Date()
         guard now.timeIntervalSince(lastStepAt) >= stepInterval else { return }

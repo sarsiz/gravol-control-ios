@@ -7,7 +7,8 @@ final class AppModel: ObservableObject {
     @Published var isArmed = true
     @Published var lastAction: String = "Idle"
     @Published var currentVolume: Float = 0
-    @Published var sensitivity: Double = 0.22
+    @Published var triggerAngleDegrees: Double = 12
+    @Published var currentTiltDegrees: Double = 0
     @Published var stepSize: Double = 0.04
     @Published var volumeChangeRate: Double = 0
     @Published var didLaunchAnimate = false
@@ -18,9 +19,10 @@ final class AppModel: ObservableObject {
     private var recentChangeTimes: [Date] = []
 
     private lazy var tiltController: TiltVolumeController = {
+        let threshold = Self.degreesToRadians(triggerAngleDegrees)
         TiltVolumeController(
-            pitchThreshold: sensitivity,
-            hysteresis: sensitivity * 0.5,
+            pitchThreshold: threshold,
+            hysteresis: threshold * 0.45,
             stepInterval: 0.15
         )
     }()
@@ -39,6 +41,11 @@ final class AppModel: ObservableObject {
                 self.applyVolumeChange(delta: -Float(self.stepSize), action: "Tilt Down")
             }
         }
+
+        tiltController.onTiltDeltaChanged = { [weak self] deltaPitch in
+            guard let self else { return }
+            self.currentTiltDegrees = Self.radiansToDegrees(deltaPitch)
+        }
     }
 
     func setArmed(_ value: Bool) {
@@ -53,11 +60,12 @@ final class AppModel: ObservableObject {
         }
     }
 
-    func updateSensitivity(_ value: Double) {
-        sensitivity = value
+    func updateTriggerAngleDegrees(_ value: Double) {
+        triggerAngleDegrees = min(max(value, 5), 35)
+        let threshold = Self.degreesToRadians(triggerAngleDegrees)
         tiltController.updateThresholds(
-            pitchThreshold: value,
-            hysteresis: value * 0.5
+            pitchThreshold: threshold,
+            hysteresis: threshold * 0.45
         )
     }
 
@@ -163,5 +171,13 @@ final class AppModel: ObservableObject {
 
     deinit {
         volumeRefreshTimer?.invalidate()
+    }
+
+    private static func degreesToRadians(_ value: Double) -> Double {
+        value * .pi / 180
+    }
+
+    private static func radiansToDegrees(_ value: Double) -> Double {
+        value * 180 / .pi
     }
 }
