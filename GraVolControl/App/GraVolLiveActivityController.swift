@@ -28,7 +28,7 @@ actor GraVolLiveActivityController {
         for activity in Activity<GraVolLiveActivityAttributes>.activities {
             if #available(iOS 16.2, *) {
                 let finalContent = ActivityContent(state: activity.content.state, staleDate: nil)
-                await activity.end(content: finalContent, dismissalPolicy: .immediate)
+                await activity.end(finalContent, dismissalPolicy: .immediate)
             } else {
                 await activity.end(dismissalPolicy: .immediate)
             }
