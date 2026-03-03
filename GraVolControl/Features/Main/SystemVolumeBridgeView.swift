@@ -28,10 +28,7 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: MPVolumeView, context: Context) {
-        // Avoid publishing observable changes during SwiftUI's update cycle.
-        DispatchQueue.main.async {
-            attachSliderIfAvailable(from: uiView, coordinator: context.coordinator)
-        }
+        // Intentionally no-op to avoid observable writes during SwiftUI view updates.
     }
 
     private func attachSliderIfAvailable(from volumeView: MPVolumeView, coordinator: Coordinator) {
