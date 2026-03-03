@@ -3,32 +3,46 @@ import UIKit
 
 struct ContentView: View {
     @EnvironmentObject private var model: AppModel
-    @State private var showInfo = false
-    @State private var showSetup = false
+    @State private var activeSheet: ActiveSheet?
+    @State private var infoDetent: PresentationDetent = .medium
+    @State private var isInfoExpanded = false
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            backgroundLayer
+        GeometryReader { proxy in
+            ZStack(alignment: .bottomLeading) {
+                backgroundLayer
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 14) {
-                    header
-                    volumeCard
-                    controlsCard
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 14) {
+                        header
+                        volumeCard
+                        controlsCard
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, max(proxy.safeAreaInsets.top, 10))
+                    .padding(.bottom, max(proxy.safeAreaInsets.bottom + 72, 90))
+                    .frame(maxWidth: .infinity, minHeight: proxy.size.height, alignment: .top)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 90)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            infoButton
-                .padding(.leading, 16)
-                .padding(.bottom, 18)
+                infoButton
+                    .padding(.leading, 16)
+                    .padding(.bottom, max(proxy.safeAreaInsets.bottom, 12))
+            }
+            .ignoresSafeArea()
         }
-        .ignoresSafeArea()
-        .sheet(isPresented: $showInfo) { infoSheet }
-        .sheet(isPresented: $showSetup) { setupSheet }
+        .sheet(item: $activeSheet) { item in
+            switch item {
+            case .info:
+                infoSheet
+                    .presentationDetents([.medium, .large], selection: $infoDetent)
+                    .presentationDragIndicator(.visible)
+            case .setup:
+                setupSheet
+                    .presentationDetents([.fraction(0.48), .medium, .large])
+                    .presentationDragIndicator(.visible)
+            }
+        }
         .onAppear {
             model.triggerLaunchAnimationIfNeeded()
             model.setArmed(model.isArmed)
@@ -43,28 +57,24 @@ struct ContentView: View {
 
     private var backgroundLayer: some View {
         ZStack {
-            LinearGradient(
-                colors: [Color.black.opacity(0.34), Color.blue.opacity(0.34), Color.teal.opacity(0.3)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            Color.clear
             .overlay(
                 Rectangle()
                     .fill(.ultraThinMaterial)
-                    .opacity(0.35)
+                    .opacity(0.2)
             )
 
             Circle()
-                .fill(.white.opacity(0.18))
-                .blur(radius: 60)
-                .frame(width: 240, height: 240)
-                .offset(x: -120, y: -280)
+                .fill(.white.opacity(0.12))
+                .blur(radius: 72)
+                .frame(width: 260, height: 260)
+                .offset(x: -140, y: -280)
 
             Circle()
-                .fill(.cyan.opacity(0.2))
-                .blur(radius: 70)
-                .frame(width: 260, height: 260)
-                .offset(x: 120, y: 300)
+                .fill(.cyan.opacity(0.14))
+                .blur(radius: 80)
+                .frame(width: 290, height: 290)
+                .offset(x: 130, y: 300)
         }
     }
 
@@ -194,7 +204,7 @@ struct ContentView: View {
                 }
                 .buttonStyle(MainButtonStyle(accent: .mint.opacity(0.24)))
 
-                Button { showSetup = true } label: {
+                Button { activeSheet = .setup } label: {
                     Label("Setup Trigger", systemImage: "app.badge")
                         .frame(maxWidth: .infinity)
                 }
@@ -216,7 +226,11 @@ struct ContentView: View {
     }
 
     private var infoButton: some View {
-        Button { showInfo = true } label: {
+        Button {
+            activeSheet = .info
+            infoDetent = .medium
+            isInfoExpanded = false
+        } label: {
             Image(systemName: "info.circle.fill")
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundStyle(.white)
@@ -248,17 +262,36 @@ struct ContentView: View {
     }
 
     private var infoSheet: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("How It Works")
-                .font(.title3.bold())
-            Text("1. Open app from Shortcut, Action Button, widget, or Back Tap.")
-            Text("2. Tap Recenter in your natural hand position.")
-            Text("3. Tilt toward you to raise volume, away to lower volume.")
-            Text("4. Tap Pause Tilt when done to prevent accidental changes.")
-            Spacer()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("How It Works")
+                        .font(.title3.bold())
+                    Spacer()
+                    Button(isInfoExpanded ? "Collapse" : "Expand") {
+                        isInfoExpanded.toggle()
+                        infoDetent = isInfoExpanded ? .large : .medium
+                    }
+                    .font(.caption.weight(.semibold))
+                }
+
+                Group {
+                    Text("1. Open app from Shortcut, Action Button, widget, or Back Tap.")
+                    Text("2. Tap Recenter in your natural hand position.")
+                    Text("3. Enable Tilt and keep movement intentional.")
+                    Text("4. Tilt toward you to raise volume, away to lower volume.")
+                    Text("5. Tap Pause Tilt when done to avoid accidental changes.")
+                    Text("6. If controls seem delayed, wait for 'Bridge Ready' on the main screen.")
+                }
+                .font(.body)
+                .onTapGesture {
+                    isInfoExpanded = true
+                    infoDetent = .large
+                }
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(20)
-        .presentationDetents([.fraction(0.42), .medium])
     }
 
     private var setupSheet: some View {
@@ -272,9 +305,15 @@ struct ContentView: View {
             Spacer()
         }
         .padding(20)
-        .presentationDetents([.fraction(0.48), .medium])
     }
 }
+
+private enum ActiveSheet: String, Identifiable {
+    case info
+    case setup
+
+    var id: String { rawValue }
+    }
 
 private struct MainButtonStyle: ButtonStyle {
     let accent: Color
