@@ -42,7 +42,14 @@ final class AppModel: ObservableObject {
 
     func setArmed(_ value: Bool) {
         isArmed = value
-        value ? tiltController.start() : tiltController.stop()
+        if value {
+            tiltController.start()
+            tiltController.recenterBaseline()
+            lastAction = "Tilt Ready"
+        } else {
+            tiltController.stop()
+            lastAction = "Paused"
+        }
     }
 
     func updateSensitivity(_ value: Double) {
@@ -80,6 +87,11 @@ final class AppModel: ObservableObject {
     func triggerLaunchAnimationIfNeeded() {
         guard !didLaunchAnimate else { return }
         didLaunchAnimate = true
+    }
+
+    func recenterTiltReference() {
+        tiltController.recenterBaseline()
+        lastAction = "Recentered"
     }
 
     func handleScenePhase(_ phase: ScenePhase) {

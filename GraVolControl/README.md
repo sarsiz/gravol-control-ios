@@ -1,16 +1,18 @@
 # GraVol Control
 
-Tilt-based system volume control for iPhone, with quick launch via Shortcut/Back Tap.
+Glass-style, full-screen iOS volume controller with safer tilt detection and quick triggers.
 
 ## Features
 
 - Tilt toward you: volume up
 - Tilt away: volume down
-- Animated volume dial (shows current volume and change speed)
-- Large one-thumb controls: up/down, presets, sensitivity, step size
-- Quick actions:
-  - Open Shortcuts app
-  - In-app guide to add Shortcuts widget on Home Screen
+- Full-window glass UI for iPhone 14 and newer
+- Animated volume dial (current volume + change speed)
+- One-thumb controls: up/down, presets, recenter, sensitivity, step
+- Bottom-left info button with in-app usage guide
+- Quick trigger setup from inside app:
+  - Open Shortcuts directly
+  - Trigger setup sheet (Shortcut, Home Screen widget, Action Button, Back Tap)
 
 ## iOS Constraints (Important)
 
@@ -20,6 +22,14 @@ Tilt-based system volume control for iPhone, with quick launch via Shortcut/Back
   1. Back Tap runs a Shortcut
   2. Shortcut opens this app
   3. Tilt control runs while app is active
+  4. Action Button is supported only on models that have it (iPhone 15 Pro and newer)
+
+## Motion Safety Improvements
+
+- Recenter baseline to your natural hold position
+- Sustained tilt requirement before changing volume
+- Rotation-noise filtering to reduce accidental triggers
+- Instant pause using top-right `Tilt Ready` toggle
 
 ## Security and Secret Safety
 
@@ -43,6 +53,7 @@ If this finds anything sensitive, remove it from git history before pushing.
 1. Open `/Users/sarsiz/Desktop/Code Projects/iOS app/GraVol Control/GraVolControl.xcodeproj` in Xcode.
 2. Set your signing team and unique bundle id.
 3. Build and run on a real iPhone.
+4. For best behavior, tap `Recenter` once after launch.
 
 ## Back Tap Setup
 
@@ -61,3 +72,9 @@ If this finds anything sensitive, remove it from git history before pushing.
 3. Edit widget and choose `Start GraVol`
 
 This gives one-tap launch from Home Screen.
+
+## Action Button Setup (if available)
+
+1. Create `Start GraVol` shortcut (`Open App -> GraVol Control`).
+2. Go to `Settings -> Action Button`.
+3. Choose `Shortcut`, then select `Start GraVol`.

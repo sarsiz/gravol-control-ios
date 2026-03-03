@@ -13,10 +13,13 @@ final class TiltVolumeController {
     private var pitchThreshold: Double
     private var hysteresis: Double
     private let stepInterval: TimeInterval
+    private let holdDuration: TimeInterval = 0.15
+    private let maxRotationNoise: Double = 2.8
 
+    private var baselinePitch: Double = 0
     private var lowPassPitch: Double = 0
-    private var isInsideTowardBand = false
-    private var isInsideAwayBand = false
+    private var towardHoldStart: Date?
+    private var awayHoldStart: Date?
     private var lastStepAt = Date.distantPast
 
     init(pitchThreshold: Double, hysteresis: Double, stepInterval: TimeInterval) {
@@ -34,24 +37,37 @@ final class TiltVolumeController {
         guard motionManager.isDeviceMotionAvailable else { return }
         guard !motionManager.isDeviceMotionActive else { return }
 
-        motionManager.deviceMotionUpdateInterval = 1.0 / 30.0
+        motionManager.deviceMotionUpdateInterval = 1.0 / 45.0
         motionManager.startDeviceMotionUpdates(to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
-            self.process(pitch: motion.attitude.pitch)
+            self.process(motion)
         }
     }
 
     func stop() {
         motionManager.stopDeviceMotionUpdates()
-        isInsideTowardBand = false
-        isInsideAwayBand = false
+        towardHoldStart = nil
+        awayHoldStart = nil
         lowPassPitch = 0
     }
 
-    private func process(pitch: Double) {
-        // Low-pass filter to smooth hand jitter.
+    func recenterBaseline() {
+        guard let motion = motionManager.deviceMotion else { return }
+        baselinePitch = motion.attitude.pitch
+    }
+
+    private func process(_ motion: CMDeviceMotion) {
+        // Filter out fast general motion (walking/phone handling) to reduce false positives.
+        let rotationNoise = abs(motion.rotationRate.x) + abs(motion.rotationRate.y) + abs(motion.rotationRate.z)
+        if rotationNoise > maxRotationNoise {
+            towardHoldStart = nil
+            awayHoldStart = nil
+            return
+        }
+
         let alpha = 0.2
-        lowPassPitch = alpha * pitch + (1.0 - alpha) * lowPassPitch
+        lowPassPitch = alpha * motion.attitude.pitch + (1.0 - alpha) * lowPassPitch
+        let deltaPitch = lowPassPitch - baselinePitch
 
         let now = Date()
         guard now.timeIntervalSince(lastStepAt) >= stepInterval else { return }
@@ -61,28 +77,34 @@ final class TiltVolumeController {
         let awayEnter = -pitchThreshold
         let awayExit = -pitchThreshold + hysteresis
 
-        if lowPassPitch >= towardEnter {
-            isInsideTowardBand = true
-            isInsideAwayBand = false
-            lastStepAt = now
-            onDirection?(.towardUser)
+        if deltaPitch >= towardEnter {
+            towardHoldStart = towardHoldStart ?? now
+            awayHoldStart = nil
+            if let towardHoldStart, now.timeIntervalSince(towardHoldStart) >= holdDuration {
+                lastStepAt = now
+                onDirection?(.towardUser)
+                self.towardHoldStart = nil
+            }
             return
         }
 
-        if lowPassPitch <= awayEnter {
-            isInsideAwayBand = true
-            isInsideTowardBand = false
-            lastStepAt = now
-            onDirection?(.awayFromUser)
+        if deltaPitch <= awayEnter {
+            awayHoldStart = awayHoldStart ?? now
+            towardHoldStart = nil
+            if let awayHoldStart, now.timeIntervalSince(awayHoldStart) >= holdDuration {
+                lastStepAt = now
+                onDirection?(.awayFromUser)
+                self.awayHoldStart = nil
+            }
             return
         }
 
-        if isInsideTowardBand, lowPassPitch < towardExit {
-            isInsideTowardBand = false
+        if deltaPitch < towardExit {
+            towardHoldStart = nil
         }
 
-        if isInsideAwayBand, lowPassPitch > awayExit {
-            isInsideAwayBand = false
+        if deltaPitch > awayExit {
+            awayHoldStart = nil
         }
     }
 }

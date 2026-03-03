@@ -3,31 +3,33 @@ import UIKit
 
 struct ContentView: View {
     @EnvironmentObject private var model: AppModel
-    @State private var showWidgetSheet = false
+    @State private var showInfo = false
+    @State private var showSetup = false
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [Color(red: 0.03, green: 0.1, blue: 0.25), Color(red: 0.05, green: 0.35, blue: 0.28)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+        GeometryReader { proxy in
+            ZStack(alignment: .bottomLeading) {
+                backgroundGradient
 
-            VStack(spacing: 12) {
-                header
-                volumeDial
-                Spacer(minLength: 12)
-                thumbControls
+                VStack(spacing: 16) {
+                    titleBar
+                    volumeDial
+                    controlsCard
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                infoButton
+                    .padding(.leading, 16)
+                    .padding(.bottom, max(proxy.safeAreaInsets.bottom, 12))
             }
-            .padding(.top, 18)
-            .padding(.horizontal, 16)
-            .padding(.bottom, 8)
+            .ignoresSafeArea()
         }
-        .sheet(isPresented: $showWidgetSheet) {
-            widgetHelpSheet
-                .presentationDetents([.fraction(0.42), .medium])
-        }
+        .sheet(isPresented: $showInfo) { infoSheet }
+        .sheet(isPresented: $showSetup) { setupSheet }
         .onAppear {
             model.triggerLaunchAnimationIfNeeded()
             model.setArmed(model.isArmed)
@@ -40,17 +42,26 @@ struct ContentView: View {
         )
     }
 
-    private var header: some View {
-        HStack {
+    private var backgroundGradient: some View {
+        LinearGradient(
+            colors: [Color(red: 0.07, green: 0.17, blue: 0.26), Color(red: 0.05, green: 0.38, blue: 0.40)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    private var titleBar: some View {
+        HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("GraVol")
-                    .font(.system(size: 34, weight: .heavy, design: .rounded))
+                    .font(.system(size: 36, weight: .black, design: .rounded))
                     .foregroundStyle(.white)
-                Text("Tilt toward you up, tilt away down")
-                    .font(.footnote.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.82))
+                Text("Tilt control for system volume")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.8))
             }
             Spacer()
+
             Toggle("", isOn: Binding(
                 get: { model.isArmed },
                 set: { model.setArmed($0) }
@@ -63,91 +74,99 @@ struct ContentView: View {
     private var volumeDial: some View {
         ZStack {
             Circle()
-                .stroke(.white.opacity(0.24), lineWidth: 16)
-                .frame(width: 230, height: 230)
+                .fill(.ultraThinMaterial.opacity(0.45))
+                .frame(width: 250, height: 250)
+                .overlay(
+                    Circle()
+                        .stroke(.white.opacity(0.25), lineWidth: 1)
+                )
 
             Circle()
                 .trim(from: 0, to: CGFloat(model.currentVolume))
                 .stroke(
-                    AngularGradient(
-                        colors: [.mint, .cyan, .yellow],
-                        center: .center
-                    ),
-                    style: StrokeStyle(lineWidth: 18, lineCap: .round)
+                    LinearGradient(colors: [.mint, .cyan, .white], startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 15, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .frame(width: 230, height: 230)
-                .animation(.easeOut(duration: 0.2), value: model.currentVolume)
+                .frame(width: 220, height: 220)
+                .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.84), value: model.currentVolume)
 
             VStack(spacing: 6) {
                 Text("\(Int(model.currentVolume * 100))%")
                     .font(.system(size: 54, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                 Text(model.lastAction)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.85))
-                Text(String(format: "Speed %.0f/s", model.volumeChangeRate))
-                    .font(.caption.weight(.medium))
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.9))
+                Text(String(format: "%.0f changes/sec", model.volumeChangeRate))
+                    .font(.caption)
                     .foregroundStyle(.white.opacity(0.75))
             }
         }
-        .scaleEffect(model.didLaunchAnimate ? 1 : 0.86)
-        .opacity(model.didLaunchAnimate ? 1 : 0.55)
-        .animation(.spring(response: 0.75, dampingFraction: 0.72), value: model.didLaunchAnimate)
+        .scaleEffect(model.didLaunchAnimate ? 1 : 0.9)
+        .opacity(model.didLaunchAnimate ? 1 : 0.3)
+        .animation(.spring(response: 0.7, dampingFraction: 0.8), value: model.didLaunchAnimate)
+        .frame(maxWidth: .infinity)
     }
 
-    private var thumbControls: some View {
-        VStack(spacing: 14) {
-            HStack(spacing: 12) {
+    private var controlsCard: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 10) {
                 Button {
                     model.nudgeDown()
                 } label: {
                     Label("Down", systemImage: "minus")
-                        .font(.headline)
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(PrimaryActionButtonStyle(color: Color.white.opacity(0.16)))
+                .buttonStyle(MainButtonStyle(accent: .white.opacity(0.17)))
 
                 Button {
                     model.nudgeUp()
                 } label: {
                     Label("Up", systemImage: "plus")
-                        .font(.headline)
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(PrimaryActionButtonStyle(color: Color.white.opacity(0.22)))
+                .buttonStyle(MainButtonStyle(accent: .white.opacity(0.22)))
             }
 
             HStack(spacing: 10) {
                 Button("Mute") { model.setVolumePreset(0.0) }
-                    .buttonStyle(ChipButtonStyle())
+                    .buttonStyle(ChipStyle())
                 Button("50%") { model.setVolumePreset(0.5) }
-                    .buttonStyle(ChipButtonStyle())
+                    .buttonStyle(ChipStyle())
                 Button("80%") { model.setVolumePreset(0.8) }
-                    .buttonStyle(ChipButtonStyle())
+                    .buttonStyle(ChipStyle())
+                Button("Recenter") { model.recenterTiltReference() }
+                    .buttonStyle(ChipStyle())
             }
 
-            VStack(alignment: .leading, spacing: 10) {
-                controlSlider(
-                    title: "Sensitivity",
-                    valueLabel: String(format: "%.2f", model.sensitivity),
-                    value: Binding(
-                        get: { model.sensitivity },
-                        set: { model.updateSensitivity($0) }
-                    ),
-                    range: 0.10...0.45
-                )
-
-                controlSlider(
-                    title: "Step",
-                    valueLabel: String(format: "%.2f", model.stepSize),
-                    value: Binding(
-                        get: { model.stepSize },
-                        set: { model.updateStepSize($0) }
-                    ),
-                    range: 0.01...0.10
-                )
+            Button {
+                model.setArmed(!model.isArmed)
+            } label: {
+                Label(model.isArmed ? "Pause Tilt" : "Resume Tilt", systemImage: model.isArmed ? "pause.fill" : "play.fill")
+                    .frame(maxWidth: .infinity)
             }
+            .buttonStyle(MainButtonStyle(accent: .orange.opacity(0.28)))
+
+            sliderRow(
+                title: "Sensitivity",
+                valueLabel: String(format: "%.2f", model.sensitivity),
+                value: Binding(
+                    get: { model.sensitivity },
+                    set: { model.updateSensitivity($0) }
+                ),
+                range: 0.10...0.45
+            )
+
+            sliderRow(
+                title: "Step",
+                valueLabel: String(format: "%.2f", model.stepSize),
+                value: Binding(
+                    get: { model.stepSize },
+                    set: { model.updateStepSize($0) }
+                ),
+                range: 0.01...0.10
+            )
 
             HStack(spacing: 10) {
                 Button {
@@ -155,32 +174,47 @@ struct ContentView: View {
                         UIApplication.shared.open(url)
                     }
                 } label: {
-                    Label("Open Shortcuts", systemImage: "bolt.horizontal.circle.fill")
+                    Label("Open Shortcuts", systemImage: "bolt.horizontal.fill")
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(PrimaryActionButtonStyle(color: Color.mint.opacity(0.28)))
+                .buttonStyle(MainButtonStyle(accent: .mint.opacity(0.26)))
 
                 Button {
-                    showWidgetSheet = true
+                    showSetup = true
                 } label: {
-                    Label("Widget Help", systemImage: "rectangle.grid.2x2.fill")
+                    Label("Setup Trigger", systemImage: "app.badge")
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(PrimaryActionButtonStyle(color: Color.cyan.opacity(0.24)))
+                .buttonStyle(MainButtonStyle(accent: .cyan.opacity(0.24)))
             }
         }
         .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.white.opacity(0.12))
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(.ultraThinMaterial.opacity(0.65))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(Color.white.opacity(0.22), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .stroke(.white.opacity(0.22), lineWidth: 1)
                 )
         )
     }
 
-    private func controlSlider(
+    private var infoButton: some View {
+        Button {
+            showInfo = true
+        } label: {
+            Image(systemName: "info.circle.fill")
+                .font(.system(size: 26, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.95))
+                .padding(8)
+                .background(
+                    Circle()
+                        .fill(.ultraThinMaterial.opacity(0.7))
+                )
+        }
+    }
+
+    private func sliderRow(
         title: String,
         valueLabel: String,
         value: Binding<Double>,
@@ -193,7 +227,6 @@ struct ContentView: View {
                 Spacer()
                 Text(valueLabel)
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(.white.opacity(0.85))
             }
             Slider(value: value, in: range, step: 0.01)
                 .tint(.white)
@@ -201,49 +234,66 @@ struct ContentView: View {
         .foregroundStyle(.white)
     }
 
-    private var widgetHelpSheet: some View {
+    private var infoSheet: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Add Shortcut and Widget")
+            Text("How GraVol Works")
                 .font(.title3.bold())
-            Text("1. Open Shortcuts and add action 'Open App' -> GraVol.")
-            Text("2. Save as 'Start GraVol'.")
-            Text("3. Add Shortcuts widget to Home Screen, then choose that shortcut.")
-            Text("4. Optional: Settings -> Accessibility -> Touch -> Back Tap -> Start GraVol.")
+            Text("1. Keep phone in your normal hold and tap Recenter.")
+            Text("2. Enable Tilt Ready using the top-right toggle.")
+            Text("3. Tilt toward you to increase volume, away to decrease.")
+            Text("4. Motion filtering ignores fast random movement and only reacts to sustained tilt.")
+            Text("5. Turn off the toggle anytime to stop control immediately.")
             Spacer()
         }
         .padding(20)
+        .presentationDetents([.fraction(0.46), .medium])
+    }
+
+    private var setupSheet: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Shortcut, Widget, and Action Button")
+                .font(.title3.bold())
+            Text("1. In Shortcuts, create 'Start GraVol' with action: Open App -> GraVol Control.")
+            Text("2. Add Shortcuts widget on Home Screen and choose that shortcut.")
+            Text("3. Action Button (iPhone 15 Pro and newer):")
+            Text("   Settings -> Action Button -> Shortcut -> Start GraVol")
+            Text("4. Back Tap option: Settings -> Accessibility -> Touch -> Back Tap -> Start GraVol")
+            Spacer()
+        }
+        .padding(20)
+        .presentationDetents([.fraction(0.48), .medium])
     }
 }
 
-private struct PrimaryActionButtonStyle: ButtonStyle {
-    let color: Color
+private struct MainButtonStyle: ButtonStyle {
+    let accent: Color
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(.white)
             .padding(.vertical, 12)
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 12)
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(color.opacity(configuration.isPressed ? 0.65 : 1.0))
+                    .fill(accent.opacity(configuration.isPressed ? 0.65 : 1))
             )
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
     }
 }
 
-private struct ChipButtonStyle: ButtonStyle {
+private struct ChipStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.subheadline.weight(.semibold))
+            .font(.caption.weight(.semibold))
             .foregroundStyle(.white)
-            .padding(.vertical, 10)
-            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 10)
             .background(
                 Capsule()
-                    .fill(Color.white.opacity(configuration.isPressed ? 0.18 : 0.12))
-                    .overlay(Capsule().stroke(Color.white.opacity(0.35), lineWidth: 1))
+                    .fill(Color.white.opacity(configuration.isPressed ? 0.24 : 0.16))
+                    .overlay(Capsule().stroke(.white.opacity(0.33), lineWidth: 1))
             )
-            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
     }
 }
