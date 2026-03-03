@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import UIKit
+import ActivityKit
 
 @MainActor
 final class AppModel: ObservableObject {
@@ -17,6 +18,9 @@ final class AppModel: ObservableObject {
     private let volumeManager = VolumeManager()
     private var volumeRefreshTimer: Timer?
     private var recentChangeTimes: [Date] = []
+    private var lastSeenRecenterCommandID = 0
+    private var lastLiveActivitySync = Date.distantPast
+    private let triggerAngleRange: ClosedRange<Double> = 5...60
 
     private lazy var tiltController: TiltVolumeController = {
         let threshold = Self.degreesToRadians(triggerAngleDegrees)
@@ -29,6 +33,7 @@ final class AppModel: ObservableObject {
 
     init() {
         volumeManager.configureAudioSession()
+        triggerAngleDegrees = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: triggerAngleDegrees)
         refreshCurrentVolume()
         startVolumeRefreshTimer()
 
@@ -54,19 +59,23 @@ final class AppModel: ObservableObject {
             tiltController.start()
             tiltController.recenterBaseline()
             lastAction = "Tilt Ready"
+            syncLiveActivity(force: true)
         } else {
             tiltController.stop()
             lastAction = "Paused"
+            endLiveActivity()
         }
     }
 
     func updateTriggerAngleDegrees(_ value: Double) {
-        triggerAngleDegrees = min(max(value, 5), 35)
+        triggerAngleDegrees = min(max(value, triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+        GraVolControlRemoteStore.setTriggerAngleDegrees(triggerAngleDegrees)
         let threshold = Self.degreesToRadians(triggerAngleDegrees)
         tiltController.updateThresholds(
             pitchThreshold: threshold,
             hysteresis: threshold * 0.45
         )
+        syncLiveActivity(force: true)
     }
 
     func updateStepSize(_ value: Double) {
@@ -100,6 +109,7 @@ final class AppModel: ObservableObject {
     func recenterTiltReference() {
         tiltController.recenterBaseline()
         lastAction = "Recentered"
+        syncLiveActivity(force: true)
     }
 
     func handleScenePhase(_ phase: ScenePhase) {
@@ -108,6 +118,7 @@ final class AppModel: ObservableObject {
             startVolumeRefreshTimer()
             refreshCurrentVolume()
             if isArmed { tiltController.start() }
+            syncLiveActivity(force: true)
         case .inactive, .background:
             tiltController.stop()
             stopVolumeRefreshTimer()
@@ -135,6 +146,7 @@ final class AppModel: ObservableObject {
         } else if after >= 0.999 {
             lastAction = "Already at Max"
         }
+        syncLiveActivity()
     }
 
     private func refreshCurrentVolume() {
@@ -148,6 +160,8 @@ final class AppModel: ObservableObject {
             Task { @MainActor in
                 self?.refreshCurrentVolume()
                 self?.trimVolumeRateWindow()
+                self?.applyRemoteCommands()
+                self?.syncLiveActivity()
             }
         }
         if let volumeRefreshTimer {
@@ -175,11 +189,113 @@ final class AppModel: ObservableObject {
         volumeRefreshTimer?.invalidate()
     }
 
+    private func applyRemoteCommands() {
+        let sharedAngle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: triggerAngleDegrees)
+        if abs(sharedAngle - triggerAngleDegrees) > 0.001 {
+            let threshold = Self.degreesToRadians(sharedAngle)
+            triggerAngleDegrees = min(max(sharedAngle, triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+            tiltController.updateThresholds(
+                pitchThreshold: threshold,
+                hysteresis: threshold * 0.45
+            )
+        }
+
+        if GraVolControlRemoteStore.consumeRecenterCommand(lastSeenID: &lastSeenRecenterCommandID) {
+            recenterTiltReference()
+        }
+    }
+
+    private func syncLiveActivity(force: Bool = false) {
+        guard #available(iOS 16.1, *) else { return }
+        guard isArmed else { return }
+
+        let now = Date()
+        if !force, now.timeIntervalSince(lastLiveActivitySync) < 0.35 {
+            return
+        }
+        lastLiveActivitySync = now
+
+        let content = GraVolLiveActivityAttributes.ContentState(
+            tiltDegrees: currentTiltDegrees,
+            triggerDegrees: triggerAngleDegrees,
+            isArmed: isArmed
+        )
+        Task {
+            await GraVolLiveActivityController.shared.startOrUpdate(content)
+        }
+    }
+
+    private func endLiveActivity() {
+        guard #available(iOS 16.1, *) else { return }
+        Task {
+            await GraVolLiveActivityController.shared.endAll()
+        }
+    }
+
     private static func degreesToRadians(_ value: Double) -> Double {
         value * .pi / 180
     }
 
     private static func radiansToDegrees(_ value: Double) -> Double {
         value * 180 / .pi
+    }
+}
+
+enum GraVolControlRemoteStore {
+    private static let defaults = UserDefaults.standard
+    private static let triggerAngleKey = "gravol_trigger_angle_degrees"
+    private static let recenterCommandKey = "gravol_recenter_command_id"
+
+    static func triggerAngleDegrees(defaultValue: Double) -> Double {
+        let raw = defaults.double(forKey: triggerAngleKey)
+        return raw == 0 ? defaultValue : raw
+    }
+
+    static func setTriggerAngleDegrees(_ value: Double) {
+        defaults.set(value, forKey: triggerAngleKey)
+    }
+
+    static func issueRecenterCommand() {
+        let next = defaults.integer(forKey: recenterCommandKey) + 1
+        defaults.set(next, forKey: recenterCommandKey)
+    }
+
+    static func consumeRecenterCommand(lastSeenID: inout Int) -> Bool {
+        let current = defaults.integer(forKey: recenterCommandKey)
+        guard current > lastSeenID else { return false }
+        lastSeenID = current
+        return true
+    }
+}
+
+@available(iOS 16.1, *)
+struct GraVolLiveActivityAttributes: ActivityAttributes {
+    public struct ContentState: Codable, Hashable {
+        var tiltDegrees: Double
+        var triggerDegrees: Double
+        var isArmed: Bool
+    }
+
+    var title: String = "GraVol Control"
+}
+
+@available(iOS 16.1, *)
+actor GraVolLiveActivityController {
+    static let shared = GraVolLiveActivityController()
+
+    func startOrUpdate(_ state: GraVolLiveActivityAttributes.ContentState) async {
+        if let activity = Activity<GraVolLiveActivityAttributes>.activities.first {
+            await activity.update(using: state)
+            return
+        }
+
+        let attributes = GraVolLiveActivityAttributes()
+        _ = try? Activity.request(attributes: attributes, contentState: state, pushType: nil)
+    }
+
+    func endAll() async {
+        for activity in Activity<GraVolLiveActivityAttributes>.activities {
+            await activity.end(dismissalPolicy: .immediate)
+        }
     }
 }

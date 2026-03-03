@@ -10,6 +10,8 @@ Glass-style, full-screen iOS volume controller with safer tilt detection and qui
 - Scrollable layout so no controls are cropped on smaller screens
 - Animated volume dial (current volume + change speed)
 - One-thumb controls: up/down, presets, recenter, trigger-angle dial, step
+- Dynamic-Island-safe top pill showing live tilt and trigger angle
+- Live Activity state updates with AppIntent controls (`+`, `-`, `Recenter`) on supported iOS
 - Bottom-left info button with in-app usage guide
 - Quick trigger setup from inside app:
   - Open Shortcuts directly
@@ -32,6 +34,13 @@ Glass-style, full-screen iOS volume controller with safer tilt detection and qui
 - Rotation-noise filtering to reduce accidental triggers
 - Instant pause using top-right `Tilt Ready` toggle
 - Bridge readiness status so you can confirm button-to-volume link is active
+
+## Live Activity Notes
+
+- Live Activity updates are guarded for iOS 16.1+.
+- The app updates/starts Live Activity while tilt is armed and ends it when paused.
+- Dynamic Island rendering code is in:
+  - `GraVolControl/LiveActivity/GraVolLiveActivityWidget.swift`
 
 ## Security and Secret Safety
 

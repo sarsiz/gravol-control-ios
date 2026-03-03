@@ -16,6 +16,7 @@
 		A10000000000000000000007 /* StartGraVolIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* StartGraVolIntent.swift */; };
 		A10000000000000000000008 /* GraVolShortcutsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* GraVolShortcutsProvider.swift */; };
 		A10000000000000000000009 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* Assets.xcassets */; };
+		A10000000000000000000010 /* GraVolLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* GraVolLiveActivityWidget.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		A20000000000000000000008 /* GraVolShortcutsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolShortcutsProvider.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A20000000000000000000011 /* GraVolLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraVolLiveActivityWidget.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 				A40000000000000000000005 /* Features */,
 				A40000000000000000000006 /* Services */,
 				A40000000000000000000007 /* Intents */,
+				A40000000000000000000009 /* LiveActivity */,
 				A20000000000000000000009 /* Assets.xcassets */,
 				A20000000000000000000010 /* Info.plist */,
 			);
@@ -114,6 +117,14 @@
 				A20000000000000000000004 /* SystemVolumeBridgeView.swift */,
 			);
 			path = Main;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000009 /* LiveActivity */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000011 /* GraVolLiveActivityWidget.swift */,
+			);
+			path = LiveActivity;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -193,6 +204,7 @@
 				A10000000000000000000006 /* VolumeManager.swift in Sources */,
 				A10000000000000000000007 /* StartGraVolIntent.swift in Sources */,
 				A10000000000000000000008 /* GraVolShortcutsProvider.swift in Sources */,
+				A10000000000000000000010 /* GraVolLiveActivityWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

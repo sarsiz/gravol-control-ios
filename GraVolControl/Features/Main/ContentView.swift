@@ -18,11 +18,15 @@ struct ContentView: View {
                         controlsCard
                     }
                     .padding(.horizontal, 16)
-                    .padding(.top, max(proxy.safeAreaInsets.top, 10))
+                    .padding(.top, max(proxy.safeAreaInsets.top + 48, 58))
                     .padding(.bottom, max(proxy.safeAreaInsets.bottom + 72, 90))
                     .frame(maxWidth: .infinity, alignment: .top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+
+                islandAngleBadge
+                    .padding(.top, max(proxy.safeAreaInsets.top + 4, 8))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
                 infoButton
                     .padding(.leading, 16)
@@ -30,10 +34,6 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea()
-        }
-        .safeAreaInset(edge: .top) {
-            islandAngleBadge
-                .padding(.top, 4)
         }
         .sheet(item: $activeSheet) { item in
             switch item {
@@ -61,11 +61,15 @@ struct ContentView: View {
 
     private var backgroundLayer: some View {
         ZStack {
-            Color.clear
+            LinearGradient(
+                colors: [Color.blue.opacity(0.22), Color.teal.opacity(0.22), Color.black.opacity(0.22)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
             .overlay(
                 Rectangle()
                     .fill(.ultraThinMaterial)
-                    .opacity(0.2)
+                    .opacity(0.18)
             )
 
             Circle()
@@ -195,7 +199,7 @@ struct ContentView: View {
                         get: { model.triggerAngleDegrees },
                         set: { model.updateTriggerAngleDegrees($0) }
                     ),
-                    range: 5...35
+                    range: 5...60
                 )
                 .frame(width: 84, height: 84)
 
