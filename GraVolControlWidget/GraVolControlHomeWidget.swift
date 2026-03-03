@@ -6,24 +6,27 @@ private struct GraVolEntry: TimelineEntry {
     let date: Date
     let angle: Double
     let isArmed: Bool
+    let isMuted: Bool
 }
 
 @available(iOSApplicationExtension 17.0, *)
 private struct GraVolProvider: TimelineProvider {
     func placeholder(in context: Context) -> GraVolEntry {
-        GraVolEntry(date: Date(), angle: 15, isArmed: true)
+        GraVolEntry(date: Date(), angle: 15, isArmed: true, isMuted: false)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (GraVolEntry) -> Void) {
         let angle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
         let isArmed = GraVolControlRemoteStore.armedState(defaultValue: true)
-        completion(GraVolEntry(date: Date(), angle: angle, isArmed: isArmed))
+        let isMuted = GraVolControlRemoteStore.mutedState(defaultValue: false)
+        completion(GraVolEntry(date: Date(), angle: angle, isArmed: isArmed, isMuted: isMuted))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<GraVolEntry>) -> Void) {
         let angle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
         let isArmed = GraVolControlRemoteStore.armedState(defaultValue: true)
-        let entry = GraVolEntry(date: Date(), angle: angle, isArmed: isArmed)
+        let isMuted = GraVolControlRemoteStore.mutedState(defaultValue: false)
+        let entry = GraVolEntry(date: Date(), angle: angle, isArmed: isArmed, isMuted: isMuted)
         completion(Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(180))))
     }
 }
@@ -141,7 +144,7 @@ private struct GraVolHomeWidgetView: View {
 
         LazyVGrid(columns: columns, spacing: 6) {
             Button(intent: ToggleTiltArmedIntent()) { chip(entry.isArmed ? "Pause" : "Resume") }
-            Button(intent: MuteVolumeIntent()) { chip("Mute") }
+            Button(intent: MuteVolumeIntent()) { chip(entry.isMuted ? "Unmute" : "Mute") }
             Button(intent: RecenterTiltIntent()) { chip("Recenter") }
             if includeTriggerStep {
                 Button(intent: DecreaseTriggerAngleIntent()) { chip("−T") }

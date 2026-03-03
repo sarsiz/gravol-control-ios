@@ -12,6 +12,10 @@ enum GraVolControlRemoteStore {
     private static let setArmedValueKey = "gravol_set_armed_command_value"
     private static let volumePresetCommandIDKey = "gravol_volume_preset_command_id"
     private static let volumePresetValueKey = "gravol_volume_preset_command_value"
+    private static let mutedStateKey = "gravol_muted_state"
+    private static let lastAudibleVolumeKey = "gravol_last_audible_volume"
+    private static let stepSizeKey = "gravol_step_size"
+    private static let preferredVolumeKey = "gravol_preferred_volume"
 
     static func triggerAngleDegrees(defaultValue: Double) -> Double {
         guard defaults.object(forKey: triggerAngleKey) != nil else { return defaultValue }
@@ -77,6 +81,46 @@ enum GraVolControlRemoteStore {
         guard current > lastSeenID else { return nil }
         lastSeenID = current
         return defaults.float(forKey: volumePresetValueKey)
+    }
+
+    static func mutedState(defaultValue: Bool) -> Bool {
+        if defaults.object(forKey: mutedStateKey) == nil { return defaultValue }
+        return defaults.bool(forKey: mutedStateKey)
+    }
+
+    static func setMutedState(_ value: Bool) {
+        defaults.set(value, forKey: mutedStateKey)
+    }
+
+    static func lastAudibleVolume(defaultValue: Float) -> Float {
+        if defaults.object(forKey: lastAudibleVolumeKey) == nil { return defaultValue }
+        return defaults.float(forKey: lastAudibleVolumeKey)
+    }
+
+    static func setLastAudibleVolume(_ value: Float) {
+        defaults.set(min(max(value, 0.0), 1.0), forKey: lastAudibleVolumeKey)
+    }
+
+    static func stepSize(defaultValue: Double) -> Double {
+        guard defaults.object(forKey: stepSizeKey) != nil else { return defaultValue }
+        return defaults.double(forKey: stepSizeKey)
+    }
+
+    static func setStepSize(_ value: Double) {
+        defaults.set(value, forKey: stepSizeKey)
+    }
+
+    static func preferredVolume(defaultValue: Float) -> Float {
+        guard defaults.object(forKey: preferredVolumeKey) != nil else { return defaultValue }
+        return defaults.float(forKey: preferredVolumeKey)
+    }
+
+    static func hasPreferredVolume() -> Bool {
+        defaults.object(forKey: preferredVolumeKey) != nil
+    }
+
+    static func setPreferredVolume(_ value: Float) {
+        defaults.set(min(max(value, 0.0), 1.0), forKey: preferredVolumeKey)
     }
 }
 

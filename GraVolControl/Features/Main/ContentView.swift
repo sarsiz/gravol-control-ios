@@ -130,11 +130,11 @@ struct ContentView: View {
     }
 
     private var volumeCard: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             ZStack {
                 Circle()
                     .fill(.ultraThinMaterial.opacity(0.55))
-                    .frame(width: 210, height: 210)
+                    .frame(width: 188, height: 188)
                     .overlay(Circle().stroke(.white.opacity(0.18), lineWidth: 1))
 
                 Circle()
@@ -144,18 +144,25 @@ struct ContentView: View {
                         style: StrokeStyle(lineWidth: 12, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
-                    .frame(width: 184, height: 184)
+                    .frame(width: 164, height: 164)
                     .animation(.interactiveSpring(response: 0.32, dampingFraction: 0.85), value: model.currentVolume)
 
                 VStack(spacing: 4) {
                     Text("\(Int(model.currentVolume * 100))%")
-                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                     Text(model.lastAction)
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.9))
                 }
             }
+            .contentShape(Circle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { drag in
+                        updateVolumeFromDial(drag.location, size: CGSize(width: 188, height: 188))
+                    }
+            )
             .scaleEffect(model.didLaunchAnimate ? 1 : 0.92)
             .opacity(model.didLaunchAnimate ? 1 : 0.4)
             .animation(.spring(response: 0.62, dampingFraction: 0.82), value: model.didLaunchAnimate)
@@ -163,14 +170,7 @@ struct ContentView: View {
             Text(model.isVolumeControlReady ? "Bridge Ready" : "Setting up volume bridge...")
                 .font(.caption)
                 .foregroundStyle(.white.opacity(0.82))
-        }
-        .frame(maxWidth: .infinity)
-        .padding(14)
-        .background(cardGlass)
-    }
 
-    private var controlsCard: some View {
-        VStack(spacing: 10) {
             HStack(spacing: 10) {
                 Button {
                     animateNudge(isUp: false)
@@ -196,13 +196,35 @@ struct ContentView: View {
             }
 
             HStack(spacing: 8) {
-                Button("Mute") { model.setVolumePreset(0.0) }.buttonStyle(ChipStyle())
+                Button(model.currentVolume <= 0.001 ? "Unmute" : "Mute") {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        model.toggleMute()
+                    }
+                }
+                .buttonStyle(ChipStyle())
+                .animation(.easeInOut(duration: 0.2), value: model.currentVolume)
                 Button("50%") { model.setVolumePreset(0.5) }.buttonStyle(ChipStyle())
                 Button("80%") { model.setVolumePreset(0.8) }.buttonStyle(ChipStyle())
-                Button("Recenter") { model.recenterTiltReference() }.buttonStyle(ChipStyle())
             }
             .disabled(!model.isVolumeControlReady)
             .opacity(model.isVolumeControlReady ? 1 : 0.55)
+
+            stepRail
+        }
+        .frame(maxWidth: .infinity)
+        .padding(14)
+        .background(cardGlass)
+    }
+
+    private var controlsCard: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 8) {
+                Button("Recenter Baseline") { model.recenterTiltReference() }.buttonStyle(ChipStyle())
+            }
+            Text("Recenter sets your current phone angle as neutral to reduce false tilt triggers.")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.78))
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 12) {
                 CircularAngleSlider(
@@ -247,7 +269,7 @@ struct ContentView: View {
                     Image(systemName: model.isArmed ? "pause.fill" : "play.fill")
                         .font(.footnote.weight(.bold))
                         .frame(width: 16, height: 16)
-                        .padding(3)
+                        .padding(2)
                         .background(
                             Circle()
                                 .fill(.white.opacity(model.isArmed ? 0.22 : 0.28))
@@ -257,7 +279,7 @@ struct ContentView: View {
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
+                .padding(.vertical, 9)
                 .background(
                     RoundedRectangle(cornerRadius: 15, style: .continuous)
                         .fill(.ultraThinMaterial.opacity(0.9))
@@ -283,16 +305,6 @@ struct ContentView: View {
             }
             .buttonStyle(.plain)
 
-            sliderRow(
-                title: "Step",
-                valueLabel: String(format: "%.2f", model.stepSize),
-                value: Binding(
-                    get: { model.stepSize },
-                    set: { model.updateStepSize($0) }
-                ),
-                range: 0.01...0.10
-            )
-
             HStack(spacing: 10) {
                 Button {
                     if let url = URL(string: "shortcuts://") {
@@ -313,6 +325,59 @@ struct ContentView: View {
         }
         .padding(14)
         .background(cardGlass)
+    }
+
+    private var stepRail: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("Increment")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.92))
+                Spacer()
+                Text(String(format: "%.2f", model.stepSize))
+                    .font(.caption.monospacedDigit().weight(.bold))
+                    .foregroundStyle(.white)
+            }
+
+            HStack(spacing: 8) {
+                Button("-") { model.updateStepSize(model.stepSize - 0.01) }
+                    .buttonStyle(ChipStyle())
+
+                GeometryReader { geo in
+                    let progress = CGFloat((model.stepSize - 0.01) / (5.0 - 0.01))
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(.white.opacity(0.15))
+                        Capsule()
+                            .fill(
+                                LinearGradient(
+                                    colors: [.mint.opacity(0.9), .cyan.opacity(0.85)],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: max(14, geo.size.width * progress))
+                    }
+                    .overlay(
+                        Capsule().stroke(.white.opacity(0.24), lineWidth: 1)
+                    )
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { drag in
+                                let x = min(max(0, drag.location.x), geo.size.width)
+                                let raw = 0.01 + (Double(x / geo.size.width) * (5.0 - 0.01))
+                                let snapped = (raw / 0.01).rounded() * 0.01
+                                model.updateStepSize(max(0.01, min(5.0, snapped)))
+                            }
+                    )
+                }
+                .frame(height: 26)
+
+                Button("+") { model.updateStepSize(model.stepSize + 0.01) }
+                    .buttonStyle(ChipStyle())
+            }
+        }
     }
 
     private var cardGlass: some View {
@@ -340,24 +405,6 @@ struct ContentView: View {
         }
     }
 
-    private func sliderRow(
-        title: String,
-        valueLabel: String,
-        value: Binding<Double>,
-        range: ClosedRange<Double>
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack {
-                Text(title).font(.footnote.weight(.semibold))
-                Spacer()
-                Text(valueLabel).font(.caption.weight(.bold))
-            }
-            Slider(value: value, in: range, step: 0.01)
-                .tint(.white)
-        }
-        .foregroundStyle(.white)
-    }
-
     private var infoSheet: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
@@ -369,7 +416,8 @@ struct ContentView: View {
                     Text("2. Keep the phone near horizontal (0° reference).")
                     Text("3. Tilt up positive, down negative.")
                     Text("4. Trigger angle controls when tilt starts changing volume.")
-                    Text("5. Tap Pause Tilt when done.")
+                    Text("5. Use Recenter Baseline to reset neutral angle when your grip changes.")
+                    Text("6. Tap Pause Tilt when done.")
                 }
                 .font(.body)
                 .onTapGesture { infoDetent = .large }
@@ -400,6 +448,26 @@ struct ContentView: View {
             downPulse = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { downPulse = false }
         }
+    }
+
+    private func updateVolumeFromDial(_ location: CGPoint, size: CGSize) {
+        let center = CGPoint(x: size.width / 2, y: size.height / 2)
+        let dx = location.x - center.x
+        let dy = location.y - center.y
+        var angle = atan2(dy, dx) * 180 / .pi + 90
+        if angle < 0 { angle += 360 }
+        var normalized = min(max(Float(angle / 360), 0), 1)
+
+        // Prevent seam wrap at the top (100% <-> 0%) while dragging.
+        let seam: Float = 0.08
+        let current = model.currentVolume
+        if current > (1 - seam) && normalized < seam {
+            normalized = 1
+        } else if current < seam && normalized > (1 - seam) {
+            normalized = 0
+        }
+
+        model.setVolumeDirect(normalized)
     }
 }
 

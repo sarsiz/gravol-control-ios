@@ -27,6 +27,10 @@ final class VolumeManager {
         return pending
     }
 
+    func rawOutputVolume() -> Float {
+        audioSession.outputVolume
+    }
+
     @discardableResult
     func changeVolume(by delta: Float) -> Float {
         let current = currentOutputVolume()

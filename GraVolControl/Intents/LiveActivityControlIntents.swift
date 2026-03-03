@@ -50,10 +50,18 @@ struct ToggleTiltArmedIntent: AppIntent {
 }
 
 struct MuteVolumeIntent: AppIntent {
-    static var title: LocalizedStringResource = "Mute Volume"
+    static var title: LocalizedStringResource = "Mute or Unmute Volume"
 
     func perform() async throws -> some IntentResult {
-        GraVolControlRemoteStore.issueVolumePresetCommand(0.0)
+        let isMuted = GraVolControlRemoteStore.mutedState(defaultValue: false)
+        if isMuted {
+            let restore = max(0.01, GraVolControlRemoteStore.lastAudibleVolume(defaultValue: 0.5))
+            GraVolControlRemoteStore.setMutedState(false)
+            GraVolControlRemoteStore.issueVolumePresetCommand(restore)
+        } else {
+            GraVolControlRemoteStore.setMutedState(true)
+            GraVolControlRemoteStore.issueVolumePresetCommand(0.0)
+        }
         reloadWidgets()
         return .result()
     }
