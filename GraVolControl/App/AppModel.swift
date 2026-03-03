@@ -132,6 +132,10 @@ final class AppModel: ObservableObject {
         if abs(after - before) > 0.0001 {
             lastAction = action
             registerVolumeChange()
+        } else if after <= 0.001 {
+            lastAction = "Already at Min"
+        } else if after >= 0.999 {
+            lastAction = "Already at Max"
         }
     }
 

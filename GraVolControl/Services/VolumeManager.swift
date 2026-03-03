@@ -5,7 +5,8 @@ import UIKit
 @MainActor
 final class VolumeManager {
     private let audioSession = AVAudioSession.sharedInstance()
-    private weak var systemSlider: UISlider?
+    private var systemSlider: UISlider?
+    private let minimumSystemTick: Float = 1.0 / 16.0
 
     func configureAudioSession() {
         do {
@@ -22,7 +23,9 @@ final class VolumeManager {
     @discardableResult
     func changeVolume(by delta: Float) -> Float {
         let current = currentOutputVolume()
-        return setVolume(current + delta)
+        if delta == 0 { return current }
+        let signedStep = max(abs(delta), minimumSystemTick) * (delta > 0 ? 1 : -1)
+        return setVolume(current + signedStep)
     }
 
     func attachSystemSlider(_ slider: UISlider) {
@@ -37,10 +40,8 @@ final class VolumeManager {
     func setVolume(_ value: Float) -> Float {
         let clamped = min(max(value, 0.0), 1.0)
         guard let slider = systemSlider else { return currentOutputVolume() }
-        DispatchQueue.main.async {
-            slider.value = clamped
-            slider.sendActions(for: .valueChanged)
-        }
+        slider.setValue(clamped, animated: false)
+        slider.sendActions(for: .valueChanged)
         return clamped
     }
 }
