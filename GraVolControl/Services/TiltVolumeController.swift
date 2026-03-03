@@ -17,7 +17,6 @@ final class TiltVolumeController {
     private let holdDuration: TimeInterval = 0.15
     private let maxRotationNoise: Double = 2.8
 
-    private var baselinePitch: Double = 0
     private var lowPassPitch: Double = 0
     private var towardHoldStart: Date?
     private var awayHoldStart: Date?
@@ -54,15 +53,15 @@ final class TiltVolumeController {
     }
 
     func recenterBaseline() {
-        guard let motion = motionManager.deviceMotion else { return }
-        baselinePitch = motion.attitude.pitch
+        towardHoldStart = nil
+        awayHoldStart = nil
     }
 
     private func process(_ motion: CMDeviceMotion) {
         let alpha = 0.2
         lowPassPitch = alpha * motion.attitude.pitch + (1.0 - alpha) * lowPassPitch
-        let deltaPitch = lowPassPitch - baselinePitch
-        onTiltDeltaChanged?(deltaPitch)
+        let signedPitchFromHorizontal = lowPassPitch
+        onTiltDeltaChanged?(signedPitchFromHorizontal)
 
         let rotationNoise = abs(motion.rotationRate.x) + abs(motion.rotationRate.y) + abs(motion.rotationRate.z)
         if rotationNoise > maxRotationNoise {
@@ -79,7 +78,7 @@ final class TiltVolumeController {
         let awayEnter = -pitchThreshold
         let awayExit = -pitchThreshold + hysteresis
 
-        if deltaPitch >= towardEnter {
+        if signedPitchFromHorizontal >= towardEnter {
             towardHoldStart = towardHoldStart ?? now
             awayHoldStart = nil
             if let towardHoldStart, now.timeIntervalSince(towardHoldStart) >= holdDuration {
@@ -90,7 +89,7 @@ final class TiltVolumeController {
             return
         }
 
-        if deltaPitch <= awayEnter {
+        if signedPitchFromHorizontal <= awayEnter {
             awayHoldStart = awayHoldStart ?? now
             towardHoldStart = nil
             if let awayHoldStart, now.timeIntervalSince(awayHoldStart) >= holdDuration {
@@ -101,11 +100,11 @@ final class TiltVolumeController {
             return
         }
 
-        if deltaPitch < towardExit {
+        if signedPitchFromHorizontal < towardExit {
             towardHoldStart = nil
         }
 
-        if deltaPitch > awayExit {
+        if signedPitchFromHorizontal > awayExit {
             awayHoldStart = nil
         }
     }

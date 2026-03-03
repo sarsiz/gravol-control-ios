@@ -20,15 +20,20 @@ struct ContentView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, max(proxy.safeAreaInsets.top, 10))
                     .padding(.bottom, max(proxy.safeAreaInsets.bottom + 72, 90))
-                    .frame(maxWidth: .infinity, minHeight: proxy.size.height, alignment: .top)
+                    .frame(maxWidth: .infinity, alignment: .top)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
                 infoButton
                     .padding(.leading, 16)
                     .padding(.bottom, max(proxy.safeAreaInsets.bottom, 12))
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea()
+        }
+        .safeAreaInset(edge: .top) {
+            islandAngleBadge
+                .padding(.top, 4)
         }
         .sheet(item: $activeSheet) { item in
             switch item {
@@ -75,6 +80,26 @@ struct ContentView: View {
                 .frame(width: 290, height: 290)
                 .offset(x: 130, y: 300)
         }
+    }
+
+    private var islandAngleBadge: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "angle")
+            Text(String(format: "%+.1f°", model.currentTiltDegrees))
+                .monospacedDigit()
+                .font(.footnote.weight(.semibold))
+            Text("Trigger \(Int(model.triggerAngleDegrees))°")
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.white.opacity(0.85))
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 7)
+        .background(
+            Capsule()
+                .fill(.ultraThinMaterial)
+                .overlay(Capsule().stroke(.white.opacity(0.25), lineWidth: 1))
+        )
     }
 
     private var header: some View {
@@ -404,11 +429,11 @@ private struct CircularAngleSlider: View {
                         let center = CGPoint(x: proxy.size.width / 2, y: proxy.size.height / 2)
                         let dx = drag.location.x - center.x
                         let dy = drag.location.y - center.y
-                        var degrees = atan2(dy, dx) * 180 / .pi
-                        degrees += 135
-                        if degrees < 0 { degrees += 360 }
-                        let capped = min(max(degrees, 0), 270)
-                        let progress = capped / 270
+                        var raw = atan2(dy, dx) * 180 / .pi
+                        if raw < 0 { raw += 360 }
+                        if raw < 135 { raw += 360 }
+                        let clamped = min(max(raw, 135), 405)
+                        let progress = (clamped - 135) / 270
                         value = range.lowerBound + Double(progress) * (range.upperBound - range.lowerBound)
                     }
             )
