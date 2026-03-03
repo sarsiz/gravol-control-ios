@@ -20,7 +20,7 @@ final class AppModel: ObservableObject {
 
     private lazy var tiltController: TiltVolumeController = {
         let threshold = Self.degreesToRadians(triggerAngleDegrees)
-        TiltVolumeController(
+        return TiltVolumeController(
             pitchThreshold: threshold,
             hysteresis: threshold * 0.45,
             stepInterval: 0.15

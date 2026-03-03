@@ -7,7 +7,6 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> MPVolumeView {
         let view = MPVolumeView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
-        view.showsRouteButton = false
         view.alpha = 0.01
         attachSliderIfAvailable(from: view)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
@@ -21,7 +20,10 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: MPVolumeView, context: Context) {
-        attachSliderIfAvailable(from: uiView)
+        // Avoid publishing observable changes during SwiftUI's update cycle.
+        DispatchQueue.main.async {
+            attachSliderIfAvailable(from: uiView)
+        }
     }
 
     private func attachSliderIfAvailable(from volumeView: MPVolumeView) {
