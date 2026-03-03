@@ -367,7 +367,8 @@ private struct CircularAngleSlider: View {
             let lineWidth: CGFloat = 8
             let radius = size / 2 - lineWidth / 2
             let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
-            let angle = Angle(degrees: 270 * normalized - 135)
+            let angleDegrees = Double(270.0 * normalized - 135.0)
+            let angle = Angle(degrees: angleDegrees)
 
             ZStack {
                 Circle()

@@ -75,8 +75,14 @@ final class AppModel: ObservableObject {
 
     func attachSystemVolumeSlider(_ slider: UISlider) {
         volumeManager.attachSystemSlider(slider)
-        isVolumeControlReady = volumeManager.isReady()
-        refreshCurrentVolume()
+        let ready = volumeManager.isReady()
+        if isVolumeControlReady != ready {
+            isVolumeControlReady = ready
+        }
+        let updatedVolume = volumeManager.currentOutputVolume()
+        if abs(currentVolume - updatedVolume) > 0.0001 {
+            currentVolume = updatedVolume
+        }
     }
 
     func nudgeUp() {
