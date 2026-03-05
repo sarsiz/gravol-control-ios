@@ -18,15 +18,11 @@ final class TiltVolumeController {
     private let stepInterval: TimeInterval
     private let holdDuration: TimeInterval = 0.22
     private let maxRotationNoise: Double = 2.8
-    private let maxContinuousStepsPerDirection = 6
-    private let neutralBandRadians: Double = 0.06
 
     private var lowPassPitch: Double = 0
     private var towardHoldStart: Date?
     private var awayHoldStart: Date?
     private var lastStepAt = Date.distantPast
-    private var towardStepBurstCount = 0
-    private var awayStepBurstCount = 0
 
     init(
         towardPitchThreshold: Double,
@@ -70,16 +66,12 @@ final class TiltVolumeController {
         towardHoldStart = nil
         awayHoldStart = nil
         lowPassPitch = 0
-        towardStepBurstCount = 0
-        awayStepBurstCount = 0
         onTiltDeltaChanged?(0)
     }
 
     func recenterBaseline() {
         towardHoldStart = nil
         awayHoldStart = nil
-        towardStepBurstCount = 0
-        awayStepBurstCount = 0
     }
 
     private func process(_ motion: CMDeviceMotion) {
@@ -103,19 +95,11 @@ final class TiltVolumeController {
         let awayEnter = -awayPitchThreshold
         let awayExit = -awayPitchThreshold + awayHysteresis
 
-        if abs(signedPitchFromHorizontal) <= neutralBandRadians {
-            towardStepBurstCount = 0
-            awayStepBurstCount = 0
-        }
-
         if signedPitchFromHorizontal >= towardEnter {
-            guard towardStepBurstCount < maxContinuousStepsPerDirection else { return }
             towardHoldStart = towardHoldStart ?? now
             awayHoldStart = nil
             if let towardHoldStart, now.timeIntervalSince(towardHoldStart) >= holdDuration {
                 lastStepAt = now
-                towardStepBurstCount += 1
-                awayStepBurstCount = 0
                 onDirection?(.towardUser)
                 self.towardHoldStart = nil
             }
@@ -123,13 +107,10 @@ final class TiltVolumeController {
         }
 
         if signedPitchFromHorizontal <= awayEnter {
-            guard awayStepBurstCount < maxContinuousStepsPerDirection else { return }
             awayHoldStart = awayHoldStart ?? now
             towardHoldStart = nil
             if let awayHoldStart, now.timeIntervalSince(awayHoldStart) >= holdDuration {
                 lastStepAt = now
-                awayStepBurstCount += 1
-                towardStepBurstCount = 0
                 onDirection?(.awayFromUser)
                 self.awayHoldStart = nil
             }

@@ -334,16 +334,20 @@ final class AppModel: ObservableObject {
     }
 
     private func applyRemoteCommands() {
+        var shouldRefreshWidgets = false
+
         let sharedAngle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: triggerAngleDegrees)
         if abs(sharedAngle - triggerAngleDegrees) > 0.001 {
             triggerAngleDegrees = min(max(abs(sharedAngle), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
             updateTiltThresholds()
+            shouldRefreshWidgets = true
         }
 
         let sharedDownAngle = GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: downTriggerAngleDegrees)
         if abs(sharedDownAngle - downTriggerAngleDegrees) > 0.001 {
             downTriggerAngleDegrees = min(max(abs(sharedDownAngle), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
             updateTiltThresholds()
+            shouldRefreshWidgets = true
         }
 
         if GraVolControlRemoteStore.consumeRecenterCommand(lastSeenID: &lastSeenRecenterCommandID) {
@@ -353,13 +357,16 @@ final class AppModel: ObservableObject {
         if let remoteArmed = GraVolControlRemoteStore.consumeSetArmedCommand(lastSeenID: &lastSeenSetArmedCommandID),
            remoteArmed != isArmed {
             setArmed(remoteArmed)
+            shouldRefreshWidgets = true
         }
 
         if let volumePreset = GraVolControlRemoteStore.consumeVolumePresetCommand(lastSeenID: &lastSeenVolumePresetCommandID) {
             setVolumePreset(volumePreset)
+            shouldRefreshWidgets = true
         }
-
-        notifyWidgetsIfNeeded()
+        if shouldRefreshWidgets {
+            notifyWidgetsIfNeeded(force: true)
+        }
     }
 
     private func syncLiveActivity(force: Bool = false) {
@@ -444,7 +451,6 @@ final class AppModel: ObservableObject {
         lastWidgetUpAngle = triggerAngleDegrees
         lastWidgetDownAngle = downTriggerAngleDegrees
         WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
-        WidgetCenter.shared.reloadAllTimelines()
     }
 
     private func beginBackgroundTaskIfNeeded() {
