@@ -94,7 +94,7 @@ private struct GraVolHomeWidgetView: View {
             header
             statusLine
             Spacer(minLength: 0)
-            controlGrid(includeTriggerStep: false)
+            controlGrid
         }
         .padding(10)
     }
@@ -108,7 +108,7 @@ private struct GraVolHomeWidgetView: View {
                 triggerStepChips
             }
             Spacer(minLength: 0)
-            controlGrid(includeTriggerStep: false)
+            controlGrid
         }
         .padding(10)
     }
@@ -122,7 +122,7 @@ private struct GraVolHomeWidgetView: View {
                 triggerStepChips
             }
             Spacer(minLength: 0)
-            controlGrid(includeTriggerStep: true)
+            controlGrid
         }
         .padding(12)
     }
@@ -141,7 +141,7 @@ private struct GraVolHomeWidgetView: View {
     }
 
     @ViewBuilder
-    private func controlGrid(includeTriggerStep: Bool) -> some View {
+    private var controlGrid: some View {
         let columns = [
             GridItem(.flexible(minimum: 0, maximum: .infinity), spacing: 6),
             GridItem(.flexible(minimum: 0, maximum: .infinity), spacing: 6),
@@ -153,12 +153,6 @@ private struct GraVolHomeWidgetView: View {
                 Button(intent: ToggleTiltArmedIntent()) { chip(entry.isArmed ? "Pause" : "Resume") }
                 Button(intent: MuteVolumeIntent()) { chip(entry.isMuted ? "Unmute" : "Mute") }
                 Button(intent: RecenterTiltIntent()) { chip("Recenter") }
-                if includeTriggerStep {
-                    Button(intent: DecreaseTriggerAngleIntent()) { chip("−T") }
-                    Button(intent: IncreaseTriggerAngleIntent()) { chip("+T") }
-                    Button(intent: DecreaseDownTriggerAngleIntent()) { chip("−D") }
-                    Button(intent: IncreaseDownTriggerAngleIntent()) { chip("+D") }
-                }
             } else {
                 chip(entry.isArmed ? "Tilt On" : "Tilt Off")
                 chip(entry.isMuted ? "Muted" : "Sound On")

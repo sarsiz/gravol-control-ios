@@ -24,7 +24,10 @@ final class AppModel: ObservableObject {
     private var lastSeenRecenterCommandID = 0
     private var lastSeenSetArmedCommandID = 0
     private var lastSeenVolumePresetCommandID = 0
-    private var lastLiveActivitySync = Date.distantPast
+    private var lastWidgetArmedState: Bool?
+    private var lastWidgetMutedState: Bool?
+    private var lastWidgetUpAngle: Double?
+    private var lastWidgetDownAngle: Double?
     private let triggerAngleRange: ClosedRange<Double> = 0...60
     private let muteThreshold: Float = 0.001
     private let firstLaunchFlagKey = "gravol_has_launched_once"
@@ -99,6 +102,7 @@ final class AppModel: ObservableObject {
     func setArmed(_ value: Bool) {
         isArmed = value
         GraVolControlRemoteStore.setArmedState(value)
+        notifyWidgetsIfNeeded(force: true)
         if value {
             tiltController.start()
             tiltController.recenterBaseline()
@@ -114,7 +118,7 @@ final class AppModel: ObservableObject {
     func updateTriggerAngleDegrees(_ value: Double) {
         triggerAngleDegrees = min(max(abs(value), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
         GraVolControlRemoteStore.setTriggerAngleDegrees(triggerAngleDegrees)
-        WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+        notifyWidgetsIfNeeded(force: true)
         updateTiltThresholds()
         syncLiveActivity(force: true)
     }
@@ -122,7 +126,7 @@ final class AppModel: ObservableObject {
     func updateDefaultTriggerAngleDegrees(_ value: Double) {
         defaultTriggerAngleDegrees = min(max(abs(value), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
         GraVolControlRemoteStore.setDefaultTriggerAngleDegrees(defaultTriggerAngleDegrees)
-        WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+        notifyWidgetsIfNeeded(force: true)
     }
 
     func resetTriggerToDefault() {
@@ -132,7 +136,7 @@ final class AppModel: ObservableObject {
     func updateDownTriggerAngleDegrees(_ value: Double) {
         downTriggerAngleDegrees = min(max(abs(value), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
         GraVolControlRemoteStore.setDownTriggerAngleDegrees(downTriggerAngleDegrees)
-        WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+        notifyWidgetsIfNeeded(force: true)
         updateTiltThresholds()
         syncLiveActivity(force: true)
     }
@@ -140,6 +144,7 @@ final class AppModel: ObservableObject {
     func updateDefaultDownTriggerAngleDegrees(_ value: Double) {
         defaultDownTriggerAngleDegrees = min(max(abs(value), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
         GraVolControlRemoteStore.setDefaultDownTriggerAngleDegrees(defaultDownTriggerAngleDegrees)
+        notifyWidgetsIfNeeded(force: true)
     }
 
     func resetDownTriggerToDefault() {
@@ -157,7 +162,7 @@ final class AppModel: ObservableObject {
         GraVolControlRemoteStore.setTriggerAngleDegrees(defaultAngle)
         GraVolControlRemoteStore.setDownTriggerAngleDegrees(defaultAngle)
         updateTiltThresholds()
-        WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+        notifyWidgetsIfNeeded(force: true)
         syncLiveActivity(force: true)
     }
 
@@ -172,7 +177,7 @@ final class AppModel: ObservableObject {
         if !enabled {
             GraVolControlRemoteStore.setTriggerAngleDegrees(triggerAngleDegrees)
             GraVolControlRemoteStore.setDownTriggerAngleDegrees(downTriggerAngleDegrees)
-            WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+            notifyWidgetsIfNeeded(force: true)
             syncLiveActivity(force: true)
         }
     }
@@ -242,7 +247,7 @@ final class AppModel: ObservableObject {
         GraVolControlRemoteStore.setTriggerAngleDegrees(baselineDefault)
         GraVolControlRemoteStore.setDownTriggerAngleDegrees(baselineDefault)
         updateTiltThresholds()
-        WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+        notifyWidgetsIfNeeded(force: true)
         tiltController.recenterBaseline()
         lastAction = "Recentered"
         syncLiveActivity(force: true)
@@ -353,17 +358,13 @@ final class AppModel: ObservableObject {
         if let volumePreset = GraVolControlRemoteStore.consumeVolumePresetCommand(lastSeenID: &lastSeenVolumePresetCommandID) {
             setVolumePreset(volumePreset)
         }
+
+        notifyWidgetsIfNeeded()
     }
 
     private func syncLiveActivity(force: Bool = false) {
         guard #available(iOS 16.1, *) else { return }
         guard isArmed else { return }
-
-        let now = Date()
-        if !force, now.timeIntervalSince(lastLiveActivitySync) < 0.12 {
-            return
-        }
-        lastLiveActivitySync = now
 
         let content = GraVolLiveActivityAttributes.ContentState(
             tiltDegrees: currentTiltDegrees,
@@ -392,11 +393,16 @@ final class AppModel: ObservableObject {
     }
 
     private func syncMuteState(for volume: Float) {
-        if volume <= muteThreshold {
+        let isMutedNow = volume <= muteThreshold
+        let previous = GraVolControlRemoteStore.mutedState(defaultValue: false)
+        if isMutedNow {
             GraVolControlRemoteStore.setMutedState(true)
         } else {
             GraVolControlRemoteStore.setMutedState(false)
             GraVolControlRemoteStore.setLastAudibleVolume(volume)
+        }
+        if previous != isMutedNow {
+            notifyWidgetsIfNeeded(force: true)
         }
     }
 
@@ -421,7 +427,24 @@ final class AppModel: ObservableObject {
         } else {
             downTriggerAngleDegrees = mapped
         }
+        notifyWidgetsIfNeeded(force: true)
         updateTiltThresholds()
+    }
+
+    private func notifyWidgetsIfNeeded(force: Bool = false) {
+        let muted = GraVolControlRemoteStore.mutedState(defaultValue: false)
+        let changed = lastWidgetArmedState != isArmed ||
+            lastWidgetMutedState != muted ||
+            lastWidgetUpAngle != triggerAngleDegrees ||
+            lastWidgetDownAngle != downTriggerAngleDegrees
+
+        guard force || changed else { return }
+        lastWidgetArmedState = isArmed
+        lastWidgetMutedState = muted
+        lastWidgetUpAngle = triggerAngleDegrees
+        lastWidgetDownAngle = downTriggerAngleDegrees
+        WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     private func beginBackgroundTaskIfNeeded() {

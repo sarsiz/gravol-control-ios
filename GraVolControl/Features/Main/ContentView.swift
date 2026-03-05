@@ -608,17 +608,6 @@ private struct DualTriggerAngleDial: View {
                     }
                 }
                 .padding(.top, 8)
-
-                HStack {
-                    Text(String(format: "-%.0f°", downValue))
-                        .font(.caption.monospacedDigit().weight(.bold))
-                        .foregroundStyle(.white.opacity(0.9))
-                    Spacer()
-                    Text(String(format: "+%.0f°", upValue))
-                        .font(.caption.monospacedDigit().weight(.bold))
-                        .foregroundStyle(.white.opacity(0.9))
-                }
-                .padding(.horizontal, 12)
             }
             .frame(width: size, height: size)
             .contentShape(Circle())
