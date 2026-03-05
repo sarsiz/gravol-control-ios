@@ -16,22 +16,14 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
     func makeUIView(context: Context) -> MPVolumeView {
         let view = MPVolumeView(frame: CGRect(x: 0, y: 0, width: 120, height: 30))
         view.alpha = 0.01
-        attachSliderIfAvailable(from: view, coordinator: context.coordinator)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-            attachSliderIfAvailable(from: view, coordinator: context.coordinator)
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            attachSliderIfAvailable(from: view, coordinator: context.coordinator)
-        }
+        attachSliderWithRetries(from: view, coordinator: context.coordinator, attempts: 20)
 
         return view
     }
 
     func updateUIView(_ uiView: MPVolumeView, context: Context) {
         attachSliderIfAvailable(from: uiView, coordinator: context.coordinator)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
-            attachSliderIfAvailable(from: uiView, coordinator: context.coordinator)
-        }
+        attachSliderWithRetries(from: uiView, coordinator: context.coordinator, attempts: 8)
     }
 
     private func attachSliderIfAvailable(from volumeView: MPVolumeView, coordinator: Coordinator) {
@@ -52,5 +44,13 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
             }
         }
         return nil
+    }
+
+    private func attachSliderWithRetries(from volumeView: MPVolumeView, coordinator: Coordinator, attempts: Int) {
+        attachSliderIfAvailable(from: volumeView, coordinator: coordinator)
+        guard coordinator.attachedSlider == nil, attempts > 0 else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+            attachSliderWithRetries(from: volumeView, coordinator: coordinator, attempts: attempts - 1)
+        }
     }
 }

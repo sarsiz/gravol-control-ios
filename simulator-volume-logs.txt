@@ -1,0 +1,1267 @@
+GraVol Simulator Volume Diagnostics
+Generated: Thu Mar  5 22:12:21 AEDT 2026
+Bundle: com.sarsiz.GraVolControl
+Data Container: /Users/sarsiz/Library/Developer/CoreSimulator/Devices/25D3BDE6-E7C5-4A70-8E64-FDA5EFCE314B/data/Containers/Data/Application/4F4DD064-AEFE-4C8D-B927-92EFB3638DC8
+
+=== File Log (Application Support/volume-diagnostics.log) ===
+2026-03-05T10:34:16.500Z | app.previousLogCount=0
+2026-03-05T10:34:16.504Z | app.logFile=/Users/sarsiz/Library/Developer/CoreSimulator/Devices/25D3BDE6-E7C5-4A70-8E64-FDA5EFCE314B/data/Containers/Data/Application/A669969A-1198-48BD-8E36-7672314A372B/Library/Application Support/volume-diagnostics.log
+2026-03-05T10:34:16.573Z | bridge.attach.internal immediate
+2026-03-05T10:34:16.573Z | app.init started
+2026-03-05T10:34:16.578Z | refresh.volume old=0% new=70%
+2026-03-05T10:34:16.579Z | system.read source=timer value=70%
+2026-03-05T10:34:16.579Z | refresh.ready ready
+2026-03-05T10:34:16.580Z | app.init complete ready=true volume=70%
+2026-03-05T10:34:16.656Z | bridge.attach.external slider attached
+2026-03-05T10:34:16.658Z | ui.bridge sliderAttached
+2026-03-05T10:34:16.840Z | bridge.mount ok
+2026-03-05T10:34:18.261Z | ui.tap down
+2026-03-05T10:34:18.262Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:34:18.264Z | write.start before=70% target=65%
+2026-03-05T10:34:18.265Z | ui.change done action=Manual Down before=70% after=65%
+2026-03-05T10:34:18.330Z | refresh.volume old=65% new=70%
+2026-03-05T10:34:18.347Z | write.retry target=65% actual=70%
+2026-03-05T10:34:18.347Z | write.done target=65% actual=70%
+2026-03-05T10:34:19.443Z | ui.tap up
+2026-03-05T10:34:19.443Z | ui.change action=Manual Up delta=0.05
+2026-03-05T10:34:19.444Z | write.start before=70% target=75%
+2026-03-05T10:34:19.446Z | ui.change done action=Manual Up before=70% after=75%
+2026-03-05T10:34:19.527Z | write.retry target=75% actual=70%
+2026-03-05T10:34:19.528Z | write.done target=75% actual=70%
+2026-03-05T10:34:19.581Z | refresh.volume old=75% new=70%
+2026-03-05T10:34:20.442Z | ui.preset set target=80%
+2026-03-05T10:34:20.443Z | write.start before=70% target=80%
+2026-03-05T10:34:20.444Z | ui.preset done current=70%
+2026-03-05T10:34:20.528Z | write.retry target=80% actual=70%
+2026-03-05T10:34:20.529Z | write.done target=80% actual=70%
+2026-03-05T10:34:21.453Z | ui.preset set target=50%
+2026-03-05T10:34:21.454Z | write.start before=70% target=50%
+2026-03-05T10:34:21.455Z | ui.preset done current=70%
+2026-03-05T10:34:21.539Z | write.retry target=50% actual=70%
+2026-03-05T10:34:21.540Z | write.done target=50% actual=70%
+2026-03-05T10:34:22.276Z | ui.tap muteToggle current=70%
+2026-03-05T10:34:22.277Z | ui.preset set target=0%
+2026-03-05T10:34:22.278Z | write.start before=70% target=0%
+2026-03-05T10:34:22.279Z | ui.preset done current=70%
+2026-03-05T10:34:22.280Z | ui.mute muted
+2026-03-05T10:34:22.362Z | write.retry target=0% actual=70%
+2026-03-05T10:34:22.362Z | write.done target=0% actual=70%
+2026-03-05T10:34:24.080Z | refresh.volume old=70% new=60%
+2026-03-05T10:34:24.081Z | system.read source=timer value=60%
+2026-03-05T10:34:24.580Z | refresh.volume old=60% new=55%
+2026-03-05T10:34:24.581Z | system.read source=timer value=55%
+2026-03-05T10:34:26.330Z | refresh.volume old=55% new=50%
+2026-03-05T10:34:26.332Z | system.read source=timer value=50%
+2026-03-05T10:34:27.580Z | refresh.volume old=50% new=55%
+2026-03-05T10:34:27.581Z | system.read source=timer value=55%
+2026-03-05T10:34:29.080Z | refresh.volume old=55% new=60%
+2026-03-05T10:34:29.081Z | system.read source=timer value=60%
+2026-03-05T10:38:27.994Z | app.previousLogCount=52
+2026-03-05T10:38:27.995Z | app.logFile=/Users/sarsiz/Library/Developer/CoreSimulator/Devices/25D3BDE6-E7C5-4A70-8E64-FDA5EFCE314B/data/Containers/Data/Application/0D9FB681-2360-4848-951E-D8BCC85C278C/Library/Application Support/volume-diagnostics.log
+2026-03-05T10:38:28.081Z | bridge.attach.internal immediate
+2026-03-05T10:38:28.082Z | app.init started
+2026-03-05T10:38:28.085Z | refresh.volume old=0% new=60%
+2026-03-05T10:38:28.085Z | system.read source=timer value=60%
+2026-03-05T10:38:28.085Z | refresh.ready ready
+2026-03-05T10:38:28.086Z | app.init complete ready=true volume=60%
+2026-03-05T10:38:28.157Z | bridge.attach.external slider attached
+2026-03-05T10:38:28.159Z | ui.bridge sliderAttached
+2026-03-05T10:38:28.335Z | bridge.mount ok
+2026-03-05T10:38:30.143Z | ui.tap down
+2026-03-05T10:38:30.144Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:38:30.145Z | write.start before=60% target=55%
+2026-03-05T10:38:30.146Z | ui.change done action=Manual Down before=60% after=55%
+2026-03-05T10:38:30.229Z | write.retry target=55% actual=60%
+2026-03-05T10:38:30.230Z | write.done target=55% actual=60%
+2026-03-05T10:38:30.338Z | refresh.volume old=55% new=60%
+2026-03-05T10:38:32.109Z | ui.tap up
+2026-03-05T10:38:32.109Z | ui.change action=Manual Up delta=0.05
+2026-03-05T10:38:32.111Z | write.start before=60% target=65%
+2026-03-05T10:38:32.112Z | ui.change done action=Manual Up before=60% after=65%
+2026-03-05T10:38:32.193Z | write.retry target=65% actual=60%
+2026-03-05T10:38:32.194Z | write.done target=65% actual=60%
+2026-03-05T10:38:32.337Z | refresh.volume old=65% new=60%
+2026-03-05T10:38:32.925Z | ui.tap up
+2026-03-05T10:38:32.926Z | ui.change action=Manual Up delta=0.05
+2026-03-05T10:38:32.927Z | write.start before=60% target=65%
+2026-03-05T10:38:32.928Z | ui.change done action=Manual Up before=60% after=65%
+2026-03-05T10:38:33.011Z | write.retry target=65% actual=60%
+2026-03-05T10:38:33.012Z | write.done target=65% actual=60%
+2026-03-05T10:38:33.087Z | refresh.volume old=65% new=60%
+2026-03-05T10:38:34.197Z | ui.tap muteToggle current=60%
+2026-03-05T10:38:34.198Z | ui.preset set target=0%
+2026-03-05T10:38:34.199Z | write.start before=60% target=0%
+2026-03-05T10:38:34.200Z | ui.preset done current=60%
+2026-03-05T10:38:34.200Z | ui.mute muted
+2026-03-05T10:38:34.280Z | write.retry target=0% actual=60%
+2026-03-05T10:38:34.281Z | write.done target=0% actual=60%
+2026-03-05T10:38:36.539Z | ui.preset set target=50%
+2026-03-05T10:38:36.540Z | write.start before=60% target=50%
+2026-03-05T10:38:36.542Z | ui.preset done current=60%
+2026-03-05T10:38:36.625Z | write.retry target=50% actual=60%
+2026-03-05T10:38:36.626Z | write.done target=50% actual=60%
+2026-03-05T10:38:37.456Z | ui.preset set target=80%
+2026-03-05T10:38:37.456Z | write.start before=60% target=80%
+2026-03-05T10:38:37.458Z | ui.preset done current=60%
+2026-03-05T10:38:37.538Z | write.retry target=80% actual=60%
+2026-03-05T10:38:37.539Z | write.done target=80% actual=60%
+2026-03-05T10:38:39.337Z | refresh.volume old=60% new=55%
+2026-03-05T10:38:39.339Z | system.read source=timer value=55%
+2026-03-05T10:38:40.087Z | refresh.volume old=55% new=50%
+2026-03-05T10:38:40.089Z | system.read source=timer value=50%
+2026-03-05T10:38:41.838Z | refresh.volume old=50% new=55%
+2026-03-05T10:38:41.839Z | system.read source=timer value=55%
+2026-03-05T10:38:42.087Z | refresh.volume old=55% new=60%
+2026-03-05T10:38:42.089Z | system.read source=timer value=60%
+2026-03-05T10:38:42.337Z | refresh.volume old=60% new=70%
+2026-03-05T10:38:42.338Z | system.read source=timer value=70%
+2026-03-05T10:38:42.837Z | refresh.volume old=70% new=75%
+2026-03-05T10:38:42.839Z | system.read source=timer value=75%
+2026-03-05T10:38:45.592Z | ui.tap muteToggle current=75%
+2026-03-05T10:38:45.593Z | ui.preset set target=0%
+2026-03-05T10:38:45.593Z | write.start before=75% target=0%
+2026-03-05T10:38:45.595Z | ui.preset done current=75%
+2026-03-05T10:38:45.595Z | ui.mute muted
+2026-03-05T10:38:45.677Z | write.retry target=0% actual=75%
+2026-03-05T10:38:45.678Z | write.done target=0% actual=75%
+2026-03-05T10:38:47.631Z | ui.tap muteToggle current=75%
+2026-03-05T10:38:47.632Z | ui.preset set target=0%
+2026-03-05T10:38:47.632Z | write.start before=75% target=0%
+2026-03-05T10:38:47.634Z | ui.preset done current=75%
+2026-03-05T10:38:47.634Z | ui.mute muted
+2026-03-05T10:38:47.717Z | write.retry target=0% actual=75%
+2026-03-05T10:38:47.718Z | write.done target=0% actual=75%
+2026-03-05T10:38:48.639Z | ui.tap muteToggle current=75%
+2026-03-05T10:38:48.640Z | ui.preset set target=0%
+2026-03-05T10:38:48.641Z | write.start before=75% target=0%
+2026-03-05T10:38:48.643Z | ui.preset done current=75%
+2026-03-05T10:38:48.643Z | ui.mute muted
+2026-03-05T10:38:48.725Z | write.retry target=0% actual=75%
+2026-03-05T10:38:48.726Z | write.done target=0% actual=75%
+2026-03-05T10:38:49.259Z | ui.preset set target=50%
+2026-03-05T10:38:49.260Z | write.start before=75% target=50%
+2026-03-05T10:38:49.262Z | ui.preset done current=75%
+2026-03-05T10:38:49.342Z | write.retry target=50% actual=75%
+2026-03-05T10:38:49.343Z | write.done target=50% actual=75%
+2026-03-05T10:46:03.587Z | app.previousLogCount=139
+2026-03-05T10:46:03.591Z | app.logFile=/Users/sarsiz/Library/Developer/CoreSimulator/Devices/25D3BDE6-E7C5-4A70-8E64-FDA5EFCE314B/data/Containers/Data/Application/41821FE2-0EBF-4AD2-8BCD-E0FB0795A720/Library/Application Support/volume-diagnostics.log
+2026-03-05T10:46:03.636Z | bridge.attach.internal immediate
+2026-03-05T10:46:03.637Z | app.init started
+2026-03-05T10:46:03.640Z | refresh.volume old=0% new=75%
+2026-03-05T10:46:03.640Z | system.read source=timer value=75%
+2026-03-05T10:46:03.641Z | refresh.ready ready
+2026-03-05T10:46:03.641Z | app.init complete ready=true volume=75%
+2026-03-05T10:46:03.705Z | bridge.attach.external slider attached
+2026-03-05T10:46:03.706Z | ui.bridge sliderAttached
+2026-03-05T10:46:03.872Z | bridge.mount ok
+2026-03-05T10:46:05.279Z | ui.tap up
+2026-03-05T10:46:05.279Z | ui.change action=Manual Up delta=0.05
+2026-03-05T10:46:05.281Z | write.start before=75% target=80%
+2026-03-05T10:46:05.283Z | ui.change done action=Manual Up before=75% after=80%
+2026-03-05T10:46:05.364Z | write.retry target=80% actual=75%
+2026-03-05T10:46:05.365Z | sim.override set=80%
+2026-03-05T10:46:05.366Z | write.done target=80% actual=75%
+2026-03-05T10:46:05.393Z | sim.override cleared by external change system=75%
+2026-03-05T10:46:05.393Z | refresh.volume old=80% new=75%
+2026-03-05T10:46:06.150Z | ui.tap up
+2026-03-05T10:46:06.151Z | ui.change action=Manual Up delta=0.05
+2026-03-05T10:46:06.154Z | write.start before=75% target=80%
+2026-03-05T10:46:06.156Z | ui.change done action=Manual Up before=75% after=80%
+2026-03-05T10:46:06.239Z | write.retry target=80% actual=75%
+2026-03-05T10:46:06.240Z | sim.override set=80%
+2026-03-05T10:46:06.241Z | write.done target=80% actual=75%
+2026-03-05T10:46:06.393Z | sim.override cleared by external change system=75%
+2026-03-05T10:46:06.394Z | refresh.volume old=80% new=75%
+2026-03-05T10:46:07.411Z | ui.tap up
+2026-03-05T10:46:07.411Z | ui.change action=Manual Up delta=0.05
+2026-03-05T10:46:07.413Z | write.start before=75% target=80%
+2026-03-05T10:46:07.415Z | ui.change done action=Manual Up before=75% after=80%
+2026-03-05T10:46:07.498Z | write.retry target=80% actual=75%
+2026-03-05T10:46:07.499Z | sim.override set=80%
+2026-03-05T10:46:07.499Z | write.done target=80% actual=75%
+2026-03-05T10:46:07.643Z | sim.override cleared by external change system=75%
+2026-03-05T10:46:07.644Z | refresh.volume old=80% new=75%
+2026-03-05T10:46:08.911Z | ui.tap down
+2026-03-05T10:46:08.912Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:46:08.913Z | write.start before=75% target=70%
+2026-03-05T10:46:08.915Z | ui.change done action=Manual Down before=75% after=70%
+2026-03-05T10:46:08.998Z | write.retry target=70% actual=75%
+2026-03-05T10:46:08.999Z | sim.override set=70%
+2026-03-05T10:46:08.999Z | write.done target=70% actual=75%
+2026-03-05T10:46:09.143Z | sim.override cleared by external change system=75%
+2026-03-05T10:46:09.144Z | refresh.volume old=70% new=75%
+2026-03-05T10:46:09.661Z | ui.tap down
+2026-03-05T10:46:09.662Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:46:09.664Z | write.start before=75% target=70%
+2026-03-05T10:46:09.666Z | ui.change done action=Manual Down before=75% after=70%
+2026-03-05T10:46:09.748Z | write.retry target=70% actual=75%
+2026-03-05T10:46:09.749Z | sim.override set=70%
+2026-03-05T10:46:09.749Z | write.done target=70% actual=75%
+2026-03-05T10:46:09.893Z | sim.override cleared by external change system=75%
+2026-03-05T10:46:09.894Z | refresh.volume old=70% new=75%
+2026-03-05T10:46:10.147Z | ui.tap down
+2026-03-05T10:46:10.148Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:46:10.151Z | write.start before=75% target=70%
+2026-03-05T10:46:10.153Z | ui.change done action=Manual Down before=75% after=70%
+2026-03-05T10:46:10.236Z | write.retry target=70% actual=75%
+2026-03-05T10:46:10.237Z | sim.override set=70%
+2026-03-05T10:46:10.238Z | write.done target=70% actual=75%
+2026-03-05T10:46:10.392Z | sim.override cleared by external change system=75%
+2026-03-05T10:46:10.393Z | refresh.volume old=70% new=75%
+2026-03-05T10:46:10.477Z | ui.tap down
+2026-03-05T10:46:10.478Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:46:10.479Z | write.start before=75% target=70%
+2026-03-05T10:46:10.480Z | ui.change done action=Manual Down before=75% after=70%
+2026-03-05T10:46:10.562Z | write.retry target=70% actual=75%
+2026-03-05T10:46:10.563Z | sim.override set=70%
+2026-03-05T10:46:10.564Z | write.done target=70% actual=75%
+2026-03-05T10:46:10.643Z | sim.override cleared by external change system=75%
+2026-03-05T10:46:10.644Z | refresh.volume old=70% new=75%
+2026-03-05T10:46:12.143Z | refresh.volume old=75% new=70%
+2026-03-05T10:46:12.144Z | system.read source=timer value=70%
+2026-03-05T10:46:13.643Z | refresh.volume old=70% new=60%
+2026-03-05T10:46:13.644Z | system.read source=timer value=60%
+2026-03-05T10:46:16.529Z | ui.tap muteToggle current=60%
+2026-03-05T10:46:16.530Z | ui.preset set target=0%
+2026-03-05T10:46:16.531Z | write.start before=60% target=0%
+2026-03-05T10:46:16.533Z | ui.preset done current=60%
+2026-03-05T10:46:16.533Z | ui.mute muted
+2026-03-05T10:46:16.614Z | write.retry target=0% actual=60%
+2026-03-05T10:46:16.616Z | sim.override set=0%
+2026-03-05T10:46:16.617Z | write.done target=0% actual=60%
+2026-03-05T10:46:16.643Z | sim.override cleared by external change system=60%
+2026-03-05T10:46:17.782Z | ui.preset set target=50%
+2026-03-05T10:46:17.783Z | write.start before=60% target=50%
+2026-03-05T10:46:17.785Z | ui.preset done current=60%
+2026-03-05T10:46:17.865Z | write.retry target=50% actual=60%
+2026-03-05T10:46:17.866Z | sim.override set=50%
+2026-03-05T10:46:17.867Z | write.done target=50% actual=60%
+2026-03-05T10:46:17.893Z | sim.override cleared by external change system=60%
+2026-03-05T10:46:18.478Z | ui.preset set target=80%
+2026-03-05T10:46:18.478Z | write.start before=60% target=80%
+2026-03-05T10:46:18.480Z | ui.preset done current=60%
+2026-03-05T10:46:18.560Z | write.retry target=80% actual=60%
+2026-03-05T10:46:18.562Z | sim.override set=80%
+2026-03-05T10:46:18.563Z | write.done target=80% actual=60%
+2026-03-05T10:46:18.642Z | sim.override cleared by external change system=60%
+2026-03-05T10:48:29.897Z | app.previousLogCount=240
+2026-03-05T10:48:29.898Z | app.logFile=/Users/sarsiz/Library/Developer/CoreSimulator/Devices/25D3BDE6-E7C5-4A70-8E64-FDA5EFCE314B/data/Containers/Data/Application/B959F56B-A6D5-4C79-83C7-9E654ADBB18B/Library/Application Support/volume-diagnostics.log
+2026-03-05T10:48:29.956Z | bridge.attach.internal immediate
+2026-03-05T10:48:29.957Z | app.init started
+2026-03-05T10:48:29.960Z | refresh.volume old=0% new=60%
+2026-03-05T10:48:29.960Z | system.read source=timer value=60%
+2026-03-05T10:48:29.961Z | refresh.ready ready
+2026-03-05T10:48:29.962Z | app.init complete ready=true volume=60%
+2026-03-05T10:48:30.015Z | bridge.attach.external slider attached
+2026-03-05T10:48:30.017Z | ui.bridge sliderAttached
+2026-03-05T10:48:30.100Z | bridge.mount ok
+2026-03-05T10:48:31.950Z | ui.tap down
+2026-03-05T10:48:31.952Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:48:31.955Z | write.start before=60% target=55%
+2026-03-05T10:48:31.959Z | ui.change done action=Manual Down before=60% after=55%
+2026-03-05T10:48:31.964Z | refresh.volume old=55% new=60%
+2026-03-05T10:48:32.040Z | write.retry target=55% actual=60%
+2026-03-05T10:48:32.040Z | sim.override set=55%
+2026-03-05T10:48:32.041Z | write.done target=55% actual=60%
+2026-03-05T10:48:32.213Z | refresh.volume old=60% new=55%
+2026-03-05T10:48:34.204Z | ui.tap down
+2026-03-05T10:48:34.206Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:48:34.209Z | write.start before=60% target=50%
+2026-03-05T10:48:34.213Z | ui.change done action=Manual Down before=55% after=50%
+2026-03-05T10:48:34.219Z | refresh.volume old=50% new=55%
+2026-03-05T10:48:34.295Z | write.retry target=50% actual=60%
+2026-03-05T10:48:34.296Z | sim.override set=50%
+2026-03-05T10:48:34.297Z | write.done target=50% actual=60%
+2026-03-05T10:48:34.463Z | refresh.volume old=55% new=50%
+2026-03-05T10:48:36.303Z | ui.tap down
+2026-03-05T10:48:36.304Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:48:36.305Z | write.start before=60% target=45%
+2026-03-05T10:48:36.306Z | ui.change done action=Manual Down before=50% after=45%
+2026-03-05T10:48:36.389Z | write.retry target=45% actual=60%
+2026-03-05T10:48:36.390Z | sim.override set=45%
+2026-03-05T10:48:36.391Z | write.done target=45% actual=60%
+2026-03-05T10:48:37.603Z | ui.tap down
+2026-03-05T10:48:37.604Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:48:37.605Z | write.start before=60% target=39%
+2026-03-05T10:48:37.606Z | ui.change done action=Manual Down before=45% after=39%
+2026-03-05T10:48:37.689Z | write.retry target=39% actual=60%
+2026-03-05T10:48:37.690Z | sim.override set=39%
+2026-03-05T10:48:37.691Z | write.done target=39% actual=60%
+2026-03-05T10:48:38.619Z | ui.tap down
+2026-03-05T10:48:38.620Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:48:38.622Z | write.start before=60% target=34%
+2026-03-05T10:48:38.623Z | ui.change done action=Manual Down before=39% after=34%
+2026-03-05T10:48:38.706Z | write.retry target=34% actual=60%
+2026-03-05T10:48:38.707Z | sim.override set=34%
+2026-03-05T10:48:38.707Z | write.done target=34% actual=60%
+2026-03-05T10:48:39.653Z | ui.tap down
+2026-03-05T10:48:39.654Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:48:39.656Z | write.start before=60% target=29%
+2026-03-05T10:48:39.658Z | ui.change done action=Manual Down before=34% after=29%
+2026-03-05T10:48:39.713Z | refresh.volume old=29% new=34%
+2026-03-05T10:48:39.739Z | write.retry target=29% actual=60%
+2026-03-05T10:48:39.740Z | sim.override set=29%
+2026-03-05T10:48:39.740Z | write.done target=29% actual=60%
+2026-03-05T10:48:39.964Z | refresh.volume old=34% new=29%
+2026-03-05T10:48:42.461Z | ui.tap up
+2026-03-05T10:48:42.463Z | ui.change action=Manual Up delta=0.05
+2026-03-05T10:48:42.467Z | write.start before=60% target=34%
+2026-03-05T10:48:42.470Z | ui.change done action=Manual Up before=29% after=34%
+2026-03-05T10:48:42.476Z | refresh.volume old=34% new=29%
+2026-03-05T10:48:42.552Z | write.retry target=34% actual=60%
+2026-03-05T10:48:42.553Z | sim.override set=34%
+2026-03-05T10:48:42.553Z | write.done target=34% actual=60%
+2026-03-05T10:48:42.713Z | refresh.volume old=29% new=34%
+2026-03-05T10:48:43.730Z | ui.tap up
+2026-03-05T10:48:43.731Z | ui.change action=Manual Up delta=0.05
+2026-03-05T10:48:43.733Z | write.start before=60% target=39%
+2026-03-05T10:48:43.735Z | ui.change done action=Manual Up before=34% after=39%
+2026-03-05T10:48:43.818Z | write.retry target=39% actual=60%
+2026-03-05T10:48:43.819Z | sim.override set=39%
+2026-03-05T10:48:43.820Z | write.done target=39% actual=60%
+2026-03-05T10:48:44.903Z | ui.tap up
+2026-03-05T10:48:44.904Z | ui.change action=Manual Up delta=0.05
+2026-03-05T10:48:44.906Z | write.start before=60% target=45%
+2026-03-05T10:48:44.909Z | ui.change done action=Manual Up before=39% after=45%
+2026-03-05T10:48:44.963Z | refresh.volume old=45% new=39%
+2026-03-05T10:48:44.991Z | write.retry target=45% actual=60%
+2026-03-05T10:48:44.991Z | sim.override set=45%
+2026-03-05T10:48:44.992Z | write.done target=45% actual=60%
+2026-03-05T10:48:45.213Z | refresh.volume old=39% new=45%
+2026-03-05T10:48:47.213Z | sim.override cleared by external change system=55%
+2026-03-05T10:48:47.215Z | refresh.volume old=45% new=55%
+2026-03-05T10:48:47.217Z | system.read source=timer value=55%
+2026-03-05T10:48:49.463Z | refresh.volume old=55% new=50%
+2026-03-05T10:48:49.465Z | system.read source=timer value=50%
+2026-03-05T10:48:51.128Z | ui.tap down
+2026-03-05T10:48:51.129Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:48:51.130Z | write.start before=50% target=45%
+2026-03-05T10:48:51.132Z | ui.change done action=Manual Down before=50% after=45%
+2026-03-05T10:48:51.213Z | refresh.volume old=45% new=50%
+2026-03-05T10:48:51.216Z | write.retry target=45% actual=50%
+2026-03-05T10:48:51.216Z | sim.override set=45%
+2026-03-05T10:48:51.217Z | write.done target=45% actual=50%
+2026-03-05T10:48:51.463Z | refresh.volume old=50% new=45%
+2026-03-05T10:48:52.657Z | ui.tap down
+2026-03-05T10:48:52.658Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:48:52.660Z | write.start before=50% target=39%
+2026-03-05T10:48:52.663Z | ui.change done action=Manual Down before=45% after=39%
+2026-03-05T10:48:52.713Z | refresh.volume old=39% new=45%
+2026-03-05T10:48:52.745Z | write.retry target=39% actual=50%
+2026-03-05T10:48:52.746Z | sim.override set=39%
+2026-03-05T10:48:52.747Z | write.done target=39% actual=50%
+2026-03-05T10:48:52.963Z | refresh.volume old=45% new=39%
+2026-03-05T10:48:54.963Z | sim.override cleared by external change system=55%
+2026-03-05T10:48:54.965Z | refresh.volume old=39% new=55%
+2026-03-05T10:48:54.966Z | system.read source=timer value=55%
+2026-03-05T10:49:03.045Z | ui.tap muteToggle current=55%
+2026-03-05T10:49:03.045Z | ui.preset set target=0%
+2026-03-05T10:49:03.046Z | write.start before=55% target=0%
+2026-03-05T10:49:03.048Z | ui.preset done current=55%
+2026-03-05T10:49:03.048Z | ui.mute muted
+2026-03-05T10:49:03.131Z | write.retry target=0% actual=55%
+2026-03-05T10:49:03.132Z | sim.override set=0%
+2026-03-05T10:49:03.133Z | write.done target=0% actual=55%
+2026-03-05T10:49:03.213Z | refresh.volume old=55% new=0%
+2026-03-05T10:49:06.713Z | ui.tap muteToggle current=0%
+2026-03-05T10:49:06.717Z | ui.preset set target=55%
+2026-03-05T10:49:06.718Z | write.start before=55% target=55%
+2026-03-05T10:49:06.723Z | ui.preset done current=0%
+2026-03-05T10:49:06.724Z | ui.mute unmuted restore=55%
+2026-03-05T10:49:06.804Z | write.done target=55% actual=55%
+2026-03-05T10:49:06.963Z | refresh.volume old=0% new=55%
+2026-03-05T10:49:08.124Z | ui.preset set target=80%
+2026-03-05T10:49:08.125Z | write.start before=55% target=80%
+2026-03-05T10:49:08.127Z | ui.preset done current=55%
+2026-03-05T10:49:08.210Z | write.retry target=80% actual=55%
+2026-03-05T10:49:08.213Z | sim.override set=80%
+2026-03-05T10:49:08.214Z | write.done target=80% actual=55%
+2026-03-05T10:49:08.216Z | refresh.volume old=55% new=80%
+2026-03-05T10:49:10.044Z | ui.tap down
+2026-03-05T10:49:10.045Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:49:10.046Z | write.start before=55% target=75%
+2026-03-05T10:49:10.048Z | ui.change done action=Manual Down before=80% after=75%
+2026-03-05T10:49:10.131Z | write.retry target=75% actual=55%
+2026-03-05T10:49:10.133Z | sim.override set=75%
+2026-03-05T10:49:10.133Z | write.done target=75% actual=55%
+2026-03-05T10:49:11.827Z | ui.tap up
+2026-03-05T10:49:11.828Z | ui.change action=Manual Up delta=0.05
+2026-03-05T10:49:11.829Z | write.start before=55% target=80%
+2026-03-05T10:49:11.831Z | ui.change done action=Manual Up before=75% after=80%
+2026-03-05T10:49:11.914Z | write.retry target=80% actual=55%
+2026-03-05T10:49:11.915Z | sim.override set=80%
+2026-03-05T10:49:11.916Z | write.done target=80% actual=55%
+2026-03-05T10:52:15.945Z | app.previousLogCount=300
+2026-03-05T10:52:15.950Z | app.logFile=/Users/sarsiz/Library/Developer/CoreSimulator/Devices/25D3BDE6-E7C5-4A70-8E64-FDA5EFCE314B/data/Containers/Data/Application/07479E72-EE77-46A8-A547-276E786CE5C4/Library/Application Support/volume-diagnostics.log
+2026-03-05T10:52:15.994Z | bridge.attach.internal immediate
+2026-03-05T10:52:15.996Z | app.init started
+2026-03-05T10:52:15.998Z | refresh.volume old=0% new=55%
+2026-03-05T10:52:15.999Z | system.read source=timer value=55%
+2026-03-05T10:52:16.000Z | refresh.ready ready
+2026-03-05T10:52:16.001Z | app.init complete ready=true volume=55%
+2026-03-05T10:52:16.063Z | bridge.attach.external slider attached
+2026-03-05T10:52:16.065Z | ui.bridge sliderAttached
+2026-03-05T10:52:16.234Z | bridge.mount ok
+2026-03-05T10:52:18.215Z | ui.tap down
+2026-03-05T10:52:18.216Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:52:18.218Z | write.start before=55% target=50%
+2026-03-05T10:52:18.221Z | ui.change done action=Manual Down before=55% after=50%
+2026-03-05T10:52:18.301Z | write.retry target=50% actual=55%
+2026-03-05T10:52:18.302Z | sim.override set=50%
+2026-03-05T10:52:18.302Z | write.done target=50% actual=55%
+2026-03-05T10:52:19.961Z | ui.tap down
+2026-03-05T10:52:19.962Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:52:19.965Z | write.start before=55% target=45%
+2026-03-05T10:52:19.968Z | ui.change done action=Manual Down before=50% after=45%
+2026-03-05T10:52:20.050Z | write.retry target=45% actual=55%
+2026-03-05T10:52:20.051Z | sim.override set=45%
+2026-03-05T10:52:20.052Z | write.done target=45% actual=55%
+2026-03-05T10:52:22.751Z | sim.override cleared by external change system=50%
+2026-03-05T10:52:22.752Z | refresh.volume old=45% new=50%
+2026-03-05T10:52:22.754Z | system.read source=timer value=50%
+2026-03-05T10:52:25.501Z | refresh.volume old=50% new=45%
+2026-03-05T10:52:25.502Z | system.read source=timer value=45%
+2026-03-05T10:57:30.754Z | app.previousLogCount=300
+2026-03-05T10:57:30.755Z | app.logFile=/Users/sarsiz/Library/Developer/CoreSimulator/Devices/25D3BDE6-E7C5-4A70-8E64-FDA5EFCE314B/data/Containers/Data/Application/3C8BFE3A-A482-4487-937F-39DE12934105/Library/Application Support/volume-diagnostics.log
+2026-03-05T10:57:30.793Z | bridge.attach.internal immediate
+2026-03-05T10:57:30.794Z | app.init started
+2026-03-05T10:57:30.796Z | refresh.volume old=0% new=45%
+2026-03-05T10:57:30.796Z | system.read source=timer value=45%
+2026-03-05T10:57:30.797Z | refresh.ready ready
+2026-03-05T10:57:30.798Z | app.init complete ready=true volume=45%
+2026-03-05T10:57:30.843Z | bridge.attach.external slider attached
+2026-03-05T10:57:30.845Z | ui.bridge sliderAttached
+2026-03-05T10:57:30.906Z | bridge.mount ok
+2026-03-05T10:57:36.107Z | ui.tap down
+2026-03-05T10:57:36.107Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:57:36.109Z | write.start before=45% target=40%
+2026-03-05T10:57:36.110Z | ui.change done action=Manual Down before=45% after=40%
+2026-03-05T10:57:36.192Z | write.retry target=40% actual=45%
+2026-03-05T10:57:36.193Z | sim.override set=40%
+2026-03-05T10:57:36.194Z | write.done target=40% actual=45%
+2026-03-05T10:57:37.347Z | ui.tap down
+2026-03-05T10:57:37.348Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T10:57:37.349Z | write.start before=45% target=35%
+2026-03-05T10:57:37.351Z | ui.change done action=Manual Down before=40% after=35%
+2026-03-05T10:57:37.434Z | write.retry target=35% actual=45%
+2026-03-05T10:57:37.435Z | sim.override set=35%
+2026-03-05T10:57:37.435Z | write.done target=35% actual=45%
+2026-03-05T10:57:39.800Z | sim.override adjustedByPhysical delta=-10 mapped=24%
+2026-03-05T10:57:39.800Z | refresh.volume old=35% new=24%
+2026-03-05T10:57:39.801Z | system.read source=timer value=35%
+2026-03-05T10:57:41.550Z | sim.override adjustedByPhysical delta=-4 mapped=19%
+2026-03-05T10:57:41.552Z | refresh.volume old=24% new=19%
+2026-03-05T10:57:41.554Z | system.read source=timer value=30%
+2026-03-05T10:57:43.094Z | ui.preset set target=50%
+2026-03-05T10:57:43.095Z | write.start before=30% target=50%
+2026-03-05T10:57:43.097Z | ui.preset done current=50%
+2026-03-05T10:57:43.179Z | write.retry target=50% actual=30%
+2026-03-05T10:57:43.181Z | sim.override set=50%
+2026-03-05T10:57:43.182Z | write.done target=50% actual=30%
+2026-03-05T10:57:45.800Z | sim.override adjustedByPhysical delta=4 mapped=54%
+2026-03-05T10:57:45.801Z | refresh.volume old=50% new=54%
+2026-03-05T10:57:45.803Z | system.read source=timer value=35%
+2026-03-05T10:57:50.549Z | sim.override adjustedByPhysical delta=10 mapped=65%
+2026-03-05T10:57:50.551Z | refresh.volume old=54% new=65%
+2026-03-05T10:57:50.552Z | system.read source=timer value=45%
+2026-03-05T10:57:51.799Z | sim.override adjustedByPhysical delta=4 mapped=69%
+2026-03-05T10:57:51.800Z | refresh.volume old=65% new=69%
+2026-03-05T10:57:51.802Z | system.read source=timer value=50%
+2026-03-05T10:57:52.549Z | sim.override adjustedByPhysical delta=5 mapped=74%
+2026-03-05T10:57:52.551Z | refresh.volume old=69% new=74%
+2026-03-05T10:57:52.553Z | system.read source=timer value=55%
+2026-03-05T10:57:53.550Z | sim.override adjustedByPhysical delta=5 mapped=79%
+2026-03-05T10:57:53.552Z | refresh.volume old=74% new=79%
+2026-03-05T10:57:53.554Z | system.read source=timer value=60%
+2026-03-05T10:57:54.049Z | sim.override adjustedByPhysical delta=9 mapped=89%
+2026-03-05T10:57:54.051Z | refresh.volume old=79% new=89%
+2026-03-05T10:57:54.053Z | system.read source=timer value=70%
+2026-03-05T10:57:55.299Z | sim.override adjustedByPhysical delta=5 mapped=94%
+2026-03-05T10:57:55.301Z | refresh.volume old=89% new=94%
+2026-03-05T10:57:55.302Z | system.read source=timer value=75%
+2026-03-05T10:57:56.299Z | sim.override adjustedByPhysical delta=5 mapped=99%
+2026-03-05T10:57:56.301Z | refresh.volume old=94% new=99%
+2026-03-05T10:57:56.303Z | system.read source=timer value=80%
+2026-03-05T10:57:57.049Z | sim.override adjustedByPhysical delta=5 mapped=100%
+2026-03-05T10:57:57.051Z | system.read source=timer value=85%
+2026-03-05T10:57:58.050Z | sim.override adjustedByPhysical delta=9 mapped=100%
+2026-03-05T10:57:58.051Z | system.read source=timer value=95%
+2026-03-05T10:57:58.800Z | sim.override adjustedByPhysical delta=5 mapped=100%
+2026-03-05T10:57:58.801Z | system.read source=timer value=100%
+2026-03-05T10:58:00.800Z | sim.override adjustedByPhysical delta=-5 mapped=95%
+2026-03-05T10:58:00.801Z | refresh.volume old=100% new=95%
+2026-03-05T10:58:00.803Z | system.read source=timer value=95%
+2026-03-05T10:58:02.049Z | sim.override adjustedByPhysical delta=-9 mapped=85%
+2026-03-05T10:58:02.051Z | refresh.volume old=95% new=85%
+2026-03-05T10:58:02.052Z | system.read source=timer value=85%
+2026-03-05T10:58:03.550Z | sim.override adjustedByPhysical delta=9 mapped=95%
+2026-03-05T10:58:03.551Z | refresh.volume old=85% new=95%
+2026-03-05T10:58:03.553Z | system.read source=timer value=95%
+2026-03-05T10:58:04.800Z | sim.override adjustedByPhysical delta=5 mapped=100%
+2026-03-05T10:58:04.801Z | refresh.volume old=95% new=100%
+2026-03-05T10:58:04.803Z | system.read source=timer value=100%
+2026-03-05T10:58:16.452Z | ui.tap muteToggle current=100%
+2026-03-05T10:58:16.453Z | ui.preset set target=0%
+2026-03-05T10:58:16.454Z | write.start before=100% target=0%
+2026-03-05T10:58:16.457Z | ui.preset done current=0%
+2026-03-05T10:58:16.458Z | ui.mute muted
+2026-03-05T10:58:16.538Z | write.retry target=0% actual=100%
+2026-03-05T10:58:16.539Z | sim.override set=0%
+2026-03-05T10:58:16.541Z | write.done target=0% actual=100%
+2026-03-05T10:58:18.428Z | ui.tap muteToggle current=0%
+2026-03-05T10:58:18.429Z | ui.preset set target=100%
+2026-03-05T10:58:18.429Z | write.start before=100% target=100%
+2026-03-05T10:58:18.432Z | ui.preset done current=100%
+2026-03-05T10:58:18.432Z | ui.mute unmuted restore=100%
+2026-03-05T10:58:18.513Z | write.done target=100% actual=100%
+2026-03-05T11:03:57.613Z | app.previousLogCount=300
+2026-03-05T11:03:57.617Z | app.logFile=/Users/sarsiz/Library/Developer/CoreSimulator/Devices/25D3BDE6-E7C5-4A70-8E64-FDA5EFCE314B/data/Containers/Data/Application/A54383B1-2459-419A-9ADF-C919793CB44A/Library/Application Support/volume-diagnostics.log
+2026-03-05T11:03:57.685Z | bridge.attach.internal immediate
+2026-03-05T11:03:57.686Z | app.init started
+2026-03-05T11:03:57.689Z | refresh.volume old=0% new=100%
+2026-03-05T11:03:57.689Z | system.read source=timer value=100%
+2026-03-05T11:03:57.690Z | refresh.ready ready
+2026-03-05T11:03:57.691Z | app.init complete ready=true volume=100%
+2026-03-05T11:03:57.772Z | bridge.attach.external slider attached
+2026-03-05T11:03:57.774Z | ui.bridge sliderAttached
+2026-03-05T11:03:57.968Z | bridge.mount ok
+2026-03-05T11:04:09.692Z | refresh.volume old=100% new=95%
+2026-03-05T11:04:09.694Z | system.read source=timer value=95%
+2026-03-05T11:04:10.692Z | refresh.volume old=95% new=85%
+2026-03-05T11:04:10.693Z | system.read source=timer value=85%
+2026-03-05T11:04:14.878Z | ui.tap down
+2026-03-05T11:04:14.879Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T11:04:14.880Z | write.start before=85% target=80%
+2026-03-05T11:04:14.882Z | ui.change done action=Manual Down before=85% after=80%
+2026-03-05T11:04:14.964Z | write.retry target=80% actual=85%
+2026-03-05T11:04:14.965Z | sim.override set=80%
+2026-03-05T11:04:14.966Z | write.done target=80% actual=85%
+2026-03-05T11:04:15.661Z | ui.tap down
+2026-03-05T11:04:15.662Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T11:04:15.664Z | write.start before=85% target=75%
+2026-03-05T11:04:15.667Z | ui.change done action=Manual Down before=80% after=75%
+2026-03-05T11:04:15.748Z | write.retry target=75% actual=85%
+2026-03-05T11:04:15.749Z | sim.override set=75%
+2026-03-05T11:04:15.750Z | write.done target=75% actual=85%
+2026-03-05T11:04:16.196Z | ui.tap down
+2026-03-05T11:04:16.197Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T11:04:16.198Z | write.start before=85% target=70%
+2026-03-05T11:04:16.200Z | ui.change done action=Manual Down before=75% after=70%
+2026-03-05T11:04:16.280Z | write.retry target=70% actual=85%
+2026-03-05T11:04:16.281Z | sim.override set=70%
+2026-03-05T11:04:16.282Z | write.done target=70% actual=85%
+2026-03-05T11:04:16.696Z | ui.tap down
+2026-03-05T11:04:16.697Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T11:04:16.698Z | write.start before=85% target=65%
+2026-03-05T11:04:16.701Z | ui.change done action=Manual Down before=70% after=65%
+2026-03-05T11:04:16.784Z | write.retry target=65% actual=85%
+2026-03-05T11:04:16.785Z | sim.override set=65%
+2026-03-05T11:04:16.786Z | write.done target=65% actual=85%
+2026-03-05T11:04:17.044Z | ui.tap down
+2026-03-05T11:04:17.045Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T11:04:17.046Z | write.start before=85% target=59%
+2026-03-05T11:04:17.047Z | ui.change done action=Manual Down before=65% after=59%
+2026-03-05T11:04:17.130Z | write.retry target=59% actual=85%
+2026-03-05T11:04:17.131Z | sim.override set=59%
+2026-03-05T11:04:17.132Z | write.done target=59% actual=85%
+2026-03-05T11:04:17.344Z | ui.tap down
+2026-03-05T11:04:17.345Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T11:04:17.346Z | write.start before=85% target=54%
+2026-03-05T11:04:17.347Z | ui.change done action=Manual Down before=59% after=54%
+2026-03-05T11:04:17.430Z | write.retry target=54% actual=85%
+2026-03-05T11:04:17.432Z | sim.override set=54%
+2026-03-05T11:04:17.432Z | write.done target=54% actual=85%
+2026-03-05T11:04:19.791Z | ui.tap up
+2026-03-05T11:04:19.791Z | ui.change action=Manual Up delta=0.05
+2026-03-05T11:04:19.792Z | write.start before=85% target=59%
+2026-03-05T11:04:19.794Z | ui.change done action=Manual Up before=54% after=59%
+2026-03-05T11:04:19.876Z | write.retry target=59% actual=85%
+2026-03-05T11:04:19.877Z | sim.override set=59%
+2026-03-05T11:04:19.878Z | write.done target=59% actual=85%
+2026-03-05T11:04:20.798Z | ui.tap up
+2026-03-05T11:04:20.799Z | ui.change action=Manual Up delta=0.05
+2026-03-05T11:04:20.800Z | write.start before=85% target=65%
+2026-03-05T11:04:20.802Z | ui.change done action=Manual Up before=59% after=65%
+2026-03-05T11:04:20.885Z | write.retry target=65% actual=85%
+2026-03-05T11:04:20.886Z | sim.override set=65%
+2026-03-05T11:04:20.886Z | write.done target=65% actual=85%
+2026-03-05T11:04:25.873Z | ui.tap muteToggle current=65%
+2026-03-05T11:04:25.874Z | ui.preset set target=0%
+2026-03-05T11:04:25.875Z | write.start before=85% target=0%
+2026-03-05T11:04:25.878Z | ui.preset done current=0%
+2026-03-05T11:04:25.879Z | ui.mute muted
+2026-03-05T11:04:25.959Z | write.retry target=0% actual=85%
+2026-03-05T11:04:25.960Z | sim.override set=0%
+2026-03-05T11:04:25.961Z | write.done target=0% actual=85%
+2026-03-05T11:04:27.211Z | ui.tap muteToggle current=0%
+2026-03-05T11:04:27.214Z | ui.preset set target=65%
+2026-03-05T11:04:27.215Z | write.start before=85% target=65%
+2026-03-05T11:04:27.218Z | ui.preset done current=65%
+2026-03-05T11:04:27.218Z | ui.mute unmuted restore=65%
+2026-03-05T11:04:27.299Z | write.retry target=65% actual=85%
+2026-03-05T11:04:27.300Z | sim.override set=65%
+2026-03-05T11:04:27.301Z | write.done target=65% actual=85%
+2026-03-05T11:04:28.478Z | ui.preset set target=80%
+2026-03-05T11:04:28.479Z | write.start before=85% target=80%
+2026-03-05T11:04:28.481Z | ui.preset done current=80%
+2026-03-05T11:04:28.564Z | write.retry target=80% actual=85%
+2026-03-05T11:04:28.565Z | sim.override set=80%
+2026-03-05T11:04:28.566Z | write.done target=80% actual=85%
+2026-03-05T11:04:30.144Z | ui.preset set target=50%
+2026-03-05T11:04:30.145Z | write.start before=85% target=50%
+2026-03-05T11:04:30.148Z | ui.preset done current=50%
+2026-03-05T11:04:30.231Z | write.retry target=50% actual=85%
+2026-03-05T11:04:30.232Z | sim.override set=50%
+2026-03-05T11:04:30.233Z | write.done target=50% actual=85%
+2026-03-05T11:04:32.192Z | sim.override adjustedByPhysical delta=-5 mapped=45%
+2026-03-05T11:04:32.193Z | refresh.volume old=50% new=45%
+2026-03-05T11:04:32.195Z | system.read source=timer value=80%
+2026-03-05T11:04:34.942Z | sim.override adjustedByPhysical delta=-5 mapped=39%
+2026-03-05T11:04:34.944Z | refresh.volume old=45% new=39%
+2026-03-05T11:04:34.945Z | system.read source=timer value=75%
+2026-03-05T11:04:35.942Z | sim.override adjustedByPhysical delta=-5 mapped=34%
+2026-03-05T11:04:35.944Z | refresh.volume old=39% new=34%
+2026-03-05T11:04:35.946Z | system.read source=timer value=70%
+2026-03-05T11:04:36.692Z | sim.override adjustedByPhysical delta=-9 mapped=25%
+2026-03-05T11:04:36.694Z | refresh.volume old=34% new=25%
+2026-03-05T11:04:36.696Z | system.read source=timer value=60%
+2026-03-05T11:04:37.442Z | sim.override adjustedByPhysical delta=-5 mapped=19%
+2026-03-05T11:04:37.444Z | refresh.volume old=25% new=19%
+2026-03-05T11:04:37.446Z | system.read source=timer value=55%
+2026-03-05T11:04:38.192Z | sim.override adjustedByPhysical delta=-5 mapped=14%
+2026-03-05T11:04:38.194Z | refresh.volume old=19% new=14%
+2026-03-05T11:04:38.196Z | system.read source=timer value=50%
+2026-03-05T11:04:38.692Z | sim.override adjustedByPhysical delta=-4 mapped=9%
+2026-03-05T11:04:38.694Z | refresh.volume old=14% new=9%
+2026-03-05T11:04:38.695Z | system.read source=timer value=45%
+2026-03-05T11:04:39.442Z | sim.override adjustedByPhysical delta=-10 mapped=0%
+2026-03-05T11:04:39.444Z | refresh.volume old=9% new=0%
+2026-03-05T11:04:39.447Z | system.read source=timer value=35%
+2026-03-05T11:04:40.192Z | sim.override adjustedByPhysical delta=-4 mapped=0%
+2026-03-05T11:04:40.194Z | system.read source=timer value=30%
+2026-03-05T11:04:40.692Z | sim.override adjustedByPhysical delta=-5 mapped=0%
+2026-03-05T11:04:40.694Z | system.read source=timer value=25%
+2026-03-05T11:04:41.692Z | sim.override adjustedByPhysical delta=-4 mapped=0%
+2026-03-05T11:04:41.695Z | system.read source=timer value=20%
+2026-03-05T11:04:42.192Z | sim.override adjustedByPhysical delta=-10 mapped=0%
+2026-03-05T11:04:42.195Z | system.read source=timer value=10%
+2026-03-05T11:04:42.942Z | sim.override adjustedByPhysical delta=-5 mapped=0%
+2026-03-05T11:04:42.944Z | system.read source=timer value=5%
+2026-03-05T11:04:43.942Z | sim.override adjustedByPhysical delta=-5 mapped=0%
+2026-03-05T11:04:43.944Z | system.read source=timer value=0%
+2026-03-05T11:05:10.367Z | ui.dial set target=90%
+2026-03-05T11:05:10.369Z | write.start before=0% target=90%
+2026-03-05T11:05:10.373Z | ui.dial done current=90%
+2026-03-05T11:05:10.455Z | write.retry target=90% actual=0%
+2026-03-05T11:05:10.456Z | sim.override set=90%
+2026-03-05T11:05:10.458Z | write.done target=90% actual=0%
+2026-03-05T11:05:10.461Z | ui.dial set target=90%
+2026-03-05T11:05:10.462Z | write.start before=0% target=90%
+2026-03-05T11:05:10.465Z | ui.dial done current=90%
+2026-03-05T11:05:10.478Z | ui.dial set target=89%
+2026-03-05T11:05:10.480Z | write.start before=0% target=89%
+2026-03-05T11:05:10.482Z | ui.dial done current=89%
+2026-03-05T11:05:10.495Z | ui.dial set target=87%
+2026-03-05T11:05:10.497Z | write.start before=0% target=87%
+2026-03-05T11:05:10.499Z | ui.dial done current=87%
+2026-03-05T11:05:10.512Z | ui.dial set target=82%
+2026-03-05T11:05:10.513Z | write.start before=0% target=82%
+2026-03-05T11:05:10.515Z | ui.dial done current=82%
+2026-03-05T11:05:10.528Z | ui.dial set target=75%
+2026-03-05T11:05:10.530Z | write.start before=0% target=75%
+2026-03-05T11:05:10.532Z | ui.dial done current=75%
+2026-03-05T11:05:10.545Z | ui.dial set target=67%
+2026-03-05T11:05:10.547Z | write.start before=0% target=67%
+2026-03-05T11:05:10.548Z | ui.dial done current=67%
+2026-03-05T11:05:10.553Z | write.retry target=90% actual=0%
+2026-03-05T11:05:10.554Z | sim.override set=90%
+2026-03-05T11:05:10.555Z | write.done target=90% actual=0%
+2026-03-05T11:05:10.562Z | ui.dial set target=61%
+2026-03-05T11:05:10.563Z | write.start before=0% target=61%
+2026-03-05T11:05:10.564Z | ui.dial done current=61%
+2026-03-05T11:05:10.569Z | write.retry target=89% actual=0%
+2026-03-05T11:05:10.570Z | sim.override set=89%
+2026-03-05T11:05:10.570Z | write.done target=89% actual=0%
+2026-03-05T11:05:10.578Z | ui.dial set target=58%
+2026-03-05T11:05:10.579Z | write.start before=0% target=58%
+2026-03-05T11:05:10.581Z | ui.dial done current=58%
+2026-03-05T11:05:10.586Z | write.retry target=87% actual=0%
+2026-03-05T11:05:10.587Z | sim.override set=87%
+2026-03-05T11:05:10.588Z | write.done target=87% actual=0%
+2026-03-05T11:05:10.595Z | ui.dial set target=57%
+2026-03-05T11:05:10.596Z | write.start before=0% target=57%
+2026-03-05T11:05:10.597Z | ui.dial done current=57%
+2026-03-05T11:05:10.601Z | write.retry target=82% actual=0%
+2026-03-05T11:05:10.602Z | sim.override set=82%
+2026-03-05T11:05:10.603Z | write.done target=82% actual=0%
+2026-03-05T11:05:10.612Z | ui.dial set target=56%
+2026-03-05T11:05:10.612Z | write.start before=0% target=56%
+2026-03-05T11:05:10.614Z | ui.dial done current=56%
+2026-03-05T11:05:10.618Z | write.retry target=75% actual=0%
+2026-03-05T11:05:10.618Z | sim.override set=75%
+2026-03-05T11:05:10.619Z | write.done target=75% actual=0%
+2026-03-05T11:05:10.631Z | write.retry target=67% actual=0%
+2026-03-05T11:05:10.632Z | sim.override set=67%
+2026-03-05T11:05:10.633Z | write.done target=67% actual=0%
+2026-03-05T11:05:10.648Z | write.retry target=61% actual=0%
+2026-03-05T11:05:10.649Z | sim.override set=61%
+2026-03-05T11:05:10.649Z | write.done target=61% actual=0%
+2026-03-05T11:05:10.664Z | write.retry target=58% actual=0%
+2026-03-05T11:05:10.665Z | sim.override set=58%
+2026-03-05T11:05:10.666Z | write.done target=58% actual=0%
+2026-03-05T11:05:10.680Z | write.retry target=57% actual=0%
+2026-03-05T11:05:10.681Z | sim.override set=57%
+2026-03-05T11:05:10.682Z | write.done target=57% actual=0%
+2026-03-05T11:05:10.697Z | write.retry target=56% actual=0%
+2026-03-05T11:05:10.697Z | sim.override set=56%
+2026-03-05T11:05:10.698Z | write.done target=56% actual=0%
+2026-03-05T11:05:11.510Z | ui.dial set target=76%
+2026-03-05T11:05:11.511Z | write.start before=0% target=76%
+2026-03-05T11:05:11.515Z | ui.dial done current=76%
+2026-03-05T11:05:11.598Z | write.retry target=76% actual=0%
+2026-03-05T11:05:11.601Z | sim.override set=76%
+2026-03-05T11:05:11.603Z | write.done target=76% actual=0%
+2026-03-05T11:05:11.628Z | ui.dial set target=76%
+2026-03-05T11:05:11.630Z | write.start before=0% target=76%
+2026-03-05T11:05:11.633Z | ui.dial done current=76%
+2026-03-05T11:05:11.646Z | ui.dial set target=75%
+2026-03-05T11:05:11.647Z | write.start before=0% target=75%
+2026-03-05T11:05:11.650Z | ui.dial done current=75%
+2026-03-05T11:05:11.662Z | ui.dial set target=75%
+2026-03-05T11:05:11.663Z | write.start before=0% target=75%
+2026-03-05T11:05:11.665Z | ui.dial done current=75%
+2026-03-05T11:05:11.678Z | ui.dial set target=74%
+2026-03-05T11:05:11.680Z | write.start before=0% target=74%
+2026-03-05T11:05:11.682Z | ui.dial done current=74%
+2026-03-05T11:05:11.696Z | ui.dial set target=73%
+2026-03-05T11:05:11.696Z | write.start before=0% target=73%
+2026-03-05T11:05:11.698Z | ui.dial done current=73%
+2026-03-05T11:05:11.712Z | ui.dial set target=72%
+2026-03-05T11:05:11.713Z | write.start before=0% target=72%
+2026-03-05T11:05:11.715Z | ui.dial done current=72%
+2026-03-05T11:05:11.719Z | write.retry target=76% actual=0%
+2026-03-05T11:05:11.720Z | sim.override set=76%
+2026-03-05T11:05:11.721Z | write.done target=76% actual=0%
+2026-03-05T11:05:11.728Z | ui.dial set target=71%
+2026-03-05T11:05:11.729Z | write.start before=0% target=71%
+2026-03-05T11:05:11.731Z | ui.dial done current=71%
+2026-03-05T11:05:11.735Z | write.retry target=75% actual=0%
+2026-03-05T11:05:11.736Z | sim.override set=75%
+2026-03-05T11:05:11.736Z | write.done target=75% actual=0%
+2026-03-05T11:05:11.745Z | ui.dial set target=70%
+2026-03-05T11:05:11.746Z | write.start before=0% target=70%
+2026-03-05T11:05:11.747Z | ui.dial done current=70%
+2026-03-05T11:05:11.752Z | write.retry target=75% actual=0%
+2026-03-05T11:05:11.753Z | sim.override set=75%
+2026-03-05T11:05:11.754Z | write.done target=75% actual=0%
+2026-03-05T11:05:11.761Z | ui.dial set target=68%
+2026-03-05T11:05:11.762Z | write.start before=0% target=68%
+2026-03-05T11:05:11.764Z | ui.dial done current=68%
+2026-03-05T11:05:11.768Z | write.retry target=74% actual=0%
+2026-03-05T11:05:11.769Z | sim.override set=74%
+2026-03-05T11:05:11.770Z | write.done target=74% actual=0%
+2026-03-05T11:05:11.778Z | ui.dial set target=67%
+2026-03-05T11:05:11.779Z | write.start before=0% target=67%
+2026-03-05T11:05:11.780Z | ui.dial done current=67%
+2026-03-05T11:05:11.784Z | write.retry target=73% actual=0%
+2026-03-05T11:05:11.785Z | sim.override set=73%
+2026-03-05T11:05:11.786Z | write.done target=73% actual=0%
+2026-03-05T11:05:11.795Z | ui.dial set target=66%
+2026-03-05T11:05:11.796Z | write.start before=0% target=66%
+2026-03-05T11:05:11.797Z | ui.dial done current=66%
+2026-03-05T11:05:11.802Z | write.retry target=72% actual=0%
+2026-03-05T11:05:11.803Z | sim.override set=72%
+2026-03-05T11:05:11.804Z | write.done target=72% actual=0%
+2026-03-05T11:05:11.811Z | ui.dial set target=65%
+2026-03-05T11:05:11.813Z | write.start before=0% target=65%
+2026-03-05T11:05:11.815Z | ui.dial done current=65%
+2026-03-05T11:05:11.819Z | write.retry target=71% actual=0%
+2026-03-05T11:05:11.820Z | sim.override set=71%
+2026-03-05T11:05:11.821Z | write.done target=71% actual=0%
+2026-03-05T11:05:11.828Z | ui.dial set target=64%
+2026-03-05T11:05:11.829Z | write.start before=0% target=64%
+2026-03-05T11:05:11.830Z | ui.dial done current=64%
+2026-03-05T11:05:11.835Z | write.retry target=70% actual=0%
+2026-03-05T11:05:11.835Z | sim.override set=70%
+2026-03-05T11:05:11.836Z | write.done target=70% actual=0%
+2026-03-05T11:05:11.845Z | ui.dial set target=63%
+2026-03-05T11:05:11.845Z | write.start before=0% target=63%
+2026-03-05T11:05:11.847Z | ui.dial done current=63%
+2026-03-05T11:05:11.852Z | write.retry target=68% actual=0%
+2026-03-05T11:05:11.852Z | sim.override set=68%
+2026-03-05T11:05:11.853Z | write.done target=68% actual=0%
+2026-03-05T11:05:11.861Z | ui.dial set target=63%
+2026-03-05T11:05:11.862Z | write.start before=0% target=63%
+2026-03-05T11:05:11.863Z | ui.dial done current=63%
+2026-03-05T11:05:11.867Z | write.retry target=67% actual=0%
+2026-03-05T11:05:11.868Z | sim.override set=67%
+2026-03-05T11:05:11.868Z | write.done target=67% actual=0%
+2026-03-05T11:05:11.878Z | ui.dial set target=63%
+2026-03-05T11:05:11.879Z | write.start before=0% target=63%
+2026-03-05T11:05:11.880Z | ui.dial done current=63%
+2026-03-05T11:05:11.884Z | write.retry target=66% actual=0%
+2026-03-05T11:05:11.885Z | sim.override set=66%
+2026-03-05T11:05:11.886Z | write.done target=66% actual=0%
+2026-03-05T11:05:11.895Z | ui.dial set target=63%
+2026-03-05T11:05:11.896Z | write.start before=0% target=63%
+2026-03-05T11:05:11.897Z | ui.dial done current=63%
+2026-03-05T11:05:11.902Z | write.retry target=65% actual=0%
+2026-03-05T11:05:11.908Z | sim.override set=65%
+2026-03-05T11:05:11.909Z | write.done target=65% actual=0%
+2026-03-05T11:05:11.911Z | ui.dial set target=62%
+2026-03-05T11:05:11.912Z | write.start before=0% target=62%
+2026-03-05T11:05:11.914Z | ui.dial done current=62%
+2026-03-05T11:05:11.919Z | write.retry target=64% actual=0%
+2026-03-05T11:05:11.921Z | sim.override set=64%
+2026-03-05T11:05:11.922Z | write.done target=64% actual=0%
+2026-03-05T11:05:11.928Z | ui.dial set target=62%
+2026-03-05T11:05:11.929Z | write.start before=0% target=62%
+2026-03-05T11:05:11.931Z | ui.dial done current=62%
+2026-03-05T11:05:11.936Z | write.retry target=63% actual=0%
+2026-03-05T11:05:11.937Z | sim.override set=63%
+2026-03-05T11:05:11.937Z | write.done target=63% actual=0%
+2026-03-05T11:05:11.945Z | ui.dial set target=62%
+2026-03-05T11:05:11.945Z | write.start before=0% target=62%
+2026-03-05T11:05:11.947Z | ui.dial done current=62%
+2026-03-05T11:05:11.952Z | write.retry target=63% actual=0%
+2026-03-05T11:05:11.953Z | sim.override set=63%
+2026-03-05T11:05:11.954Z | write.done target=63% actual=0%
+2026-03-05T11:05:11.961Z | ui.dial set target=62%
+2026-03-05T11:05:11.963Z | write.start before=0% target=62%
+2026-03-05T11:05:11.964Z | ui.dial done current=62%
+2026-03-05T11:05:11.968Z | write.retry target=63% actual=0%
+2026-03-05T11:05:11.969Z | sim.override set=63%
+2026-03-05T11:05:11.970Z | write.done target=63% actual=0%
+2026-03-05T11:05:11.978Z | ui.dial set target=62%
+2026-03-05T11:05:11.979Z | write.start before=0% target=62%
+2026-03-05T11:05:11.981Z | ui.dial done current=62%
+2026-03-05T11:05:11.985Z | write.retry target=63% actual=0%
+2026-03-05T11:05:11.986Z | sim.override set=63%
+2026-03-05T11:05:11.987Z | write.done target=63% actual=0%
+2026-03-05T11:05:11.995Z | ui.dial set target=62%
+2026-03-05T11:05:11.996Z | write.start before=0% target=62%
+2026-03-05T11:05:11.997Z | ui.dial done current=62%
+2026-03-05T11:05:12.009Z | write.retry target=62% actual=0%
+2026-03-05T11:05:12.010Z | sim.override set=62%
+2026-03-05T11:05:12.012Z | write.done target=62% actual=0%
+2026-03-05T11:05:12.013Z | ui.dial set target=62%
+2026-03-05T11:05:12.014Z | write.start before=0% target=62%
+2026-03-05T11:05:12.015Z | ui.dial done current=62%
+2026-03-05T11:05:12.017Z | write.retry target=62% actual=0%
+2026-03-05T11:05:12.019Z | sim.override set=62%
+2026-03-05T11:05:12.020Z | write.done target=62% actual=0%
+2026-03-05T11:05:12.030Z | write.retry target=62% actual=0%
+2026-03-05T11:05:12.031Z | sim.override set=62%
+2026-03-05T11:05:12.032Z | write.done target=62% actual=0%
+2026-03-05T11:05:12.045Z | ui.dial set target=62%
+2026-03-05T11:05:12.046Z | write.start before=0% target=62%
+2026-03-05T11:05:12.047Z | ui.dial done current=62%
+2026-03-05T11:05:12.051Z | write.retry target=62% actual=0%
+2026-03-05T11:05:12.052Z | sim.override set=62%
+2026-03-05T11:05:12.053Z | write.done target=62% actual=0%
+2026-03-05T11:05:12.064Z | write.retry target=62% actual=0%
+2026-03-05T11:05:12.065Z | sim.override set=62%
+2026-03-05T11:05:12.066Z | write.done target=62% actual=0%
+2026-03-05T11:05:12.080Z | write.retry target=62% actual=0%
+2026-03-05T11:05:12.083Z | sim.override set=62%
+2026-03-05T11:05:12.084Z | write.done target=62% actual=0%
+2026-03-05T11:05:12.097Z | write.retry target=62% actual=0%
+2026-03-05T11:05:12.098Z | sim.override set=62%
+2026-03-05T11:05:12.100Z | write.done target=62% actual=0%
+2026-03-05T11:05:12.130Z | write.retry target=62% actual=0%
+2026-03-05T11:05:12.132Z | sim.override set=62%
+2026-03-05T11:05:12.133Z | write.done target=62% actual=0%
+2026-03-05T11:05:12.196Z | ui.dial set target=61%
+2026-03-05T11:05:12.198Z | write.start before=0% target=61%
+2026-03-05T11:05:12.203Z | ui.dial done current=61%
+2026-03-05T11:05:12.212Z | ui.dial set target=61%
+2026-03-05T11:05:12.214Z | write.start before=0% target=61%
+2026-03-05T11:05:12.215Z | ui.dial done current=61%
+2026-03-05T11:05:12.228Z | ui.dial set target=61%
+2026-03-05T11:05:12.229Z | write.start before=0% target=61%
+2026-03-05T11:05:12.232Z | ui.dial done current=61%
+2026-03-05T11:05:12.245Z | ui.dial set target=60%
+2026-03-05T11:05:12.246Z | write.start before=0% target=60%
+2026-03-05T11:05:12.248Z | ui.dial done current=60%
+2026-03-05T11:05:12.262Z | ui.dial set target=59%
+2026-03-05T11:05:12.263Z | write.start before=0% target=59%
+2026-03-05T11:05:12.265Z | ui.dial done current=59%
+2026-03-05T11:05:12.278Z | ui.dial set target=58%
+2026-03-05T11:05:12.281Z | write.start before=0% target=58%
+2026-03-05T11:05:12.283Z | ui.dial done current=58%
+2026-03-05T11:05:12.289Z | write.retry target=61% actual=0%
+2026-03-05T11:05:12.290Z | sim.override set=61%
+2026-03-05T11:05:12.292Z | write.done target=61% actual=0%
+2026-03-05T11:05:12.296Z | ui.dial set target=57%
+2026-03-05T11:05:12.299Z | write.start before=0% target=57%
+2026-03-05T11:05:12.300Z | ui.dial done current=57%
+2026-03-05T11:05:12.303Z | write.retry target=61% actual=0%
+2026-03-05T11:05:12.304Z | sim.override set=61%
+2026-03-05T11:05:12.305Z | write.done target=61% actual=0%
+2026-03-05T11:05:12.312Z | ui.dial set target=55%
+2026-03-05T11:05:12.313Z | write.start before=0% target=55%
+2026-03-05T11:05:12.315Z | ui.dial done current=55%
+2026-03-05T11:05:12.320Z | write.retry target=61% actual=0%
+2026-03-05T11:05:12.322Z | sim.override set=61%
+2026-03-05T11:05:12.322Z | write.done target=61% actual=0%
+2026-03-05T11:05:12.328Z | ui.dial set target=53%
+2026-03-05T11:05:12.329Z | write.start before=0% target=53%
+2026-03-05T11:05:12.330Z | ui.dial done current=53%
+2026-03-05T11:05:12.334Z | write.retry target=60% actual=0%
+2026-03-05T11:05:12.335Z | sim.override set=60%
+2026-03-05T11:05:12.336Z | write.done target=60% actual=0%
+2026-03-05T11:05:12.345Z | ui.dial set target=50%
+2026-03-05T11:05:12.346Z | write.start before=0% target=50%
+2026-03-05T11:05:12.347Z | ui.dial done current=50%
+2026-03-05T11:05:12.355Z | write.retry target=59% actual=0%
+2026-03-05T11:05:12.356Z | sim.override set=59%
+2026-03-05T11:05:12.357Z | write.done target=59% actual=0%
+2026-03-05T11:05:12.361Z | ui.dial set target=47%
+2026-03-05T11:05:12.362Z | write.start before=0% target=47%
+2026-03-05T11:05:12.364Z | ui.dial done current=47%
+2026-03-05T11:05:12.368Z | write.retry target=58% actual=0%
+2026-03-05T11:05:12.369Z | sim.override set=58%
+2026-03-05T11:05:12.370Z | write.done target=58% actual=0%
+2026-03-05T11:05:12.378Z | ui.dial set target=44%
+2026-03-05T11:05:12.379Z | write.start before=0% target=44%
+2026-03-05T11:05:12.380Z | ui.dial done current=44%
+2026-03-05T11:05:12.384Z | write.retry target=57% actual=0%
+2026-03-05T11:05:12.385Z | sim.override set=57%
+2026-03-05T11:05:12.386Z | write.done target=57% actual=0%
+2026-03-05T11:05:12.395Z | ui.dial set target=42%
+2026-03-05T11:05:12.396Z | write.start before=0% target=42%
+2026-03-05T11:05:12.397Z | ui.dial done current=42%
+2026-03-05T11:05:12.401Z | write.retry target=55% actual=0%
+2026-03-05T11:05:12.401Z | sim.override set=55%
+2026-03-05T11:05:12.402Z | write.done target=55% actual=0%
+2026-03-05T11:05:12.411Z | ui.dial set target=40%
+2026-03-05T11:05:12.412Z | write.start before=0% target=40%
+2026-03-05T11:05:12.413Z | ui.dial done current=40%
+2026-03-05T11:05:12.417Z | write.retry target=53% actual=0%
+2026-03-05T11:05:12.418Z | sim.override set=53%
+2026-03-05T11:05:12.419Z | write.done target=53% actual=0%
+2026-03-05T11:05:12.428Z | ui.dial set target=38%
+2026-03-05T11:05:12.429Z | write.start before=0% target=38%
+2026-03-05T11:05:12.430Z | ui.dial done current=38%
+2026-03-05T11:05:12.434Z | write.retry target=50% actual=0%
+2026-03-05T11:05:12.435Z | sim.override set=50%
+2026-03-05T11:05:12.435Z | write.done target=50% actual=0%
+2026-03-05T11:05:12.444Z | ui.dial set target=36%
+2026-03-05T11:05:12.444Z | write.start before=0% target=36%
+2026-03-05T11:05:12.446Z | ui.dial done current=36%
+2026-03-05T11:05:12.448Z | write.retry target=47% actual=0%
+2026-03-05T11:05:12.457Z | sim.override set=47%
+2026-03-05T11:05:12.458Z | write.done target=47% actual=0%
+2026-03-05T11:05:12.461Z | ui.dial set target=35%
+2026-03-05T11:05:12.462Z | write.start before=0% target=35%
+2026-03-05T11:05:12.463Z | ui.dial done current=35%
+2026-03-05T11:05:12.468Z | write.retry target=44% actual=0%
+2026-03-05T11:05:12.470Z | sim.override set=44%
+2026-03-05T11:05:12.474Z | write.done target=44% actual=0%
+2026-03-05T11:05:12.479Z | ui.dial set target=34%
+2026-03-05T11:05:12.481Z | write.start before=0% target=34%
+2026-03-05T11:05:12.482Z | ui.dial done current=34%
+2026-03-05T11:05:12.484Z | write.retry target=42% actual=0%
+2026-03-05T11:05:12.485Z | sim.override set=42%
+2026-03-05T11:05:12.485Z | write.done target=42% actual=0%
+2026-03-05T11:05:12.495Z | ui.dial set target=33%
+2026-03-05T11:05:12.495Z | write.start before=0% target=33%
+2026-03-05T11:05:12.497Z | ui.dial done current=33%
+2026-03-05T11:05:12.500Z | write.retry target=40% actual=0%
+2026-03-05T11:05:12.501Z | sim.override set=40%
+2026-03-05T11:05:12.502Z | write.done target=40% actual=0%
+2026-03-05T11:05:12.511Z | ui.dial set target=33%
+2026-03-05T11:05:12.512Z | write.start before=0% target=33%
+2026-03-05T11:05:12.513Z | ui.dial done current=33%
+2026-03-05T11:05:12.517Z | write.retry target=38% actual=0%
+2026-03-05T11:05:12.518Z | sim.override set=38%
+2026-03-05T11:05:12.519Z | write.done target=38% actual=0%
+2026-03-05T11:05:12.528Z | ui.dial set target=32%
+2026-03-05T11:05:12.529Z | write.start before=0% target=32%
+2026-03-05T11:05:12.530Z | ui.dial done current=32%
+2026-03-05T11:05:12.534Z | write.retry target=36% actual=0%
+2026-03-05T11:05:12.535Z | sim.override set=36%
+2026-03-05T11:05:12.536Z | write.done target=36% actual=0%
+2026-03-05T11:05:12.545Z | ui.dial set target=31%
+2026-03-05T11:05:12.546Z | write.start before=0% target=31%
+2026-03-05T11:05:12.547Z | ui.dial done current=31%
+2026-03-05T11:05:12.551Z | write.retry target=35% actual=0%
+2026-03-05T11:05:12.552Z | sim.override set=35%
+2026-03-05T11:05:12.553Z | write.done target=35% actual=0%
+2026-03-05T11:05:12.561Z | ui.dial set target=31%
+2026-03-05T11:05:12.562Z | write.start before=0% target=31%
+2026-03-05T11:05:12.564Z | ui.dial done current=31%
+2026-03-05T11:05:12.567Z | write.retry target=34% actual=0%
+2026-03-05T11:05:12.568Z | sim.override set=34%
+2026-03-05T11:05:12.569Z | write.done target=34% actual=0%
+2026-03-05T11:05:12.578Z | ui.dial set target=30%
+2026-03-05T11:05:12.579Z | write.start before=0% target=30%
+2026-03-05T11:05:12.580Z | ui.dial done current=30%
+2026-03-05T11:05:12.583Z | write.retry target=33% actual=0%
+2026-03-05T11:05:12.584Z | sim.override set=33%
+2026-03-05T11:05:12.585Z | write.done target=33% actual=0%
+2026-03-05T11:05:12.595Z | ui.dial set target=29%
+2026-03-05T11:05:12.601Z | write.start before=0% target=29%
+2026-03-05T11:05:12.603Z | ui.dial done current=29%
+2026-03-05T11:05:12.606Z | write.retry target=33% actual=0%
+2026-03-05T11:05:12.607Z | sim.override set=33%
+2026-03-05T11:05:12.608Z | write.done target=33% actual=0%
+2026-03-05T11:05:12.611Z | ui.dial set target=28%
+2026-03-05T11:05:12.612Z | write.start before=0% target=28%
+2026-03-05T11:05:12.616Z | ui.dial done current=28%
+2026-03-05T11:05:12.624Z | write.retry target=32% actual=0%
+2026-03-05T11:05:12.625Z | sim.override set=32%
+2026-03-05T11:05:12.626Z | write.done target=32% actual=0%
+2026-03-05T11:05:12.627Z | ui.dial set target=27%
+2026-03-05T11:05:12.628Z | write.start before=0% target=27%
+2026-03-05T11:05:12.629Z | ui.dial done current=27%
+2026-03-05T11:05:12.633Z | write.retry target=31% actual=0%
+2026-03-05T11:05:12.634Z | sim.override set=31%
+2026-03-05T11:05:12.635Z | write.done target=31% actual=0%
+2026-03-05T11:05:12.645Z | ui.dial set target=26%
+2026-03-05T11:05:12.646Z | write.start before=0% target=26%
+2026-03-05T11:05:12.647Z | ui.dial done current=26%
+2026-03-05T11:05:12.650Z | write.retry target=31% actual=0%
+2026-03-05T11:05:12.651Z | sim.override set=31%
+2026-03-05T11:05:12.652Z | write.done target=31% actual=0%
+2026-03-05T11:05:12.661Z | ui.dial set target=24%
+2026-03-05T11:05:12.662Z | write.start before=0% target=24%
+2026-03-05T11:05:12.663Z | ui.dial done current=24%
+2026-03-05T11:05:12.667Z | write.retry target=30% actual=0%
+2026-03-05T11:05:12.668Z | sim.override set=30%
+2026-03-05T11:05:12.669Z | write.done target=30% actual=0%
+2026-03-05T11:05:12.678Z | ui.dial set target=23%
+2026-03-05T11:05:12.679Z | write.start before=0% target=23%
+2026-03-05T11:05:12.680Z | ui.dial done current=23%
+2026-03-05T11:05:12.686Z | write.retry target=29% actual=0%
+2026-03-05T11:05:12.687Z | sim.override set=29%
+2026-03-05T11:05:12.687Z | write.done target=29% actual=0%
+2026-03-05T11:05:12.694Z | ui.dial set target=22%
+2026-03-05T11:05:12.695Z | write.start before=0% target=22%
+2026-03-05T11:05:12.696Z | ui.dial done current=22%
+2026-03-05T11:05:12.700Z | write.retry target=28% actual=0%
+2026-03-05T11:05:12.701Z | sim.override set=28%
+2026-03-05T11:05:12.702Z | write.done target=28% actual=0%
+2026-03-05T11:05:12.711Z | ui.dial set target=20%
+2026-03-05T11:05:12.712Z | write.start before=0% target=20%
+2026-03-05T11:05:12.714Z | ui.dial done current=20%
+2026-03-05T11:05:12.718Z | write.retry target=27% actual=0%
+2026-03-05T11:05:12.719Z | sim.override set=27%
+2026-03-05T11:05:12.720Z | write.done target=27% actual=0%
+2026-03-05T11:05:12.728Z | ui.dial set target=18%
+2026-03-05T11:05:12.733Z | write.start before=0% target=18%
+2026-03-05T11:05:12.735Z | ui.dial done current=18%
+2026-03-05T11:05:12.739Z | write.retry target=26% actual=0%
+2026-03-05T11:05:12.740Z | sim.override set=26%
+2026-03-05T11:05:12.741Z | write.done target=26% actual=0%
+2026-03-05T11:05:12.745Z | ui.dial set target=17%
+2026-03-05T11:05:12.750Z | write.start before=0% target=17%
+2026-03-05T11:05:12.757Z | ui.dial done current=17%
+2026-03-05T11:05:12.760Z | write.retry target=24% actual=0%
+2026-03-05T11:05:12.760Z | sim.override set=24%
+2026-03-05T11:05:12.761Z | write.done target=24% actual=0%
+2026-03-05T11:05:12.762Z | ui.dial set target=15%
+2026-03-05T11:05:12.763Z | write.start before=0% target=15%
+2026-03-05T11:05:12.764Z | ui.dial done current=15%
+2026-03-05T11:05:12.766Z | write.retry target=23% actual=0%
+2026-03-05T11:05:12.767Z | sim.override set=23%
+2026-03-05T11:05:12.768Z | write.done target=23% actual=0%
+2026-03-05T11:05:12.778Z | ui.dial set target=14%
+2026-03-05T11:05:12.779Z | write.start before=0% target=14%
+2026-03-05T11:05:12.780Z | ui.dial done current=14%
+2026-03-05T11:05:12.784Z | write.retry target=22% actual=0%
+2026-03-05T11:05:12.784Z | sim.override set=22%
+2026-03-05T11:05:12.785Z | write.done target=22% actual=0%
+2026-03-05T11:05:12.795Z | ui.dial set target=13%
+2026-03-05T11:05:12.795Z | write.start before=0% target=13%
+2026-03-05T11:05:12.797Z | ui.dial done current=13%
+2026-03-05T11:05:12.800Z | write.retry target=20% actual=0%
+2026-03-05T11:05:12.801Z | sim.override set=20%
+2026-03-05T11:05:12.801Z | write.done target=20% actual=0%
+2026-03-05T11:05:12.811Z | ui.dial set target=12%
+2026-03-05T11:05:12.812Z | write.start before=0% target=12%
+2026-03-05T11:05:12.813Z | ui.dial done current=12%
+2026-03-05T11:05:12.818Z | write.retry target=18% actual=0%
+2026-03-05T11:05:12.819Z | sim.override set=18%
+2026-03-05T11:05:12.819Z | write.done target=18% actual=0%
+2026-03-05T11:05:12.828Z | ui.dial set target=11%
+2026-03-05T11:05:12.829Z | write.start before=0% target=11%
+2026-03-05T11:05:12.830Z | ui.dial done current=11%
+2026-03-05T11:05:12.840Z | write.retry target=17% actual=0%
+2026-03-05T11:05:12.841Z | sim.override set=17%
+2026-03-05T11:05:12.841Z | write.done target=17% actual=0%
+2026-03-05T11:05:12.845Z | ui.dial set target=11%
+2026-03-05T11:05:12.845Z | write.start before=0% target=11%
+2026-03-05T11:05:12.847Z | ui.dial done current=11%
+2026-03-05T11:05:12.849Z | write.retry target=15% actual=0%
+2026-03-05T11:05:12.850Z | sim.override set=15%
+2026-03-05T11:05:12.852Z | write.done target=15% actual=0%
+2026-03-05T11:05:12.861Z | ui.dial set target=10%
+2026-03-05T11:05:12.866Z | write.start before=0% target=10%
+2026-03-05T11:05:12.868Z | ui.dial done current=10%
+2026-03-05T11:05:12.871Z | write.retry target=14% actual=0%
+2026-03-05T11:05:12.872Z | sim.override set=14%
+2026-03-05T11:05:12.873Z | write.done target=14% actual=0%
+2026-03-05T11:05:12.878Z | ui.dial set target=10%
+2026-03-05T11:05:12.879Z | write.start before=0% target=10%
+2026-03-05T11:05:12.880Z | ui.dial done current=10%
+2026-03-05T11:05:12.883Z | write.retry target=13% actual=0%
+2026-03-05T11:05:12.884Z | sim.override set=13%
+2026-03-05T11:05:12.885Z | write.done target=13% actual=0%
+2026-03-05T11:05:12.895Z | ui.dial set target=10%
+2026-03-05T11:05:12.895Z | write.start before=0% target=10%
+2026-03-05T11:05:12.897Z | ui.dial done current=10%
+2026-03-05T11:05:12.900Z | write.retry target=12% actual=0%
+2026-03-05T11:05:12.900Z | sim.override set=12%
+2026-03-05T11:05:12.901Z | write.done target=12% actual=0%
+2026-03-05T11:05:12.911Z | ui.dial set target=10%
+2026-03-05T11:05:12.912Z | write.start before=0% target=10%
+2026-03-05T11:05:12.913Z | ui.dial done current=10%
+2026-03-05T11:05:12.916Z | write.retry target=11% actual=0%
+2026-03-05T11:05:12.917Z | sim.override set=11%
+2026-03-05T11:05:12.918Z | write.done target=11% actual=0%
+2026-03-05T11:05:12.930Z | write.retry target=11% actual=0%
+2026-03-05T11:05:12.931Z | sim.override set=11%
+2026-03-05T11:05:12.932Z | write.done target=11% actual=0%
+2026-03-05T11:05:12.947Z | write.retry target=10% actual=0%
+2026-03-05T11:05:12.948Z | sim.override set=10%
+2026-03-05T11:05:12.949Z | write.done target=10% actual=0%
+2026-03-05T11:05:12.962Z | write.retry target=10% actual=0%
+2026-03-05T11:05:12.963Z | sim.override set=10%
+2026-03-05T11:05:12.964Z | write.done target=10% actual=0%
+2026-03-05T11:05:12.978Z | write.retry target=10% actual=0%
+2026-03-05T11:05:12.980Z | sim.override set=10%
+2026-03-05T11:05:12.985Z | write.done target=10% actual=0%
+2026-03-05T11:05:12.996Z | write.retry target=10% actual=0%
+2026-03-05T11:05:12.996Z | sim.override set=10%
+2026-03-05T11:05:12.997Z | write.done target=10% actual=0%
+2026-03-05T11:11:25.235Z | app.previousLogCount=300
+2026-03-05T11:11:25.237Z | app.logFile=/Users/sarsiz/Library/Developer/CoreSimulator/Devices/25D3BDE6-E7C5-4A70-8E64-FDA5EFCE314B/data/Containers/Data/Application/4F4DD064-AEFE-4C8D-B927-92EFB3638DC8/Library/Application Support/volume-diagnostics.log
+2026-03-05T11:11:25.303Z | bridge.attach.internal immediate
+2026-03-05T11:11:25.304Z | app.init started
+2026-03-05T11:11:25.306Z | system.read source=timer value=0%
+2026-03-05T11:11:25.307Z | refresh.ready ready
+2026-03-05T11:11:25.310Z | app.init complete ready=true volume=0%
+2026-03-05T11:11:25.379Z | bridge.attach.external slider attached
+2026-03-05T11:11:25.381Z | ui.bridge sliderAttached
+2026-03-05T11:11:25.566Z | bridge.mount ok
+2026-03-05T11:11:28.811Z | refresh.volume old=0% new=5%
+2026-03-05T11:11:28.812Z | system.read source=timer value=5%
+2026-03-05T11:11:29.561Z | refresh.volume old=5% new=10%
+2026-03-05T11:11:29.562Z | system.read source=timer value=10%
+2026-03-05T11:11:30.561Z | refresh.volume old=10% new=20%
+2026-03-05T11:11:30.561Z | system.read source=timer value=20%
+2026-03-05T11:11:31.062Z | refresh.volume old=20% new=25%
+2026-03-05T11:11:31.063Z | system.read source=timer value=25%
+2026-03-05T11:11:31.561Z | refresh.volume old=25% new=30%
+2026-03-05T11:11:31.562Z | system.read source=timer value=30%
+2026-03-05T11:11:31.811Z | refresh.volume old=30% new=35%
+2026-03-05T11:11:31.812Z | system.read source=timer value=35%
+2026-03-05T11:11:32.062Z | refresh.volume old=35% new=45%
+2026-03-05T11:11:32.063Z | system.read source=timer value=45%
+2026-03-05T11:11:32.312Z | refresh.volume old=45% new=50%
+2026-03-05T11:11:32.314Z | system.read source=timer value=50%
+2026-03-05T11:11:32.563Z | refresh.volume old=50% new=55%
+2026-03-05T11:11:32.564Z | system.read source=timer value=55%
+2026-03-05T11:11:32.813Z | refresh.volume old=55% new=60%
+2026-03-05T11:11:32.814Z | system.read source=timer value=60%
+2026-03-05T11:11:33.063Z | refresh.volume old=60% new=70%
+2026-03-05T11:11:33.064Z | system.read source=timer value=70%
+2026-03-05T11:11:33.313Z | refresh.volume old=70% new=75%
+2026-03-05T11:11:33.314Z | system.read source=timer value=75%
+2026-03-05T11:11:33.563Z | refresh.volume old=75% new=80%
+2026-03-05T11:11:33.564Z | system.read source=timer value=80%
+2026-03-05T11:11:34.311Z | refresh.volume old=80% new=85%
+2026-03-05T11:11:34.312Z | system.read source=timer value=85%
+2026-03-05T11:11:34.813Z | refresh.volume old=85% new=95%
+2026-03-05T11:11:34.815Z | system.read source=timer value=95%
+2026-03-05T11:11:35.811Z | refresh.volume old=95% new=100%
+2026-03-05T11:11:35.812Z | system.read source=timer value=100%
+2026-03-05T11:11:37.462Z | ui.preset set target=50%
+2026-03-05T11:11:37.463Z | write.start before=100% target=50%
+2026-03-05T11:11:37.469Z | ui.preset done current=50%
+2026-03-05T11:11:37.547Z | write.retry target=50% actual=100%
+2026-03-05T11:11:37.549Z | sim.override set=50%
+2026-03-05T11:11:37.550Z | write.done target=50% actual=100%
+2026-03-05T11:11:40.561Z | sim.override adjustedByPhysical delta=-5 mapped=45%
+2026-03-05T11:11:40.562Z | refresh.volume old=50% new=45%
+2026-03-05T11:11:40.563Z | system.read source=timer value=95%
+2026-03-05T11:11:43.394Z | ui.tap down
+2026-03-05T11:11:43.395Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T11:11:43.397Z | write.start before=95% target=39%
+2026-03-05T11:11:43.400Z | ui.change done action=Manual Down before=45% after=39%
+2026-03-05T11:11:43.479Z | write.retry target=39% actual=95%
+2026-03-05T11:11:43.480Z | sim.override set=39%
+2026-03-05T11:11:43.481Z | write.done target=39% actual=95%
+2026-03-05T11:11:48.161Z | ui.tap down
+2026-03-05T11:11:48.162Z | ui.change action=Manual Down delta=-0.05
+2026-03-05T11:11:48.163Z | write.start before=95% target=34%
+2026-03-05T11:11:48.167Z | ui.change done action=Manual Down before=39% after=34%
+2026-03-05T11:11:48.247Z | write.retry target=34% actual=95%
+2026-03-05T11:11:48.248Z | sim.override set=34%
+2026-03-05T11:11:48.249Z | write.done target=34% actual=95%
+2026-03-05T11:11:49.595Z | ui.tap up
+2026-03-05T11:11:49.595Z | ui.change action=Manual Up delta=0.05
+2026-03-05T11:11:49.597Z | write.start before=95% target=39%
+2026-03-05T11:11:49.602Z | ui.change done action=Manual Up before=34% after=39%
+2026-03-05T11:11:49.680Z | write.retry target=39% actual=95%
+2026-03-05T11:11:49.681Z | sim.override set=39%
+2026-03-05T11:11:49.682Z | write.done target=39% actual=95%
+2026-03-05T11:11:50.098Z | ui.tap up
+2026-03-05T11:11:50.098Z | ui.change action=Manual Up delta=0.05
+2026-03-05T11:11:50.100Z | write.start before=95% target=45%
+2026-03-05T11:11:50.104Z | ui.change done action=Manual Up before=39% after=45%
+2026-03-05T11:11:50.184Z | write.retry target=45% actual=95%
+2026-03-05T11:11:50.185Z | sim.override set=45%
+2026-03-05T11:11:50.185Z | write.done target=45% actual=95%
+2026-03-05T11:11:50.562Z | ui.tap up
+2026-03-05T11:11:50.563Z | ui.change action=Manual Up delta=0.05
+2026-03-05T11:11:50.566Z | write.start before=95% target=50%
+2026-03-05T11:11:50.573Z | ui.change done action=Manual Up before=45% after=50%
+2026-03-05T11:11:50.650Z | write.retry target=50% actual=95%
+2026-03-05T11:11:50.651Z | sim.override set=50%
+2026-03-05T11:11:50.651Z | write.done target=50% actual=95%
+2026-03-05T11:11:52.561Z | sim.override adjustedByPhysical delta=5 mapped=55%
+2026-03-05T11:11:52.562Z | refresh.volume old=50% new=55%
+2026-03-05T11:11:52.563Z | system.read source=timer value=100%
+2026-03-05T11:11:55.561Z | sim.override adjustedByPhysical delta=-5 mapped=50%
+2026-03-05T11:11:55.562Z | refresh.volume old=55% new=50%
+2026-03-05T11:11:55.563Z | system.read source=timer value=95%
+2026-03-05T11:11:56.062Z | sim.override adjustedByPhysical delta=-9 mapped=40%
+2026-03-05T11:11:56.064Z | refresh.volume old=50% new=40%
+2026-03-05T11:11:56.065Z | system.read source=timer value=85%
+2026-03-05T11:11:56.312Z | sim.override adjustedByPhysical delta=-5 mapped=35%
+2026-03-05T11:11:56.313Z | refresh.volume old=40% new=35%
+2026-03-05T11:11:56.315Z | system.read source=timer value=80%
+2026-03-05T11:11:56.562Z | sim.override adjustedByPhysical delta=-5 mapped=30%
+2026-03-05T11:11:56.563Z | refresh.volume old=35% new=30%
+2026-03-05T11:11:56.565Z | system.read source=timer value=75%
+2026-03-05T11:11:57.561Z | sim.override adjustedByPhysical delta=-5 mapped=25%
+2026-03-05T11:11:57.562Z | refresh.volume old=30% new=25%
+2026-03-05T11:11:57.565Z | system.read source=timer value=70%
+2026-03-05T11:11:58.811Z | sim.override adjustedByPhysical delta=-9 mapped=15%
+2026-03-05T11:11:58.812Z | refresh.volume old=25% new=15%
+2026-03-05T11:11:58.815Z | system.read source=timer value=60%
+2026-03-05T11:11:59.811Z | sim.override adjustedByPhysical delta=-10 mapped=5%
+2026-03-05T11:11:59.812Z | refresh.volume old=15% new=5%
+2026-03-05T11:11:59.813Z | system.read source=timer value=50%
+2026-03-05T11:12:00.561Z | sim.override adjustedByPhysical delta=-4 mapped=0%
+2026-03-05T11:12:00.563Z | refresh.volume old=5% new=0%
+2026-03-05T11:12:00.564Z | system.read source=timer value=45%
+2026-03-05T11:12:00.811Z | sim.override adjustedByPhysical delta=-10 mapped=0%
+2026-03-05T11:12:00.813Z | system.read source=timer value=35%
+2026-03-05T11:12:04.561Z | sim.override adjustedByPhysical delta=-4 mapped=0%
+2026-03-05T11:12:04.563Z | system.read source=timer value=30%
+2026-03-05T11:12:05.061Z | sim.override adjustedByPhysical delta=-5 mapped=0%
+2026-03-05T11:12:05.062Z | system.read source=timer value=25%
+2026-03-05T11:12:06.311Z | sim.override adjustedByPhysical delta=-4 mapped=0%
+2026-03-05T11:12:06.313Z | system.read source=timer value=20%
+2026-03-05T11:12:06.561Z | sim.override adjustedByPhysical delta=-10 mapped=0%
+2026-03-05T11:12:06.562Z | system.read source=timer value=10%
+2026-03-05T11:12:06.811Z | sim.override adjustedByPhysical delta=-5 mapped=0%
+2026-03-05T11:12:06.813Z | system.read source=timer value=5%
+2026-03-05T11:12:08.061Z | sim.override adjustedByPhysical delta=-5 mapped=0%
+2026-03-05T11:12:08.063Z | system.read source=timer value=0%
+
+No App Group plist found at: /Users/sarsiz/Library/Developer/CoreSimulator/Devices/25D3BDE6-E7C5-4A70-8E64-FDA5EFCE314B/data/Containers/Data/Application/4F4DD064-AEFE-4C8D-B927-92EFB3638DC8/Library/Preferences/group.com.sarsiz.GraVolControl.plist
+

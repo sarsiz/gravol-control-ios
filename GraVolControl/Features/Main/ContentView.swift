@@ -8,10 +8,9 @@ struct ContentView: View {
     @State private var upPulse = false
     @State private var downPulse = false
 
-    // Tweak these if you want the pill/header tighter/looser.
-    private let islandBadgeTopGap: CGFloat = 8
+    private let islandBadgeTopGap: CGFloat = 6
     private let islandBadgeHeight: CGFloat = 38
-    private let badgeContentSpacing: CGFloat = 10
+    private let islandBadgeSpacingToHeader: CGFloat = 10
 
     var body: some View {
         ZStack {
@@ -21,8 +20,8 @@ struct ContentView: View {
 
             GeometryReader { geo in
                 let bottomInset = geo.safeAreaInsets.bottom
-                let badgeTopY = geo.safeAreaInsets.top + islandBadgeTopGap
-                let reservedTop = islandBadgeHeight + badgeContentSpacing
+                let badgeTop = geo.safeAreaInsets.top + islandBadgeTopGap
+                let contentTopInset = badgeTop + islandBadgeHeight + islandBadgeSpacingToHeader
 
                 ZStack(alignment: .bottomLeading) {
                     ScrollView(showsIndicators: false) {
@@ -32,7 +31,7 @@ struct ContentView: View {
                             controlsCard
                         }
                         .padding(.horizontal, 16)
-                        .padding(.top, reservedTop)
+                        .padding(.top, contentTopInset)
                         .padding(.bottom, max(14, bottomInset + 8))
                         .frame(maxWidth: .infinity, alignment: .top)
                     }
@@ -44,7 +43,7 @@ struct ContentView: View {
                 }
                 .overlay(alignment: .top) {
                     islandAngleBadge
-                        .padding(.top, badgeTopY)
+                        .padding(.top, badgeTop)
                         .padding(.horizontal, 16)
                 }
             }
@@ -161,10 +160,14 @@ struct ContentView: View {
                     Text("\(Int(model.currentVolume * 100))%")
                         .font(.system(size: 36, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
-                    Text(model.lastAction)
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.9))
+                    if !model.lastAction.isEmpty {
+                        Text(model.lastAction)
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.9))
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
                 }
+                .animation(.easeInOut(duration: 0.28), value: model.lastAction)
             }
             .contentShape(Circle())
             .gesture(

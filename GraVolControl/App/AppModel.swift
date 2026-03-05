@@ -1,12 +1,85 @@
 import Foundation
+import os
 import SwiftUI
 import UIKit
 import WidgetKit
 
+enum VolumeDiagnostics {
+    private static let logger = Logger(subsystem: "com.sarsiz.GraVolControl", category: "Volume")
+    private static let storeKey = "gravol_volume_diagnostics_log"
+    private static let maxEntries = 300
+    #if targetEnvironment(simulator)
+    private static let isSimulator = true
+    #else
+    private static let isSimulator = false
+    #endif
+    private static let dateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private static var defaults: UserDefaults {
+        UserDefaults(suiteName: GraVolControlRemoteStore.appGroupID) ?? UserDefaults.standard
+    }
+
+    static func log(_ message: String) {
+        let line = "\(dateFormatter.string(from: Date())) | \(message)"
+        logger.debug("\(line, privacy: .public)")
+        if isSimulator {
+            print("[GraVol][Volume] \(line)")
+        }
+        append(line)
+        appendToFile(line)
+    }
+
+    static func recent() -> [String] {
+        defaults.stringArray(forKey: storeKey) ?? []
+    }
+
+    static func logFilePath() -> String? {
+        fileURL()?.path
+    }
+
+    private static func append(_ line: String) {
+        var items = defaults.stringArray(forKey: storeKey) ?? []
+        items.append(line)
+        if items.count > maxEntries {
+            items.removeFirst(items.count - maxEntries)
+        }
+        defaults.set(items, forKey: storeKey)
+    }
+
+    private static func appendToFile(_ line: String) {
+        guard let url = fileURL() else { return }
+        let payload = (line + "\n").data(using: .utf8) ?? Data()
+        if FileManager.default.fileExists(atPath: url.path) {
+            if let handle = try? FileHandle(forWritingTo: url) {
+                defer { try? handle.close() }
+                do {
+                    try handle.seekToEnd()
+                    try handle.write(contentsOf: payload)
+                } catch { }
+            }
+        } else {
+            try? payload.write(to: url, options: .atomic)
+        }
+    }
+
+    private static func fileURL() -> URL? {
+        let fm = FileManager.default
+        guard let dir = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir.appendingPathComponent("volume-diagnostics.log")
+    }
+}
+
 @MainActor
 final class AppModel: ObservableObject {
     @Published var isArmed = true
-    @Published var lastAction: String = "Idle"
+    @Published var lastAction: String = ""
     @Published var currentVolume: Float = 0
     @Published var triggerAngleDegrees: Double = 15
     @Published var defaultTriggerAngleDegrees: Double = 15
@@ -35,6 +108,10 @@ final class AppModel: ObservableObject {
     private let tiltLearnModeKey = "gravol_tilt_learn_mode"
     private let tiltLearnSmoothingFactor = 0.22
     private let tiltLearnMinimumDelta = 0.12
+    private let volumeRefreshInterval: TimeInterval = 0.12
+    private var lastLoggedReadyState = false
+    private var localVolumeHoldUntil: Date = .distantPast
+    private var lastActionClearWorkItem: DispatchWorkItem?
 
     private lazy var tiltController: TiltVolumeController = {
         let upThreshold = Self.degreesToRadians(triggerAngleDegrees)
@@ -49,7 +126,13 @@ final class AppModel: ObservableObject {
     }()
 
     init() {
+        VolumeDiagnostics.log("app.previousLogCount=\(VolumeDiagnostics.recent().count)")
+        if let path = VolumeDiagnostics.logFilePath() {
+            VolumeDiagnostics.log("app.logFile=\(path)")
+        }
         volumeManager.configureAudioSession()
+        volumeManager.prepareBridge()
+        VolumeDiagnostics.log("app.init started")
 
         if !UserDefaults.standard.bool(forKey: firstLaunchFlagKey) {
             UserDefaults.standard.set(true, forKey: firstLaunchFlagKey)
@@ -80,6 +163,7 @@ final class AppModel: ObservableObject {
         isTiltLearnMode = UserDefaults.standard.bool(forKey: tiltLearnModeKey)
         refreshCurrentVolume()
         startVolumeRefreshTimer()
+        VolumeDiagnostics.log("app.init complete ready=\(isVolumeControlReady) volume=\(Int(currentVolume * 100))%")
 
         tiltController.onDirection = { [weak self] direction in
             guard let self else { return }
@@ -109,12 +193,12 @@ final class AppModel: ObservableObject {
         if value {
             tiltController.start()
             tiltController.recenterBaseline()
-            lastAction = "Tilt Ready"
+            setPersistentAction("Tilt Ready")
             tiltStatus = "Tilt Ready"
             syncLiveActivity(force: true)
         } else {
             tiltController.stop()
-            lastAction = "Paused"
+            setPersistentAction("Paused")
             tiltStatus = "Paused"
             endLiveActivity()
         }
@@ -190,49 +274,63 @@ final class AppModel: ObservableObject {
     func attachSystemVolumeSlider(_ slider: UISlider) {
         volumeManager.attachSystemSlider(slider)
         isVolumeControlReady = true
+        VolumeDiagnostics.log("ui.bridge sliderAttached")
     }
 
     func nudgeUp() {
+        VolumeDiagnostics.log("ui.tap up")
         applyVolumeChange(delta: 0.05, action: "Manual Up")
     }
 
     func nudgeDown() {
+        VolumeDiagnostics.log("ui.tap down")
         applyVolumeChange(delta: -0.05, action: "Manual Down")
     }
 
     func setVolumeDirect(_ value: Float) {
+        VolumeDiagnostics.log("ui.dial set target=\(Int(value * 100))%")
         guard volumeManager.isReady() else {
             isVolumeControlReady = false
-            lastAction = "Volume Bridge Loading"
+            setPersistentAction("Volume Bridge Loading")
+            VolumeDiagnostics.log("ui.dial blocked bridgeNotReady")
             return
         }
+        beginLocalVolumeHold()
         _ = volumeManager.setVolume(value)
         currentVolume = volumeManager.currentOutputVolume()
-        lastAction = "Dial \(Int(currentVolume * 100))%"
+        setTransientAction("Dial \(Int(currentVolume * 100))%")
         syncMuteState(for: currentVolume)
+        VolumeDiagnostics.log("ui.dial done current=\(Int(currentVolume * 100))%")
     }
 
     func setVolumePreset(_ value: Float) {
+        VolumeDiagnostics.log("ui.preset set target=\(Int(value * 100))%")
         guard volumeManager.isReady() else {
             isVolumeControlReady = false
-            lastAction = "Volume Bridge Loading"
+            setPersistentAction("Volume Bridge Loading")
+            VolumeDiagnostics.log("ui.preset blocked bridgeNotReady")
             return
         }
+        beginLocalVolumeHold()
         _ = volumeManager.setVolume(value)
         currentVolume = volumeManager.currentOutputVolume()
-        lastAction = "Set \(Int(value * 100))%"
+        setTransientAction("Set \(Int(value * 100))%")
         syncMuteState(for: currentVolume)
+        VolumeDiagnostics.log("ui.preset done current=\(Int(currentVolume * 100))%")
     }
 
     func toggleMute() {
+        VolumeDiagnostics.log("ui.tap muteToggle current=\(Int(currentVolume * 100))%")
         if currentVolume <= muteThreshold {
             let restore = max(0.01, GraVolControlRemoteStore.lastAudibleVolume(defaultValue: 0.5))
             setVolumePreset(restore)
-            lastAction = "Unmuted"
+            setTransientAction("Unmuted")
+            VolumeDiagnostics.log("ui.mute unmuted restore=\(Int(restore * 100))%")
         } else {
             GraVolControlRemoteStore.setLastAudibleVolume(max(currentVolume, 0.05))
             setVolumePreset(0.0)
-            lastAction = "Muted"
+            setTransientAction("Muted")
+            VolumeDiagnostics.log("ui.mute muted")
         }
     }
 
@@ -289,35 +387,53 @@ final class AppModel: ObservableObject {
     }
 
     private func applyVolumeChange(delta: Float, action: String) {
+        VolumeDiagnostics.log("ui.change action=\(action) delta=\(String(format: "%.2f", delta))")
         guard volumeManager.isReady() else {
             isVolumeControlReady = false
-            lastAction = "Volume Bridge Loading"
+            setPersistentAction("Volume Bridge Loading")
+            VolumeDiagnostics.log("ui.change blocked bridgeNotReady")
             return
         }
+        beginLocalVolumeHold()
         isVolumeControlReady = true
         let before = volumeManager.currentOutputVolume()
         let after = volumeManager.changeVolume(by: delta)
         currentVolume = after
         syncMuteState(for: after)
         if abs(after - before) > 0.0001 {
-            lastAction = action
+            setTransientAction(action)
         } else if after <= 0.001 {
-            lastAction = "Already at Min"
+            setTransientAction("Already at Min")
         } else if after >= 0.999 {
-            lastAction = "Already at Max"
+            setTransientAction("Already at Max")
         }
+        VolumeDiagnostics.log("ui.change done action=\(action) before=\(Int(before * 100))% after=\(Int(after * 100))%")
         syncLiveActivity()
     }
 
     private func refreshCurrentVolume() {
+        volumeManager.prepareBridge()
         isVolumeControlReady = volumeManager.isReady()
-        currentVolume = volumeManager.currentOutputVolume()
+        let read = volumeManager.currentOutputVolume()
+        if Date() < localVolumeHoldUntil {
+            volumeManager.logSystemVolumeIfChanged(source: "timer")
+            return
+        }
+        if abs(read - currentVolume) > 0.009 {
+            VolumeDiagnostics.log("refresh.volume old=\(Int(currentVolume * 100))% new=\(Int(read * 100))%")
+        }
+        currentVolume = read
+        volumeManager.logSystemVolumeIfChanged(source: "timer")
+        if isVolumeControlReady != lastLoggedReadyState {
+            lastLoggedReadyState = isVolumeControlReady
+            VolumeDiagnostics.log("refresh.ready \(isVolumeControlReady ? "ready" : "notReady")")
+        }
         syncMuteState(for: currentVolume)
     }
 
     private func startVolumeRefreshTimer() {
         guard volumeRefreshTimer == nil else { return }
-        volumeRefreshTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+        volumeRefreshTimer = Timer.scheduledTimer(withTimeInterval: volumeRefreshInterval, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.refreshCurrentVolume()
                 self?.applyRemoteCommands()
@@ -482,5 +598,31 @@ final class AppModel: ObservableObject {
         guard backgroundTaskID != .invalid else { return }
         UIApplication.shared.endBackgroundTask(backgroundTaskID)
         backgroundTaskID = .invalid
+    }
+
+    private func beginLocalVolumeHold() {
+        localVolumeHoldUntil = Date().addingTimeInterval(0.28)
+    }
+
+    private func setTransientAction(_ value: String, duration: TimeInterval = 2.2) {
+        lastActionClearWorkItem?.cancel()
+        withAnimation(.easeInOut(duration: 0.22)) {
+            lastAction = value
+        }
+        let work = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            if self.lastAction == value {
+                withAnimation(.easeInOut(duration: 0.35)) {
+                    self.lastAction = ""
+                }
+            }
+        }
+        lastActionClearWorkItem = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration, execute: work)
+    }
+
+    private func setPersistentAction(_ value: String) {
+        lastActionClearWorkItem?.cancel()
+        lastAction = value
     }
 }
