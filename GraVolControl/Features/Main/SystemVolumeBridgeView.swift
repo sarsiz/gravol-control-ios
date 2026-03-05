@@ -15,7 +15,8 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> MPVolumeView {
         let view = MPVolumeView(frame: CGRect(x: 0, y: 0, width: 120, height: 30))
-        view.alpha = 0.01
+        view.showsVolumeSlider = true
+        view.alpha = 0.05
         attachSliderWithRetries(from: view, coordinator: context.coordinator, attempts: 20)
 
         return view
@@ -28,6 +29,8 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
 
     private func attachSliderIfAvailable(from volumeView: MPVolumeView, coordinator: Coordinator) {
         if let slider = findSlider(in: volumeView),
+           slider.superview != nil,
+           slider.window != nil,
            coordinator.attachedSlider !== slider {
             coordinator.attachedSlider = slider
             onSliderReady(slider)

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
-OUT_FILE="${1:-$ROOT_DIR/simulator-volume-logs.txt}"
+OUT_FILE="${1:-$ROOT_DIR/simulator-volume-log-iphone.txt}"
 BUNDLE_ID="${BUNDLE_ID:-com.sarsiz.GraVolControl}"
 DEVICE_ID="${DEVICE_ID:-booted}"
 
@@ -13,7 +13,9 @@ if [[ -z "$DATA_CONTAINER" ]]; then
   exit 1
 fi
 
-LOG_FILE="$DATA_CONTAINER/Library/Application Support/volume-diagnostics.log"
+NEW_LOG_FILE="$DATA_CONTAINER/Documents/GraVolControl/Logs/simulator-volume-log-iphone.txt"
+APP_SUPPORT_LOG_FILE="$DATA_CONTAINER/Library/Application Support/simulator-volume-log-iphone.txt"
+LEGACY_LOG_FILE="$DATA_CONTAINER/Library/Application Support/volume-diagnostics.log"
 APP_GROUP_PLIST="$DATA_CONTAINER/Library/Preferences/group.com.sarsiz.GraVolControl.plist"
 
 {
@@ -22,12 +24,23 @@ APP_GROUP_PLIST="$DATA_CONTAINER/Library/Preferences/group.com.sarsiz.GraVolCont
   echo "Bundle: $BUNDLE_ID"
   echo "Data Container: $DATA_CONTAINER"
   echo
-  if [[ -f "$LOG_FILE" ]]; then
+  if [[ -f "$NEW_LOG_FILE" ]]; then
+    echo "=== File Log (Documents/GraVolControl/Logs/simulator-volume-log-iphone.txt) ==="
+    cat "$NEW_LOG_FILE"
+    echo
+  elif [[ -f "$APP_SUPPORT_LOG_FILE" ]]; then
+    echo "=== File Log (Application Support/simulator-volume-log-iphone.txt) ==="
+    cat "$APP_SUPPORT_LOG_FILE"
+    echo
+  elif [[ -f "$LEGACY_LOG_FILE" ]]; then
     echo "=== File Log (Application Support/volume-diagnostics.log) ==="
-    cat "$LOG_FILE"
+    cat "$LEGACY_LOG_FILE"
     echo
   else
-    echo "No file log found at: $LOG_FILE"
+    echo "No file log found at:"
+    echo "$NEW_LOG_FILE"
+    echo "$APP_SUPPORT_LOG_FILE"
+    echo "$LEGACY_LOG_FILE"
     echo
   fi
 

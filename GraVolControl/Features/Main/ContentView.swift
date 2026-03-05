@@ -219,8 +219,7 @@ struct ContentView: View {
                 Button("50%") { model.setVolumePreset(0.5) }.buttonStyle(ChipStyle())
                 Button("80%") { model.setVolumePreset(0.8) }.buttonStyle(ChipStyle())
             }
-            .disabled(!model.isVolumeControlReady)
-            .opacity(model.isVolumeControlReady ? 1 : 0.55)
+            .opacity(model.isVolumeControlReady ? 1 : 0.82)
 
             stepRail
         }
