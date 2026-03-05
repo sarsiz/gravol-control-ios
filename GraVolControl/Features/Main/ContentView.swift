@@ -95,7 +95,10 @@ struct ContentView: View {
             Image(systemName: "angle")
             Text(String(format: "%+.1f°", model.currentTiltDegrees))
                 .font(.footnote.monospacedDigit().weight(.semibold))
-            Text("Trigger \(Int(model.triggerAngleDegrees))°")
+            Text(String(format: "U +%.0f°", model.triggerAngleDegrees))
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.white.opacity(0.9))
+            Text(String(format: "D -%.0f°", model.downTriggerAngleDegrees))
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.white.opacity(0.85))
         }
@@ -227,38 +230,61 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 12) {
-                CircularAngleSlider(
-                    value: Binding(
+                DualTriggerAngleDial(
+                    upValue: Binding(
                         get: { model.triggerAngleDegrees },
                         set: { model.updateTriggerAngleDegrees($0) }
                     ),
+                    downValue: Binding(
+                        get: { model.downTriggerAngleDegrees },
+                        set: { model.updateDownTriggerAngleDegrees($0) }
+                    ),
                     range: 0...60,
-                    onUseDefault: { model.resetTriggerToDefault() },
-                    onSetDefault: { model.updateDefaultTriggerAngleDegrees(model.triggerAngleDegrees) }
+                    currentTilt: model.currentTiltDegrees,
+                    tiltLearnEnabled: model.isTiltLearnMode
                 )
-                .frame(width: 140, height: 140)
-                .frame(width: 146, alignment: .center)
-                .offset(x: 14)
-                .contentShape(Rectangle())
+                .frame(width: 156, height: 156)
+                .contentShape(Circle())
 
-                Spacer(minLength: 0)
-
-                VStack(alignment: .trailing, spacing: 3) {
-                    Text("Trigger Angle")
+                VStack(alignment: .trailing, spacing: 5) {
+                    Text(String(format: "Up +%.0f°", model.triggerAngleDegrees))
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.95))
-                    Text("\(Int(model.triggerAngleDegrees))°")
-                        .font(.title3.weight(.bold))
-                        .foregroundStyle(.white)
+                    Text(String(format: "Down -%.0f°", model.downTriggerAngleDegrees))
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.92))
                     Text(String(format: "Tilt %+.1f°", model.currentTiltDegrees))
                         .font(.caption2.monospacedDigit().weight(.semibold))
                         .foregroundStyle(.white.opacity(0.82))
-                    Text("Default \(Int(model.defaultTriggerAngleDegrees))°")
+                    Text(String(format: "Defaults +%.0f° / -%.0f°", model.defaultTriggerAngleDegrees, model.defaultDownTriggerAngleDegrees))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.78))
+
+                    HStack(spacing: 6) {
+                        Button("+ Default") { model.resetTriggerToDefault() }
+                            .buttonStyle(InnerChipStyle())
+                        Button("Save +") { model.updateDefaultTriggerAngleDegrees(model.triggerAngleDegrees) }
+                            .buttonStyle(InnerChipStyle())
+                    }
+                    HStack(spacing: 6) {
+                        Button("- Default") { model.resetDownTriggerToDefault() }
+                            .buttonStyle(InnerChipStyle())
+                        Button("Save -") { model.updateDefaultDownTriggerAngleDegrees(model.downTriggerAngleDegrees) }
+                            .buttonStyle(InnerChipStyle())
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
+
+            Toggle(isOn: Binding(
+                get: { model.isTiltLearnMode },
+                set: { model.setTiltLearnMode($0) }
+            )) {
+                Text("Set Triggers By Moving Phone")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.95))
+            }
+            .tint(.mint)
 
             Button {
                 withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
@@ -330,11 +356,11 @@ struct ContentView: View {
     private var stepRail: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text("Increment")
+                Text("Increment %")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.92))
                 Spacer()
-                Text(String(format: "%.2f", model.stepSize))
+                Text(String(format: "%.2f%%", model.stepSize))
                     .font(.caption.monospacedDigit().weight(.bold))
                     .foregroundStyle(.white)
             }
@@ -509,11 +535,12 @@ private struct ChipStyle: ButtonStyle {
     }
 }
 
-private struct CircularAngleSlider: View {
-    @Binding var value: Double
+private struct DualTriggerAngleDial: View {
+    @Binding var upValue: Double
+    @Binding var downValue: Double
     let range: ClosedRange<Double>
-    let onUseDefault: () -> Void
-    let onSetDefault: () -> Void
+    let currentTilt: Double
+    let tiltLearnEnabled: Bool
     @State private var isDragging = false
 
     private let startAngle: Double = -135
@@ -522,43 +549,56 @@ private struct CircularAngleSlider: View {
     var body: some View {
         GeometryReader { proxy in
             let size = min(proxy.size.width, proxy.size.height)
-            let lineWidth: CGFloat = 8
-            let sweep = endAngle - startAngle
-            let progress = min(max((value - range.lowerBound) / (range.upperBound - range.lowerBound), 0), 1)
+            let lineWidth: CGFloat = 9
+            let maxValue = max(range.upperBound, 1)
+
+            let upAngle = (upValue / maxValue) * endAngle
+            let downAngle = -(downValue / maxValue) * abs(startAngle)
+            let tiltAngle = signedAngle(for: currentTilt, maxValue: maxValue)
 
             ZStack {
-                Circle()
-                    .trim(from: 0, to: CGFloat(sweep / 360))
+                ArcSegment(startAngle: .degrees(startAngle), endAngle: .degrees(0))
                     .stroke(Color.white.opacity(0.22), style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-                    .rotationEffect(.degrees(startAngle))
+                ArcSegment(startAngle: .degrees(0), endAngle: .degrees(endAngle))
+                    .stroke(Color.white.opacity(0.22), style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
 
-                Circle()
-                    .trim(from: 0, to: CGFloat((sweep / 360) * progress))
+                ArcSegment(startAngle: .degrees(0), endAngle: .degrees(upAngle))
                     .stroke(
                         LinearGradient(colors: [.mint, .cyan], startPoint: .leading, endPoint: .trailing),
                         style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                     )
-                    .rotationEffect(.degrees(startAngle))
+                ArcSegment(startAngle: .degrees(downAngle), endAngle: .degrees(0))
+                    .stroke(
+                        LinearGradient(colors: [.orange, .pink], startPoint: .leading, endPoint: .trailing),
+                        style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+                    )
 
-                VStack(spacing: 6) {
-                    Text("\(Int(value))°")
-                        .font(.headline.monospacedDigit().weight(.bold))
+                if tiltLearnEnabled {
+                    ArcSegment(startAngle: .degrees(tiltAngle), endAngle: .degrees(tiltAngle + 0.8))
+                        .stroke(.white.opacity(0.95), style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                        .animation(.easeOut(duration: 0.12), value: tiltAngle)
+                }
+
+                VStack(spacing: 5) {
+                    Text(String(format: "+%.0f° / -%.0f°", upValue, downValue))
+                        .font(.caption.monospacedDigit().weight(.bold))
                         .foregroundStyle(.white)
-                    VStack(spacing: 5) {
-                        Button("Default") { onUseDefault() }
-                            .buttonStyle(InnerChipStyle())
-                        Button("Set Default") { onSetDefault() }
-                            .buttonStyle(InnerChipStyle())
+                    if tiltLearnEnabled {
+                        Text("Move phone to set")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.86))
                     }
                 }
             }
-            .frame(width: size, height: size, alignment: .center)
+            .frame(width: size, height: size)
             .contentShape(Circle())
             .animation(
-                isDragging
-                    ? .linear(duration: 0.04)
-                    : .interactiveSpring(response: 0.24, dampingFraction: 0.82),
-                value: value
+                isDragging ? .linear(duration: 0.04) : .interactiveSpring(response: 0.24, dampingFraction: 0.82),
+                value: upValue
+            )
+            .animation(
+                isDragging ? .linear(duration: 0.04) : .interactiveSpring(response: 0.24, dampingFraction: 0.82),
+                value: downValue
             )
             .gesture(
                 DragGesture(minimumDistance: 0)
@@ -567,21 +607,47 @@ private struct CircularAngleSlider: View {
                         let center = CGPoint(x: proxy.size.width / 2, y: proxy.size.height / 2)
                         let dx = drag.location.x - center.x
                         let dy = drag.location.y - center.y
-                        value = range.lowerBound + progressForDrag(dx: dx, dy: dy) * (range.upperBound - range.lowerBound)
+                        let signed = signedDragAngle(dx: dx, dy: dy)
+                        let mapped = min(max(abs(signed) / abs(endAngle) * maxValue, range.lowerBound), range.upperBound)
+                        if signed >= 0 {
+                            upValue = mapped
+                        } else {
+                            downValue = mapped
+                        }
                     }
                     .onEnded { _ in isDragging = false }
             , including: .gesture)
         }
     }
 
-    private func progressForDrag(dx: CGFloat, dy: CGFloat) -> Double {
-        var theta = atan2(dy, dx) * 180 / .pi
-        if theta < 0 { theta += 360 }
-        let sweepStart = 225.0
-        let sweepEnd = 495.0
-        if theta < sweepStart { theta += 360 }
-        let clamped = min(max(theta, sweepStart), sweepEnd)
-        return (clamped - sweepStart) / (sweepEnd - sweepStart)
+    private func signedDragAngle(dx: CGFloat, dy: CGFloat) -> Double {
+        var theta = atan2(dy, dx) * 180 / .pi + 90
+        if theta > 180 { theta -= 360 }
+        return min(max(theta, startAngle), endAngle)
+    }
+
+    private func signedAngle(for tilt: Double, maxValue: Double) -> Double {
+        let clamped = min(max(tilt, -maxValue), maxValue)
+        return (clamped / maxValue) * endAngle
+    }
+}
+
+private struct ArcSegment: Shape {
+    var startAngle: Angle
+    var endAngle: Angle
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let radius = min(rect.width, rect.height) / 2
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        path.addArc(
+            center: center,
+            radius: radius,
+            startAngle: startAngle - .degrees(90),
+            endAngle: endAngle - .degrees(90),
+            clockwise: false
+        )
+        return path
     }
 }
 

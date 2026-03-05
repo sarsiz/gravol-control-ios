@@ -6,6 +6,8 @@ enum GraVolControlRemoteStore {
     private static let defaults = UserDefaults(suiteName: appGroupID) ?? UserDefaults.standard
     private static let triggerAngleKey = "gravol_trigger_angle_degrees"
     private static let defaultTriggerAngleKey = "gravol_default_trigger_angle_degrees"
+    private static let downTriggerAngleKey = "gravol_down_trigger_angle_degrees"
+    private static let defaultDownTriggerAngleKey = "gravol_default_down_trigger_angle_degrees"
     private static let recenterCommandKey = "gravol_recenter_command_id"
     private static let armedStateKey = "gravol_armed_state"
     private static let setArmedCommandIDKey = "gravol_set_armed_command_id"
@@ -15,7 +17,6 @@ enum GraVolControlRemoteStore {
     private static let mutedStateKey = "gravol_muted_state"
     private static let lastAudibleVolumeKey = "gravol_last_audible_volume"
     private static let stepSizeKey = "gravol_step_size"
-    private static let preferredVolumeKey = "gravol_preferred_volume"
 
     static func triggerAngleDegrees(defaultValue: Double) -> Double {
         guard defaults.object(forKey: triggerAngleKey) != nil else { return defaultValue }
@@ -33,6 +34,24 @@ enum GraVolControlRemoteStore {
 
     static func setDefaultTriggerAngleDegrees(_ value: Double) {
         defaults.set(value, forKey: defaultTriggerAngleKey)
+    }
+
+    static func downTriggerAngleDegrees(defaultValue: Double) -> Double {
+        guard defaults.object(forKey: downTriggerAngleKey) != nil else { return defaultValue }
+        return defaults.double(forKey: downTriggerAngleKey)
+    }
+
+    static func setDownTriggerAngleDegrees(_ value: Double) {
+        defaults.set(value, forKey: downTriggerAngleKey)
+    }
+
+    static func defaultDownTriggerAngleDegrees(defaultValue: Double) -> Double {
+        guard defaults.object(forKey: defaultDownTriggerAngleKey) != nil else { return defaultValue }
+        return defaults.double(forKey: defaultDownTriggerAngleKey)
+    }
+
+    static func setDefaultDownTriggerAngleDegrees(_ value: Double) {
+        defaults.set(value, forKey: defaultDownTriggerAngleKey)
     }
 
     static func armedState(defaultValue: Bool) -> Bool {
@@ -56,6 +75,10 @@ enum GraVolControlRemoteStore {
         return true
     }
 
+    static func currentRecenterCommandID() -> Int {
+        defaults.integer(forKey: recenterCommandKey)
+    }
+
     static func issueSetArmedCommand(_ value: Bool) {
         defaults.set(value, forKey: setArmedValueKey)
         let next = defaults.integer(forKey: setArmedCommandIDKey) + 1
@@ -70,6 +93,10 @@ enum GraVolControlRemoteStore {
         return defaults.bool(forKey: setArmedValueKey)
     }
 
+    static func currentSetArmedCommandID() -> Int {
+        defaults.integer(forKey: setArmedCommandIDKey)
+    }
+
     static func issueVolumePresetCommand(_ value: Float) {
         defaults.set(value, forKey: volumePresetValueKey)
         let next = defaults.integer(forKey: volumePresetCommandIDKey) + 1
@@ -81,6 +108,10 @@ enum GraVolControlRemoteStore {
         guard current > lastSeenID else { return nil }
         lastSeenID = current
         return defaults.float(forKey: volumePresetValueKey)
+    }
+
+    static func currentVolumePresetCommandID() -> Int {
+        defaults.integer(forKey: volumePresetCommandIDKey)
     }
 
     static func mutedState(defaultValue: Bool) -> Bool {
@@ -110,25 +141,14 @@ enum GraVolControlRemoteStore {
         defaults.set(value, forKey: stepSizeKey)
     }
 
-    static func preferredVolume(defaultValue: Float) -> Float {
-        guard defaults.object(forKey: preferredVolumeKey) != nil else { return defaultValue }
-        return defaults.float(forKey: preferredVolumeKey)
-    }
-
-    static func hasPreferredVolume() -> Bool {
-        defaults.object(forKey: preferredVolumeKey) != nil
-    }
-
-    static func setPreferredVolume(_ value: Float) {
-        defaults.set(min(max(value, 0.0), 1.0), forKey: preferredVolumeKey)
-    }
 }
 
 @available(iOS 16.1, *)
 struct GraVolLiveActivityAttributes: ActivityAttributes {
     struct ContentState: Codable, Hashable {
         var tiltDegrees: Double
-        var triggerDegrees: Double
+        var upTriggerDegrees: Double
+        var downTriggerDegrees: Double
         var isArmed: Bool
     }
 

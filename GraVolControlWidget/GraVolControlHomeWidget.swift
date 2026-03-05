@@ -1,37 +1,37 @@
 import SwiftUI
 import WidgetKit
 
-@available(iOSApplicationExtension 17.0, *)
 private struct GraVolEntry: TimelineEntry {
     let date: Date
-    let angle: Double
+    let upAngle: Double
+    let downAngle: Double
     let isArmed: Bool
     let isMuted: Bool
 }
 
-@available(iOSApplicationExtension 17.0, *)
 private struct GraVolProvider: TimelineProvider {
     func placeholder(in context: Context) -> GraVolEntry {
-        GraVolEntry(date: Date(), angle: 15, isArmed: true, isMuted: false)
+        GraVolEntry(date: Date(), upAngle: 15, downAngle: 15, isArmed: true, isMuted: false)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (GraVolEntry) -> Void) {
-        let angle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
+        let upAngle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
+        let downAngle = GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: 15)
         let isArmed = GraVolControlRemoteStore.armedState(defaultValue: true)
         let isMuted = GraVolControlRemoteStore.mutedState(defaultValue: false)
-        completion(GraVolEntry(date: Date(), angle: angle, isArmed: isArmed, isMuted: isMuted))
+        completion(GraVolEntry(date: Date(), upAngle: upAngle, downAngle: downAngle, isArmed: isArmed, isMuted: isMuted))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<GraVolEntry>) -> Void) {
-        let angle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
+        let upAngle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
+        let downAngle = GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: 15)
         let isArmed = GraVolControlRemoteStore.armedState(defaultValue: true)
         let isMuted = GraVolControlRemoteStore.mutedState(defaultValue: false)
-        let entry = GraVolEntry(date: Date(), angle: angle, isArmed: isArmed, isMuted: isMuted)
+        let entry = GraVolEntry(date: Date(), upAngle: upAngle, downAngle: downAngle, isArmed: isArmed, isMuted: isMuted)
         completion(Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(180))))
     }
 }
 
-@available(iOSApplicationExtension 17.0, *)
 struct GraVolControlHomeWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "GraVolControlHomeWidget", provider: GraVolProvider()) { entry in
@@ -39,25 +39,17 @@ struct GraVolControlHomeWidget: Widget {
         }
         .configurationDisplayName("GraVol")
         .description("Quick view of current trigger angle.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
         .contentMarginsDisabled()
     }
 }
 
-@available(iOSApplicationExtension 17.0, *)
 private struct GraVolHomeWidgetView: View {
     let entry: GraVolEntry
     @Environment(\.widgetFamily) private var family
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [Color(red: 0.10, green: 0.33, blue: 0.38), Color(red: 0.05, green: 0.14, blue: 0.22)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .overlay(.ultraThinMaterial.opacity(0.22))
-
+        Group {
             switch family {
             case .systemSmall:
                 smallLayout
@@ -68,6 +60,14 @@ private struct GraVolHomeWidgetView: View {
             default:
                 mediumLayout
             }
+        }
+        .containerBackground(for: .widget) {
+            LinearGradient(
+                colors: [Color(red: 0.10, green: 0.33, blue: 0.38), Color(red: 0.05, green: 0.14, blue: 0.22)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .overlay(.ultraThinMaterial.opacity(0.22))
         }
     }
 
@@ -84,7 +84,7 @@ private struct GraVolHomeWidgetView: View {
     }
 
     private var statusLine: some View {
-        Text("Trigger \(Int(entry.angle))°")
+        Text(String(format: "U +%.0f°  D -%.0f°", entry.upAngle, entry.downAngle))
             .font(.subheadline.monospacedDigit())
             .foregroundStyle(.white.opacity(0.92))
     }
@@ -129,8 +129,14 @@ private struct GraVolHomeWidgetView: View {
 
     private var triggerStepChips: some View {
         HStack(spacing: 6) {
-            Button(intent: DecreaseTriggerAngleIntent()) { chip("−T", fullWidth: false) }
-            Button(intent: IncreaseTriggerAngleIntent()) { chip("+T", fullWidth: false) }
+            if #available(iOSApplicationExtension 17.0, *) {
+                Button(intent: DecreaseTriggerAngleIntent()) { chip("−T", fullWidth: false) }
+                Button(intent: IncreaseTriggerAngleIntent()) { chip("+T", fullWidth: false) }
+                Button(intent: DecreaseDownTriggerAngleIntent()) { chip("−D", fullWidth: false) }
+                Button(intent: IncreaseDownTriggerAngleIntent()) { chip("+D", fullWidth: false) }
+            } else {
+                chip("Open App", fullWidth: false)
+            }
         }
     }
 
@@ -143,12 +149,20 @@ private struct GraVolHomeWidgetView: View {
         ]
 
         LazyVGrid(columns: columns, spacing: 6) {
-            Button(intent: ToggleTiltArmedIntent()) { chip(entry.isArmed ? "Pause" : "Resume") }
-            Button(intent: MuteVolumeIntent()) { chip(entry.isMuted ? "Unmute" : "Mute") }
-            Button(intent: RecenterTiltIntent()) { chip("Recenter") }
-            if includeTriggerStep {
-                Button(intent: DecreaseTriggerAngleIntent()) { chip("−T") }
-                Button(intent: IncreaseTriggerAngleIntent()) { chip("+T") }
+            if #available(iOSApplicationExtension 17.0, *) {
+                Button(intent: ToggleTiltArmedIntent()) { chip(entry.isArmed ? "Pause" : "Resume") }
+                Button(intent: MuteVolumeIntent()) { chip(entry.isMuted ? "Unmute" : "Mute") }
+                Button(intent: RecenterTiltIntent()) { chip("Recenter") }
+                if includeTriggerStep {
+                    Button(intent: DecreaseTriggerAngleIntent()) { chip("−T") }
+                    Button(intent: IncreaseTriggerAngleIntent()) { chip("+T") }
+                    Button(intent: DecreaseDownTriggerAngleIntent()) { chip("−D") }
+                    Button(intent: IncreaseDownTriggerAngleIntent()) { chip("+D") }
+                }
+            } else {
+                chip(entry.isArmed ? "Tilt On" : "Tilt Off")
+                chip(entry.isMuted ? "Muted" : "Sound On")
+                chip("Open App")
             }
         }
     }

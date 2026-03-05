@@ -12,7 +12,7 @@ struct GraVolControlLiveActivityWidget: Widget {
                     .font(.headline)
                 Text(String(format: "Tilt: %+.1f°", context.state.tiltDegrees))
                     .font(.subheadline.monospacedDigit())
-                Text("Trigger: \(Int(context.state.triggerDegrees))°")
+                Text(String(format: "U +%.0f°  D -%.0f°", context.state.upTriggerDegrees, context.state.downTriggerDegrees))
                     .font(.caption)
             }
             .padding(12)
@@ -23,7 +23,10 @@ struct GraVolControlLiveActivityWidget: Widget {
                         .font(.headline.monospacedDigit())
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text("T \(Int(context.state.triggerDegrees))°")
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(String(format: "U +%.0f°", context.state.upTriggerDegrees))
+                        Text(String(format: "D -%.0f°", context.state.downTriggerDegrees))
+                    }
                         .font(.subheadline.monospacedDigit())
                 }
                 DynamicIslandExpandedRegion(.bottom) {
@@ -48,7 +51,7 @@ struct GraVolControlLiveActivityWidget: Widget {
                 Text(String(format: "%+.0f°", context.state.tiltDegrees))
                     .font(.caption2.monospacedDigit())
             } compactTrailing: {
-                Text("T\(Int(context.state.triggerDegrees))")
+                Text(String(format: "+%.0f/-%.0f", context.state.upTriggerDegrees, context.state.downTriggerDegrees))
                     .font(.caption2.monospacedDigit())
             } minimal: {
                 Image(systemName: context.state.isArmed ? "gyroscope" : "pause.fill")

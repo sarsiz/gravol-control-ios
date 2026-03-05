@@ -10,28 +10,34 @@ final class AppModel: ObservableObject {
     @Published var currentVolume: Float = 0
     @Published var triggerAngleDegrees: Double = 15
     @Published var defaultTriggerAngleDegrees: Double = 15
+    @Published var downTriggerAngleDegrees: Double = 15
+    @Published var defaultDownTriggerAngleDegrees: Double = 15
     @Published var currentTiltDegrees: Double = 0
     @Published var stepSize: Double = 0.2
+    @Published var isTiltLearnMode = false
     @Published var didLaunchAnimate = false
     @Published var isVolumeControlReady = false
 
     private let volumeManager = VolumeManager()
     private var volumeRefreshTimer: Timer?
+    private var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
     private var lastSeenRecenterCommandID = 0
     private var lastSeenSetArmedCommandID = 0
     private var lastSeenVolumePresetCommandID = 0
     private var lastLiveActivitySync = Date.distantPast
-    private var pendingPreferredVolumeRestore: Float?
-    private var preferredRestoreAttempts = 0
     private let triggerAngleRange: ClosedRange<Double> = 0...60
     private let muteThreshold: Float = 0.001
     private let firstLaunchFlagKey = "gravol_has_launched_once"
+    private let tiltLearnModeKey = "gravol_tilt_learn_mode"
 
     private lazy var tiltController: TiltVolumeController = {
-        let threshold = Self.degreesToRadians(triggerAngleDegrees)
+        let upThreshold = Self.degreesToRadians(triggerAngleDegrees)
+        let downThreshold = Self.degreesToRadians(downTriggerAngleDegrees)
         return TiltVolumeController(
-            pitchThreshold: threshold,
-            hysteresis: threshold * 0.45,
+            towardPitchThreshold: upThreshold,
+            awayPitchThreshold: downThreshold,
+            towardHysteresis: max(abs(upThreshold) * 0.45, Self.degreesToRadians(1)),
+            awayHysteresis: max(abs(downThreshold) * 0.45, Self.degreesToRadians(1)),
             stepInterval: 0.15
         )
     }()
@@ -43,22 +49,29 @@ final class AppModel: ObservableObject {
             UserDefaults.standard.set(true, forKey: firstLaunchFlagKey)
             defaultTriggerAngleDegrees = 15
             triggerAngleDegrees = 15
+            defaultDownTriggerAngleDegrees = 15
+            downTriggerAngleDegrees = 15
             stepSize = 0.2
             isArmed = true
             GraVolControlRemoteStore.setDefaultTriggerAngleDegrees(defaultTriggerAngleDegrees)
             GraVolControlRemoteStore.setTriggerAngleDegrees(triggerAngleDegrees)
+            GraVolControlRemoteStore.setDefaultDownTriggerAngleDegrees(defaultDownTriggerAngleDegrees)
+            GraVolControlRemoteStore.setDownTriggerAngleDegrees(downTriggerAngleDegrees)
             GraVolControlRemoteStore.setStepSize(stepSize)
             GraVolControlRemoteStore.setArmedState(isArmed)
         } else {
-            defaultTriggerAngleDegrees = GraVolControlRemoteStore.defaultTriggerAngleDegrees(defaultValue: defaultTriggerAngleDegrees)
-            triggerAngleDegrees = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: defaultTriggerAngleDegrees)
+            defaultTriggerAngleDegrees = min(max(abs(GraVolControlRemoteStore.defaultTriggerAngleDegrees(defaultValue: defaultTriggerAngleDegrees)), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+            triggerAngleDegrees = min(max(abs(GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: defaultTriggerAngleDegrees)), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+            defaultDownTriggerAngleDegrees = min(max(abs(GraVolControlRemoteStore.defaultDownTriggerAngleDegrees(defaultValue: defaultDownTriggerAngleDegrees)), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+            downTriggerAngleDegrees = min(max(abs(GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: defaultDownTriggerAngleDegrees)), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
             stepSize = min(max(GraVolControlRemoteStore.stepSize(defaultValue: stepSize), 0.01), 5.0)
             isArmed = GraVolControlRemoteStore.armedState(defaultValue: true)
         }
 
-        if GraVolControlRemoteStore.hasPreferredVolume() {
-            pendingPreferredVolumeRestore = GraVolControlRemoteStore.preferredVolume(defaultValue: currentVolume)
-        }
+        lastSeenRecenterCommandID = GraVolControlRemoteStore.currentRecenterCommandID()
+        lastSeenSetArmedCommandID = GraVolControlRemoteStore.currentSetArmedCommandID()
+        lastSeenVolumePresetCommandID = GraVolControlRemoteStore.currentVolumePresetCommandID()
+        isTiltLearnMode = UserDefaults.standard.bool(forKey: tiltLearnModeKey)
         refreshCurrentVolume()
         startVolumeRefreshTimer()
 
@@ -66,15 +79,20 @@ final class AppModel: ObservableObject {
             guard let self else { return }
             switch direction {
             case .towardUser:
-                self.applyVolumeChange(delta: Float(self.stepSize), action: "Tilt Up")
+                self.applyVolumeChange(delta: Float(self.stepSize / 100.0), action: "Tilt Up")
             case .awayFromUser:
-                self.applyVolumeChange(delta: -Float(self.stepSize), action: "Tilt Down")
+                self.applyVolumeChange(delta: -Float(self.stepSize / 100.0), action: "Tilt Down")
             }
         }
 
         tiltController.onTiltDeltaChanged = { [weak self] deltaPitch in
             guard let self else { return }
-            self.currentTiltDegrees = Self.radiansToDegrees(deltaPitch)
+            let tilt = Self.radiansToDegrees(deltaPitch)
+            self.currentTiltDegrees = tilt
+            if self.isTiltLearnMode {
+                self.applyTiltAsTrigger(tilt)
+            }
+            self.syncLiveActivity(force: true)
         }
     }
 
@@ -94,19 +112,15 @@ final class AppModel: ObservableObject {
     }
 
     func updateTriggerAngleDegrees(_ value: Double) {
-        triggerAngleDegrees = min(max(value, triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+        triggerAngleDegrees = min(max(abs(value), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
         GraVolControlRemoteStore.setTriggerAngleDegrees(triggerAngleDegrees)
         WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
-        let threshold = Self.degreesToRadians(triggerAngleDegrees)
-        tiltController.updateThresholds(
-            pitchThreshold: threshold,
-            hysteresis: threshold * 0.45
-        )
+        updateTiltThresholds()
         syncLiveActivity(force: true)
     }
 
     func updateDefaultTriggerAngleDegrees(_ value: Double) {
-        defaultTriggerAngleDegrees = min(max(value, triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+        defaultTriggerAngleDegrees = min(max(abs(value), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
         GraVolControlRemoteStore.setDefaultTriggerAngleDegrees(defaultTriggerAngleDegrees)
         WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
     }
@@ -115,15 +129,42 @@ final class AppModel: ObservableObject {
         updateTriggerAngleDegrees(defaultTriggerAngleDegrees)
     }
 
+    func updateDownTriggerAngleDegrees(_ value: Double) {
+        downTriggerAngleDegrees = min(max(abs(value), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+        GraVolControlRemoteStore.setDownTriggerAngleDegrees(downTriggerAngleDegrees)
+        WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+        updateTiltThresholds()
+        syncLiveActivity(force: true)
+    }
+
+    func updateDefaultDownTriggerAngleDegrees(_ value: Double) {
+        defaultDownTriggerAngleDegrees = min(max(abs(value), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+        GraVolControlRemoteStore.setDefaultDownTriggerAngleDegrees(defaultDownTriggerAngleDegrees)
+    }
+
+    func resetDownTriggerToDefault() {
+        updateDownTriggerAngleDegrees(defaultDownTriggerAngleDegrees)
+    }
+
     func updateStepSize(_ value: Double) {
         stepSize = min(max(value, 0.01), 5.0)
         GraVolControlRemoteStore.setStepSize(stepSize)
     }
 
+    func setTiltLearnMode(_ enabled: Bool) {
+        isTiltLearnMode = enabled
+        UserDefaults.standard.set(enabled, forKey: tiltLearnModeKey)
+        if !enabled {
+            GraVolControlRemoteStore.setTriggerAngleDegrees(triggerAngleDegrees)
+            GraVolControlRemoteStore.setDownTriggerAngleDegrees(downTriggerAngleDegrees)
+            WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+            syncLiveActivity(force: true)
+        }
+    }
+
     func attachSystemVolumeSlider(_ slider: UISlider) {
         volumeManager.attachSystemSlider(slider)
         isVolumeControlReady = true
-        attemptPreferredVolumeRestore()
     }
 
     func nudgeUp() {
@@ -144,9 +185,6 @@ final class AppModel: ObservableObject {
         currentVolume = volumeManager.currentOutputVolume()
         lastAction = "Dial \(Int(currentVolume * 100))%"
         syncMuteState(for: currentVolume)
-        GraVolControlRemoteStore.setPreferredVolume(currentVolume)
-        pendingPreferredVolumeRestore = currentVolume
-        preferredRestoreAttempts = 0
     }
 
     func setVolumePreset(_ value: Float) {
@@ -159,9 +197,6 @@ final class AppModel: ObservableObject {
         currentVolume = volumeManager.currentOutputVolume()
         lastAction = "Set \(Int(value * 100))%"
         syncMuteState(for: currentVolume)
-        GraVolControlRemoteStore.setPreferredVolume(currentVolume)
-        pendingPreferredVolumeRestore = currentVolume
-        preferredRestoreAttempts = 0
     }
 
     func toggleMute() {
@@ -190,14 +225,27 @@ final class AppModel: ObservableObject {
     func handleScenePhase(_ phase: ScenePhase) {
         switch phase {
         case .active:
+            endBackgroundTaskIfNeeded()
             startVolumeRefreshTimer()
             refreshCurrentVolume()
-            attemptPreferredVolumeRestore()
             if isArmed { tiltController.start() }
             syncLiveActivity(force: true)
-        case .inactive, .background:
-            tiltController.stop()
-            stopVolumeRefreshTimer()
+        case .inactive:
+            if isArmed {
+                tiltController.start()
+                startVolumeRefreshTimer()
+            }
+        case .background:
+            // Best effort: keep updates alive briefly while app transitions.
+            beginBackgroundTaskIfNeeded()
+            if isArmed {
+                tiltController.start()
+                startVolumeRefreshTimer()
+                syncLiveActivity(force: true)
+            } else {
+                tiltController.stop()
+                stopVolumeRefreshTimer()
+            }
         @unknown default:
             tiltController.stop()
             stopVolumeRefreshTimer()
@@ -215,9 +263,6 @@ final class AppModel: ObservableObject {
         let after = volumeManager.changeVolume(by: delta)
         currentVolume = after
         syncMuteState(for: after)
-        GraVolControlRemoteStore.setPreferredVolume(after)
-        pendingPreferredVolumeRestore = after
-        preferredRestoreAttempts = 0
         if abs(after - before) > 0.0001 {
             lastAction = action
         } else if after <= 0.001 {
@@ -232,7 +277,6 @@ final class AppModel: ObservableObject {
         isVolumeControlReady = volumeManager.isReady()
         currentVolume = volumeManager.currentOutputVolume()
         syncMuteState(for: currentVolume)
-        attemptPreferredVolumeRestore()
     }
 
     private func startVolumeRefreshTimer() {
@@ -261,12 +305,14 @@ final class AppModel: ObservableObject {
     private func applyRemoteCommands() {
         let sharedAngle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: triggerAngleDegrees)
         if abs(sharedAngle - triggerAngleDegrees) > 0.001 {
-            let threshold = Self.degreesToRadians(sharedAngle)
-            triggerAngleDegrees = min(max(sharedAngle, triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
-            tiltController.updateThresholds(
-                pitchThreshold: threshold,
-                hysteresis: threshold * 0.45
-            )
+            triggerAngleDegrees = min(max(abs(sharedAngle), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+            updateTiltThresholds()
+        }
+
+        let sharedDownAngle = GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: downTriggerAngleDegrees)
+        if abs(sharedDownAngle - downTriggerAngleDegrees) > 0.001 {
+            downTriggerAngleDegrees = min(max(abs(sharedDownAngle), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+            updateTiltThresholds()
         }
 
         if GraVolControlRemoteStore.consumeRecenterCommand(lastSeenID: &lastSeenRecenterCommandID) {
@@ -288,14 +334,15 @@ final class AppModel: ObservableObject {
         guard isArmed else { return }
 
         let now = Date()
-        if !force, now.timeIntervalSince(lastLiveActivitySync) < 0.35 {
+        if !force, now.timeIntervalSince(lastLiveActivitySync) < 0.12 {
             return
         }
         lastLiveActivitySync = now
 
         let content = GraVolLiveActivityAttributes.ContentState(
             tiltDegrees: currentTiltDegrees,
-            triggerDegrees: triggerAngleDegrees,
+            upTriggerDegrees: triggerAngleDegrees,
+            downTriggerDegrees: downTriggerAngleDegrees,
             isArmed: isArmed
         )
         Task {
@@ -327,25 +374,44 @@ final class AppModel: ObservableObject {
         }
     }
 
-    private func attemptPreferredVolumeRestore() {
-        guard let target = pendingPreferredVolumeRestore else { return }
-        guard volumeManager.isReady() else { return }
+    private func updateTiltThresholds() {
+        let upThreshold = Self.degreesToRadians(triggerAngleDegrees)
+        let downThreshold = Self.degreesToRadians(downTriggerAngleDegrees)
+        tiltController.updateThresholds(
+            towardPitchThreshold: upThreshold,
+            awayPitchThreshold: downThreshold,
+            towardHysteresis: max(abs(upThreshold) * 0.45, Self.degreesToRadians(1)),
+            awayHysteresis: max(abs(downThreshold) * 0.45, Self.degreesToRadians(1))
+        )
+    }
 
-        let current = volumeManager.rawOutputVolume()
-        if abs(current - target) <= 0.02 {
-            pendingPreferredVolumeRestore = nil
-            preferredRestoreAttempts = 0
-            return
+    private func applyTiltAsTrigger(_ tiltDegrees: Double) {
+        let minLearnAngle = 1.0
+        guard abs(tiltDegrees) >= minLearnAngle else { return }
+
+        let mapped = min(max(abs(tiltDegrees), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+        if tiltDegrees >= 0 {
+            triggerAngleDegrees = mapped
+        } else {
+            downTriggerAngleDegrees = mapped
         }
+        updateTiltThresholds()
+    }
 
-        guard preferredRestoreAttempts < 24 else {
-            pendingPreferredVolumeRestore = nil
-            preferredRestoreAttempts = 0
-            return
+    private func beginBackgroundTaskIfNeeded() {
+        guard backgroundTaskID == .invalid else { return }
+        backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "GraVolTiltLiveActivity") { [weak self] in
+            Task { @MainActor in
+                self?.endBackgroundTaskIfNeeded()
+                self?.tiltController.stop()
+                self?.stopVolumeRefreshTimer()
+            }
         }
+    }
 
-        preferredRestoreAttempts += 1
-        _ = volumeManager.setVolume(target)
-        currentVolume = target
+    private func endBackgroundTaskIfNeeded() {
+        guard backgroundTaskID != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(backgroundTaskID)
+        backgroundTaskID = .invalid
     }
 }

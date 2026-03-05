@@ -11,26 +11,47 @@ final class TiltVolumeController {
     var onTiltDeltaChanged: ((Double) -> Void)?
 
     private let motionManager = CMMotionManager()
-    private var pitchThreshold: Double
-    private var hysteresis: Double
+    private var towardPitchThreshold: Double
+    private var awayPitchThreshold: Double
+    private var towardHysteresis: Double
+    private var awayHysteresis: Double
     private let stepInterval: TimeInterval
-    private let holdDuration: TimeInterval = 0.15
+    private let holdDuration: TimeInterval = 0.22
     private let maxRotationNoise: Double = 2.8
+    private let maxContinuousStepsPerDirection = 6
+    private let neutralBandRadians: Double = 0.06
 
     private var lowPassPitch: Double = 0
     private var towardHoldStart: Date?
     private var awayHoldStart: Date?
     private var lastStepAt = Date.distantPast
+    private var towardStepBurstCount = 0
+    private var awayStepBurstCount = 0
 
-    init(pitchThreshold: Double, hysteresis: Double, stepInterval: TimeInterval) {
-        self.pitchThreshold = pitchThreshold
-        self.hysteresis = hysteresis
+    init(
+        towardPitchThreshold: Double,
+        awayPitchThreshold: Double,
+        towardHysteresis: Double,
+        awayHysteresis: Double,
+        stepInterval: TimeInterval
+    ) {
+        self.towardPitchThreshold = towardPitchThreshold
+        self.awayPitchThreshold = awayPitchThreshold
+        self.towardHysteresis = towardHysteresis
+        self.awayHysteresis = awayHysteresis
         self.stepInterval = stepInterval
     }
 
-    func updateThresholds(pitchThreshold: Double, hysteresis: Double) {
-        self.pitchThreshold = max(0.05, pitchThreshold)
-        self.hysteresis = max(0.025, hysteresis)
+    func updateThresholds(
+        towardPitchThreshold: Double,
+        awayPitchThreshold: Double,
+        towardHysteresis: Double,
+        awayHysteresis: Double
+    ) {
+        self.towardPitchThreshold = max(0.01, abs(towardPitchThreshold))
+        self.awayPitchThreshold = max(0.01, abs(awayPitchThreshold))
+        self.towardHysteresis = max(0.008, abs(towardHysteresis))
+        self.awayHysteresis = max(0.008, abs(awayHysteresis))
     }
 
     func start() {
@@ -49,12 +70,16 @@ final class TiltVolumeController {
         towardHoldStart = nil
         awayHoldStart = nil
         lowPassPitch = 0
+        towardStepBurstCount = 0
+        awayStepBurstCount = 0
         onTiltDeltaChanged?(0)
     }
 
     func recenterBaseline() {
         towardHoldStart = nil
         awayHoldStart = nil
+        towardStepBurstCount = 0
+        awayStepBurstCount = 0
     }
 
     private func process(_ motion: CMDeviceMotion) {
@@ -73,16 +98,24 @@ final class TiltVolumeController {
         let now = Date()
         guard now.timeIntervalSince(lastStepAt) >= stepInterval else { return }
 
-        let towardEnter = pitchThreshold
-        let towardExit = pitchThreshold - hysteresis
-        let awayEnter = -pitchThreshold
-        let awayExit = -pitchThreshold + hysteresis
+        let towardEnter = towardPitchThreshold
+        let towardExit = towardPitchThreshold - towardHysteresis
+        let awayEnter = -awayPitchThreshold
+        let awayExit = -awayPitchThreshold + awayHysteresis
+
+        if abs(signedPitchFromHorizontal) <= neutralBandRadians {
+            towardStepBurstCount = 0
+            awayStepBurstCount = 0
+        }
 
         if signedPitchFromHorizontal >= towardEnter {
+            guard towardStepBurstCount < maxContinuousStepsPerDirection else { return }
             towardHoldStart = towardHoldStart ?? now
             awayHoldStart = nil
             if let towardHoldStart, now.timeIntervalSince(towardHoldStart) >= holdDuration {
                 lastStepAt = now
+                towardStepBurstCount += 1
+                awayStepBurstCount = 0
                 onDirection?(.towardUser)
                 self.towardHoldStart = nil
             }
@@ -90,10 +123,13 @@ final class TiltVolumeController {
         }
 
         if signedPitchFromHorizontal <= awayEnter {
+            guard awayStepBurstCount < maxContinuousStepsPerDirection else { return }
             awayHoldStart = awayHoldStart ?? now
             towardHoldStart = nil
             if let awayHoldStart, now.timeIntervalSince(awayHoldStart) >= holdDuration {
                 lastStepAt = now
+                awayStepBurstCount += 1
+                towardStepBurstCount = 0
                 onDirection?(.awayFromUser)
                 self.awayHoldStart = nil
             }

@@ -6,7 +6,6 @@ import UIKit
 final class VolumeManager {
     private let audioSession = AVAudioSession.sharedInstance()
     private var systemSlider: UISlider?
-    private let minimumSystemTick: Float = 1.0 / 16.0
     private var pendingVolume: Float?
 
     func configureAudioSession() {
@@ -27,16 +26,11 @@ final class VolumeManager {
         return pending
     }
 
-    func rawOutputVolume() -> Float {
-        audioSession.outputVolume
-    }
-
     @discardableResult
     func changeVolume(by delta: Float) -> Float {
         let current = currentOutputVolume()
         if delta == 0 { return current }
-        let signedStep = max(abs(delta), minimumSystemTick) * (delta > 0 ? 1 : -1)
-        return setVolume(current + signedStep)
+        return setVolume(current + delta)
     }
 
     func attachSystemSlider(_ slider: UISlider) {

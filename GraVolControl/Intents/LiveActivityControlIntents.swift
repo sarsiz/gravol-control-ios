@@ -4,53 +4,88 @@ import WidgetKit
 
 struct IncreaseTriggerAngleIntent: AppIntent {
     static var title: LocalizedStringResource = "Increase Trigger Angle"
+    static var openAppWhenRun: Bool = false
 
     func perform() async throws -> some IntentResult {
         let current = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
         let next = min(current + 1, 60)
         GraVolControlRemoteStore.setTriggerAngleDegrees(next)
         reloadWidgets()
-        await syncActivity(triggerDegrees: next)
+        await syncActivity()
         return .result()
     }
 }
 
 struct DecreaseTriggerAngleIntent: AppIntent {
     static var title: LocalizedStringResource = "Decrease Trigger Angle"
+    static var openAppWhenRun: Bool = false
 
     func perform() async throws -> some IntentResult {
         let current = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
         let next = max(current - 1, 0)
         GraVolControlRemoteStore.setTriggerAngleDegrees(next)
         reloadWidgets()
-        await syncActivity(triggerDegrees: next)
+        await syncActivity()
+        return .result()
+    }
+}
+
+struct IncreaseDownTriggerAngleIntent: AppIntent {
+    static var title: LocalizedStringResource = "Increase Down Trigger Angle"
+    static var openAppWhenRun: Bool = false
+
+    func perform() async throws -> some IntentResult {
+        let current = GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: 15)
+        let next = min(current + 1, 60)
+        GraVolControlRemoteStore.setDownTriggerAngleDegrees(next)
+        reloadWidgets()
+        await syncActivity()
+        return .result()
+    }
+}
+
+struct DecreaseDownTriggerAngleIntent: AppIntent {
+    static var title: LocalizedStringResource = "Decrease Down Trigger Angle"
+    static var openAppWhenRun: Bool = false
+
+    func perform() async throws -> some IntentResult {
+        let current = GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: 15)
+        let next = max(current - 1, 0)
+        GraVolControlRemoteStore.setDownTriggerAngleDegrees(next)
+        reloadWidgets()
+        await syncActivity()
         return .result()
     }
 }
 
 struct RecenterTiltIntent: AppIntent {
     static var title: LocalizedStringResource = "Recenter Tilt"
+    static var openAppWhenRun: Bool = false
 
     func perform() async throws -> some IntentResult {
         GraVolControlRemoteStore.issueRecenterCommand()
         reloadWidgets()
+        await syncActivity()
         return .result()
     }
 }
 
 struct ToggleTiltArmedIntent: AppIntent {
     static var title: LocalizedStringResource = "Pause or Resume Tilt"
+    static var openAppWhenRun: Bool = false
 
     func perform() async throws -> some IntentResult {
         let current = GraVolControlRemoteStore.armedState(defaultValue: true)
         GraVolControlRemoteStore.issueSetArmedCommand(!current)
         reloadWidgets()
+        await syncActivity()
         return .result()
     }
 }
 
 struct MuteVolumeIntent: AppIntent {
     static var title: LocalizedStringResource = "Mute or Unmute Volume"
+    static var openAppWhenRun: Bool = false
 
     func perform() async throws -> some IntentResult {
         let isMuted = GraVolControlRemoteStore.mutedState(defaultValue: false)
@@ -63,6 +98,7 @@ struct MuteVolumeIntent: AppIntent {
             GraVolControlRemoteStore.issueVolumePresetCommand(0.0)
         }
         reloadWidgets()
+        await syncActivity()
         return .result()
     }
 }
@@ -99,14 +135,19 @@ struct Volume80Intent: AppIntent {
 
 private func reloadWidgets() {
     WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+    WidgetCenter.shared.reloadAllTimelines()
 }
 
-private func syncActivity(triggerDegrees: Double) async {
+private func syncActivity() async {
     guard #available(iOS 16.1, *) else { return }
+    let upTrigger = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
+    let downTrigger = GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: 15)
+    let isArmed = GraVolControlRemoteStore.armedState(defaultValue: true)
     let state = GraVolLiveActivityAttributes.ContentState(
         tiltDegrees: 0,
-        triggerDegrees: triggerDegrees,
-        isArmed: true
+        upTriggerDegrees: upTrigger,
+        downTriggerDegrees: downTrigger,
+        isArmed: isArmed
     )
     if let activity = Activity<GraVolLiveActivityAttributes>.activities.first {
         if #available(iOS 16.2, *) {
