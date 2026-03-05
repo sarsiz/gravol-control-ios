@@ -6,7 +6,7 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
     let onSliderReady: (UISlider) -> Void
 
     final class Coordinator {
-        var didAttachSlider = false
+        weak var attachedSlider: UISlider?
     }
 
     func makeCoordinator() -> Coordinator {
@@ -14,7 +14,7 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> MPVolumeView {
-        let view = MPVolumeView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
+        let view = MPVolumeView(frame: CGRect(x: 0, y: 0, width: 120, height: 30))
         view.alpha = 0.01
         attachSliderIfAvailable(from: view, coordinator: context.coordinator)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
@@ -29,18 +29,28 @@ struct SystemVolumeBridgeView: UIViewRepresentable {
 
     func updateUIView(_ uiView: MPVolumeView, context: Context) {
         attachSliderIfAvailable(from: uiView, coordinator: context.coordinator)
-        if !context.coordinator.didAttachSlider {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
-                attachSliderIfAvailable(from: uiView, coordinator: context.coordinator)
-            }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+            attachSliderIfAvailable(from: uiView, coordinator: context.coordinator)
         }
     }
 
     private func attachSliderIfAvailable(from volumeView: MPVolumeView, coordinator: Coordinator) {
-        guard !coordinator.didAttachSlider else { return }
-        if let slider = volumeView.subviews.compactMap({ $0 as? UISlider }).first {
-            coordinator.didAttachSlider = true
+        if let slider = findSlider(in: volumeView),
+           coordinator.attachedSlider !== slider {
+            coordinator.attachedSlider = slider
             onSliderReady(slider)
         }
+    }
+
+    private func findSlider(in view: UIView) -> UISlider? {
+        if let slider = view as? UISlider {
+            return slider
+        }
+        for subview in view.subviews {
+            if let slider = findSlider(in: subview) {
+                return slider
+            }
+        }
+        return nil
     }
 }

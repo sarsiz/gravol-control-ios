@@ -17,6 +17,7 @@ final class AppModel: ObservableObject {
     @Published var isTiltLearnMode = false
     @Published var didLaunchAnimate = false
     @Published var isVolumeControlReady = false
+    @Published var tiltStatus: String = "Tilt Ready"
 
     private let volumeManager = VolumeManager()
     private var volumeRefreshTimer: Timer?
@@ -32,6 +33,8 @@ final class AppModel: ObservableObject {
     private let muteThreshold: Float = 0.001
     private let firstLaunchFlagKey = "gravol_has_launched_once"
     private let tiltLearnModeKey = "gravol_tilt_learn_mode"
+    private let tiltLearnSmoothingFactor = 0.22
+    private let tiltLearnMinimumDelta = 0.12
 
     private lazy var tiltController: TiltVolumeController = {
         let upThreshold = Self.degreesToRadians(triggerAngleDegrees)
@@ -107,10 +110,12 @@ final class AppModel: ObservableObject {
             tiltController.start()
             tiltController.recenterBaseline()
             lastAction = "Tilt Ready"
+            tiltStatus = "Tilt Ready"
             syncLiveActivity(force: true)
         } else {
             tiltController.stop()
             lastAction = "Paused"
+            tiltStatus = "Paused"
             endLiveActivity()
         }
     }
@@ -249,7 +254,7 @@ final class AppModel: ObservableObject {
         updateTiltThresholds()
         notifyWidgetsIfNeeded(force: true)
         tiltController.recenterBaseline()
-        lastAction = "Recentered"
+        tiltStatus = "Recentered"
         syncLiveActivity(force: true)
     }
 
@@ -336,18 +341,21 @@ final class AppModel: ObservableObject {
     private func applyRemoteCommands() {
         var shouldRefreshWidgets = false
 
-        let sharedAngle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: triggerAngleDegrees)
-        if abs(sharedAngle - triggerAngleDegrees) > 0.001 {
-            triggerAngleDegrees = min(max(abs(sharedAngle), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
-            updateTiltThresholds()
-            shouldRefreshWidgets = true
-        }
+        // Do not overwrite local live-learning values from stale shared store.
+        if !isTiltLearnMode {
+            let sharedAngle = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: triggerAngleDegrees)
+            if abs(sharedAngle - triggerAngleDegrees) > 0.001 {
+                triggerAngleDegrees = min(max(abs(sharedAngle), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+                updateTiltThresholds()
+                shouldRefreshWidgets = true
+            }
 
-        let sharedDownAngle = GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: downTriggerAngleDegrees)
-        if abs(sharedDownAngle - downTriggerAngleDegrees) > 0.001 {
-            downTriggerAngleDegrees = min(max(abs(sharedDownAngle), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
-            updateTiltThresholds()
-            shouldRefreshWidgets = true
+            let sharedDownAngle = GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: downTriggerAngleDegrees)
+            if abs(sharedDownAngle - downTriggerAngleDegrees) > 0.001 {
+                downTriggerAngleDegrees = min(max(abs(sharedDownAngle), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
+                updateTiltThresholds()
+                shouldRefreshWidgets = true
+            }
         }
 
         if GraVolControlRemoteStore.consumeRecenterCommand(lastSeenID: &lastSeenRecenterCommandID) {
@@ -430,11 +438,17 @@ final class AppModel: ObservableObject {
 
         let mapped = min(max(abs(tiltDegrees), triggerAngleRange.lowerBound), triggerAngleRange.upperBound)
         if tiltDegrees >= 0 {
-            triggerAngleDegrees = mapped
+            let smoothed = triggerAngleDegrees + ((mapped - triggerAngleDegrees) * tiltLearnSmoothingFactor)
+            guard abs(smoothed - triggerAngleDegrees) >= tiltLearnMinimumDelta else { return }
+            triggerAngleDegrees = smoothed
+            GraVolControlRemoteStore.setTriggerAngleDegrees(triggerAngleDegrees)
         } else {
-            downTriggerAngleDegrees = mapped
+            let smoothed = downTriggerAngleDegrees + ((mapped - downTriggerAngleDegrees) * tiltLearnSmoothingFactor)
+            guard abs(smoothed - downTriggerAngleDegrees) >= tiltLearnMinimumDelta else { return }
+            downTriggerAngleDegrees = smoothed
+            GraVolControlRemoteStore.setDownTriggerAngleDegrees(downTriggerAngleDegrees)
         }
-        notifyWidgetsIfNeeded(force: true)
+        notifyWidgetsIfNeeded()
         updateTiltThresholds()
     }
 

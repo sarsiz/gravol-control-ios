@@ -69,7 +69,10 @@ struct ContentView: View {
             SystemVolumeBridgeView { slider in
                 model.attachSystemVolumeSlider(slider)
             }
-            .frame(width: 1, height: 1)
+            .frame(width: 120, height: 30)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+            .opacity(0.01)
         )
     }
 
@@ -263,6 +266,9 @@ struct ContentView: View {
                     Text(String(format: "Defaults +%.0f° / -%.0f°", model.defaultTriggerAngleDegrees, model.defaultDownTriggerAngleDegrees))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.78))
+                    Text(model.tiltStatus)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.9))
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
