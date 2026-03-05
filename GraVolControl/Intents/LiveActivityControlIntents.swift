@@ -143,12 +143,24 @@ private func syncActivity() async {
     let upTrigger = GraVolControlRemoteStore.triggerAngleDegrees(defaultValue: 15)
     let downTrigger = GraVolControlRemoteStore.downTriggerAngleDegrees(defaultValue: 15)
     let isArmed = GraVolControlRemoteStore.armedState(defaultValue: true)
+    let existingTilt = Activity<GraVolLiveActivityAttributes>.activities.first?.content.state.tiltDegrees ?? 0
     let state = GraVolLiveActivityAttributes.ContentState(
-        tiltDegrees: 0,
+        tiltDegrees: existingTilt,
         upTriggerDegrees: upTrigger,
         downTriggerDegrees: downTrigger,
         isArmed: isArmed
     )
+    if !isArmed {
+        for activity in Activity<GraVolLiveActivityAttributes>.activities {
+            if #available(iOS 16.2, *) {
+                let finalContent = ActivityContent(state: state, staleDate: nil)
+                await activity.end(finalContent, dismissalPolicy: .immediate)
+            } else {
+                await activity.end(dismissalPolicy: .immediate)
+            }
+        }
+        return
+    }
     if let activity = Activity<GraVolLiveActivityAttributes>.activities.first {
         if #available(iOS 16.2, *) {
             let content = ActivityContent(state: state, staleDate: nil)

@@ -146,6 +146,21 @@ final class AppModel: ObservableObject {
         updateDownTriggerAngleDegrees(defaultDownTriggerAngleDegrees)
     }
 
+    func resetBothTriggersToFortyFive() {
+        let defaultAngle = 45.0
+        defaultTriggerAngleDegrees = defaultAngle
+        defaultDownTriggerAngleDegrees = defaultAngle
+        triggerAngleDegrees = defaultAngle
+        downTriggerAngleDegrees = defaultAngle
+        GraVolControlRemoteStore.setDefaultTriggerAngleDegrees(defaultAngle)
+        GraVolControlRemoteStore.setDefaultDownTriggerAngleDegrees(defaultAngle)
+        GraVolControlRemoteStore.setTriggerAngleDegrees(defaultAngle)
+        GraVolControlRemoteStore.setDownTriggerAngleDegrees(defaultAngle)
+        updateTiltThresholds()
+        WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
+        syncLiveActivity(force: true)
+    }
+
     func updateStepSize(_ value: Double) {
         stepSize = min(max(value, 0.01), 5.0)
         GraVolControlRemoteStore.setStepSize(stepSize)
@@ -217,6 +232,17 @@ final class AppModel: ObservableObject {
     }
 
     func recenterTiltReference() {
+        let baselineDefault = 45.0
+        defaultTriggerAngleDegrees = baselineDefault
+        defaultDownTriggerAngleDegrees = baselineDefault
+        triggerAngleDegrees = baselineDefault
+        downTriggerAngleDegrees = baselineDefault
+        GraVolControlRemoteStore.setDefaultTriggerAngleDegrees(baselineDefault)
+        GraVolControlRemoteStore.setDefaultDownTriggerAngleDegrees(baselineDefault)
+        GraVolControlRemoteStore.setTriggerAngleDegrees(baselineDefault)
+        GraVolControlRemoteStore.setDownTriggerAngleDegrees(baselineDefault)
+        updateTiltThresholds()
+        WidgetCenter.shared.reloadTimelines(ofKind: "GraVolControlHomeWidget")
         tiltController.recenterBaseline()
         lastAction = "Recentered"
         syncLiveActivity(force: true)

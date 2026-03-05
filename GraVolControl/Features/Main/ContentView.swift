@@ -9,8 +9,8 @@ struct ContentView: View {
     @State private var downPulse = false
 
     // Tweak these if you want the pill/header tighter/looser.
-    private let islandBadgeTopGap: CGFloat = 4
-    private let islandBadgeHeight: CGFloat = 34
+    private let islandBadgeTopGap: CGFloat = 8
+    private let islandBadgeHeight: CGFloat = 38
     private let badgeContentSpacing: CGFloat = 10
 
     var body: some View {
@@ -21,8 +21,8 @@ struct ContentView: View {
 
             GeometryReader { geo in
                 let bottomInset = geo.safeAreaInsets.bottom
-                let badgeTopY = max(islandBadgeTopGap, geo.safeAreaInsets.top - 50)
-                let reservedTop = badgeTopY + islandBadgeHeight + badgeContentSpacing
+                let badgeTopY = geo.safeAreaInsets.top + islandBadgeTopGap
+                let reservedTop = islandBadgeHeight + badgeContentSpacing
 
                 ZStack(alignment: .bottomLeading) {
                     ScrollView(showsIndicators: false) {
@@ -33,14 +33,14 @@ struct ContentView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, reservedTop)
-                        .padding(.bottom, max(2, bottomInset - 6))
+                        .padding(.bottom, max(14, bottomInset + 8))
                         .frame(maxWidth: .infinity, alignment: .top)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
                     infoButton
                         .padding(.leading, 16)
-                        .padding(.bottom, max(4, bottomInset - 4))
+                        .padding(.bottom, max(8, bottomInset + 4))
                 }
                 .overlay(alignment: .top) {
                     islandAngleBadge
@@ -103,8 +103,8 @@ struct ContentView: View {
                 .foregroundStyle(.white.opacity(0.85))
         }
         .foregroundStyle(.white)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 7)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
         .background(
             Capsule()
                 .fill(.ultraThinMaterial)
@@ -137,17 +137,21 @@ struct ContentView: View {
             ZStack {
                 Circle()
                     .fill(.ultraThinMaterial.opacity(0.55))
-                    .frame(width: 188, height: 188)
+                    .frame(width: 204, height: 204)
                     .overlay(Circle().stroke(.white.opacity(0.18), lineWidth: 1))
 
                 Circle()
                     .trim(from: 0, to: CGFloat(model.currentVolume))
                     .stroke(
-                        LinearGradient(colors: [.mint, .cyan, .white], startPoint: .leading, endPoint: .trailing),
+                        LinearGradient(
+                            colors: volumeRingColors,
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
                         style: StrokeStyle(lineWidth: 12, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
-                    .frame(width: 164, height: 164)
+                    .frame(width: 178, height: 178)
                     .animation(.interactiveSpring(response: 0.32, dampingFraction: 0.85), value: model.currentVolume)
 
                 VStack(spacing: 4) {
@@ -163,7 +167,7 @@ struct ContentView: View {
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { drag in
-                        updateVolumeFromDial(drag.location, size: CGSize(width: 188, height: 188))
+                        updateVolumeFromDial(drag.location, size: CGSize(width: 204, height: 204))
                     }
             )
             .scaleEffect(model.didLaunchAnimate ? 1 : 0.92)
@@ -243,7 +247,7 @@ struct ContentView: View {
                     currentTilt: model.currentTiltDegrees,
                     tiltLearnEnabled: model.isTiltLearnMode
                 )
-                .frame(width: 156, height: 156)
+                .frame(width: 204, height: 204)
                 .contentShape(Circle())
 
                 VStack(alignment: .trailing, spacing: 5) {
@@ -259,19 +263,6 @@ struct ContentView: View {
                     Text(String(format: "Defaults +%.0f° / -%.0f°", model.defaultTriggerAngleDegrees, model.defaultDownTriggerAngleDegrees))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.78))
-
-                    HStack(spacing: 6) {
-                        Button("+ Default") { model.resetTriggerToDefault() }
-                            .buttonStyle(InnerChipStyle())
-                        Button("Save +") { model.updateDefaultTriggerAngleDegrees(model.triggerAngleDegrees) }
-                            .buttonStyle(InnerChipStyle())
-                    }
-                    HStack(spacing: 6) {
-                        Button("- Default") { model.resetDownTriggerToDefault() }
-                            .buttonStyle(InnerChipStyle())
-                        Button("Save -") { model.updateDefaultDownTriggerAngleDegrees(model.downTriggerAngleDegrees) }
-                            .buttonStyle(InnerChipStyle())
-                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
@@ -476,6 +467,16 @@ struct ContentView: View {
         }
     }
 
+    private var volumeRingColors: [Color] {
+        let maxTrigger = max(model.triggerAngleDegrees, model.downTriggerAngleDegrees, 1)
+        let intensity = min(max(abs(model.currentTiltDegrees) / maxTrigger, 0), 1)
+        return [
+            Color(red: 0.30 - 0.08 * intensity, green: 0.76 + 0.16 * intensity, blue: 0.78 + 0.14 * intensity),
+            Color(red: 0.18 + 0.14 * intensity, green: 0.62 + 0.14 * intensity, blue: 0.96),
+            Color.white.opacity(0.78 + 0.22 * intensity)
+        ]
+    }
+
     private func updateVolumeFromDial(_ location: CGPoint, size: CGSize) {
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
         let dx = location.x - center.x
@@ -549,12 +550,15 @@ private struct DualTriggerAngleDial: View {
     var body: some View {
         GeometryReader { proxy in
             let size = min(proxy.size.width, proxy.size.height)
-            let lineWidth: CGFloat = 9
+            let lineWidth: CGFloat = 11
             let maxValue = max(range.upperBound, 1)
+            let tiltIntensity = min(max(abs(currentTilt) / maxValue, 0), 1)
 
             let upAngle = (upValue / maxValue) * endAngle
             let downAngle = -(downValue / maxValue) * abs(startAngle)
             let tiltAngle = signedAngle(for: currentTilt, maxValue: maxValue)
+            let upProgress = min(max(upValue / maxValue, 0), 1)
+            let downProgress = min(max(downValue / maxValue, 0), 1)
 
             ZStack {
                 ArcSegment(startAngle: .degrees(startAngle), endAngle: .degrees(0))
@@ -564,12 +568,26 @@ private struct DualTriggerAngleDial: View {
 
                 ArcSegment(startAngle: .degrees(0), endAngle: .degrees(upAngle))
                     .stroke(
-                        LinearGradient(colors: [.mint, .cyan], startPoint: .leading, endPoint: .trailing),
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.20, green: 0.75 + 0.20 * upProgress, blue: 0.78 + 0.18 * upProgress),
+                                Color(red: 0.16 + 0.20 * tiltIntensity, green: 0.55 + 0.35 * upProgress, blue: 0.95)
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
                         style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                     )
                 ArcSegment(startAngle: .degrees(downAngle), endAngle: .degrees(0))
                     .stroke(
-                        LinearGradient(colors: [.orange, .pink], startPoint: .leading, endPoint: .trailing),
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.95, green: 0.45 + 0.35 * downProgress, blue: 0.22 + 0.20 * downProgress),
+                                Color(red: 1.0, green: 0.30 + 0.30 * downProgress, blue: 0.40 + 0.30 * tiltIntensity)
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
                         style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                     )
 
@@ -580,7 +598,7 @@ private struct DualTriggerAngleDial: View {
                 }
 
                 VStack(spacing: 5) {
-                    Text(String(format: "+%.0f° / -%.0f°", upValue, downValue))
+                    Text(String(format: "-%.0f°  |  +%.0f°", downValue, upValue))
                         .font(.caption.monospacedDigit().weight(.bold))
                         .foregroundStyle(.white)
                     if tiltLearnEnabled {
@@ -589,6 +607,18 @@ private struct DualTriggerAngleDial: View {
                             .foregroundStyle(.white.opacity(0.86))
                     }
                 }
+                .padding(.top, 8)
+
+                HStack {
+                    Text(String(format: "-%.0f°", downValue))
+                        .font(.caption.monospacedDigit().weight(.bold))
+                        .foregroundStyle(.white.opacity(0.9))
+                    Spacer()
+                    Text(String(format: "+%.0f°", upValue))
+                        .font(.caption.monospacedDigit().weight(.bold))
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                .padding(.horizontal, 12)
             }
             .frame(width: size, height: size)
             .contentShape(Circle())
@@ -658,9 +688,9 @@ private struct InnerChipStyle: ButtonStyle {
             .foregroundStyle(.white)
             .lineLimit(1)
             .minimumScaleFactor(0.72)
-            .frame(width: 86)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
+            .frame(width: 100)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
             .background(
                 Capsule()
                     .fill(.white.opacity(configuration.isPressed ? 0.24 : 0.14))
